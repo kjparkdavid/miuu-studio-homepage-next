@@ -14,6 +14,7 @@ module.exports = {
       },
       colors: {
         purple: "#7e52ff;",
+        smoothRed: "#FDD2D2",
       },
     },
   },
