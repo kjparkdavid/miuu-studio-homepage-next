@@ -36,14 +36,11 @@ const Footer = () => {
         <a href="#" className="font-bold">
           Home
         </a>
-        <a href="#" className="font-bold">
+        <a href="#characters" className="font-bold">
           Characters
         </a>
-        <a href="#" className="font-bold">
+        <a href="#diaryApp" className="font-bold">
           Miuu Diary App
-        </a>
-        <a href="#" className="font-bold">
-          About
         </a>
       </div>
 
