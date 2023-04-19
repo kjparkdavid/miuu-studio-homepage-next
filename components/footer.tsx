@@ -6,11 +6,11 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <div className="flex flex-col text-center items-center pt-6 px-6 pb-10">
-      <p className="text-sm">
+    <div className="flex flex-col text-center items-center pt-6 sm:pt-11 px-6 sm:px-0 pb-10 sm:pb-14">
+      <p className="text-sm sm:text-base">
         Follow us @miuustudio for fun animations about Miuu friends!
       </p>
-      <div className="flex mt-2">
+      <div className="flex mt-2 sm:mt-8">
         <a
           href="https://www.instagram.com/miuustudio/"
           target={"_blank"}
@@ -30,9 +30,9 @@ const Footer = () => {
         </a>
       </div>
 
-      <span className="w-full h-[1px] bg-black lg:w-1/3 my-6"></span>
+      <span className="w-full h-[1px] bg-black my-6 sm:mt-16"></span>
 
-      <div className="w-full grid grid-cols-2 sm:grid-cols-5 gap-3 justify-between text-left">
+      <div className="w-full sm:w-1/2 grid grid-cols-2 sm:grid-cols-3 gap-3 justify-between text-left">
         <a href="#" className="font-bold">
           Home
         </a>
@@ -44,7 +44,7 @@ const Footer = () => {
         </a>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 sm:mt-10 text-xs sm:flex">
         <p className="me-3">2023 &copy; MiuuStudio</p>
         <Link href={"/privacy-policy"}>
           <p>Privacy Policy</p>
