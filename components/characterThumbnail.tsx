@@ -11,7 +11,7 @@ const CharacterThumbnail = (character: Character) => {
         src={getCharacteThumbnail(id)}
         alt={name}
       />
-      <p className="text-center my-2">{name}</p>
+      <p className="text-center my-2 font-bold text-sm">{name}</p>
     </div>
   );
 };
