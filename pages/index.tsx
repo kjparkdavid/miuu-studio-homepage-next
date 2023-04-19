@@ -4,6 +4,7 @@ import Header, { Routes } from "@/components/header";
 import MobileHeader from "@/components/mobileHeader";
 import { getAllCharacters } from "@/lib/characters";
 import CharacterThumbnail from "@/components/characterThumbnail";
+import DiaryAppSection from "@/components/diaryAppSection";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export default function Home() {
       {/* DIARY APP SECTION */}
       <div className="px-6 mt-20">
         <h2 className="text-base font-bold mb-4">Diary App</h2>
+        <DiaryAppSection />
       </div>
     </main>
   );
