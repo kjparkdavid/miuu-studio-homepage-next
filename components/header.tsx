@@ -1,7 +1,9 @@
 import Image from "next/image";
-import miuuStudioLogo from "@/public/images/miuu-logo.png";
-import miuuFriendsBanner from "@/public/images/miuu-banner.png";
-import Link from "next/link";
+import topImage from "@/public/images/mobileHeader/top-image.png";
+import bottomImage from "@/public/images/mobileHeader/bottom-image.png";
+import mainCharacters from "@/public/images/mobileHeader/main-characters.png";
+import logo from "@/public/images/mobileHeader/logo.png";
+import cattyWorld from "@/public/images/mobileHeader/cattyworld.gif";
 
 export enum Routes {
   HOME,
@@ -13,63 +15,37 @@ export enum Routes {
 
 const Header = ({ activePage }: { activePage: Routes }) => {
   return (
-    <nav className="mt-4 flex flex-col">
-      <div className="w-full flex justify-center mb-4">
+    <div className="w-full">
+      <div className="bg-[#FFFFDB] h-screen w-full">
+        <div className="w-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <Image
+            src={cattyWorld}
+            alt={"cattyWorld"}
+            width={172}
+            className="m-auto left-0 right-0"
+          />
+          <Image
+            src={logo}
+            alt={"logo"}
+            width={320}
+            className="m-auto left-0 right-0"
+          />
+        </div>
+
         <Image
-          src={miuuStudioLogo}
-          alt={"miuuStudioLogo"}
-          width={300}
-          height={40}
+          src={bottomImage}
+          alt={"bottomImage"}
+          className="w-full absolute bottom-0 left-0"
+        />
+
+        <Image
+          src={mainCharacters}
+          alt={"mainCharacters"}
+          className="absolute bottom-0 absolute m-auto left-0 right-0"
+          width={362}
         />
       </div>
-
-      <Image
-        src={miuuFriendsBanner}
-        alt={"miuuFriendsBanner"}
-        className="w-full"
-      />
-
-      {/* List of Routes */}
-      <div className="w-full flex justify-center mt-5 font-bold">
-        <Link
-          className={`${activePage === Routes.HOME ? "text-purple" : ""} px-9`}
-          aria-current="page"
-          href="/"
-        >
-          HOME
-        </Link>
-        <Link
-          className={`${activePage === Routes.SHOP ? "text-purple" : ""} px-9`}
-          aria-current="page"
-          href="/"
-        >
-          SHOP
-        </Link>
-        <Link
-          className={`${activePage === Routes.APP ? "text-purple" : ""} px-9`}
-          aria-current="page"
-          href="/"
-        >
-          DIARY APP
-        </Link>
-        <Link
-          className={`${
-            activePage === Routes.CHARACTERS ? "text-purple" : ""
-          } px-9`}
-          aria-current="page"
-          href="/"
-        >
-          CHARACTERS
-        </Link>
-        <Link
-          className={`${activePage === Routes.ABOUT ? "text-purple" : ""} px-9`}
-          aria-current="page"
-          href="/"
-        >
-          ABOUT
-        </Link>
-      </div>
-    </nav>
+    </div>
   );
 };
 

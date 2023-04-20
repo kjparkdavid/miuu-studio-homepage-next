@@ -7,6 +7,7 @@ import CharacterThumbnail from "@/components/characterThumbnail";
 import DiaryAppSection from "@/components/diaryAppSection";
 import MiuuShopSection from "@/components/miuuShopSection";
 import Footer from "@/components/footer";
+import Header, { Routes } from "@/components/header";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -23,14 +24,10 @@ export default function Home() {
       <main
         className={`flex min-h-screen flex-col justify-between ${montserrat.className}`}
       >
-        <div className="w-full sm:hidden">
-          <MobileHeader />
-        </div>
-
-        {/* TODO: Build Desktop Header Separately */}
+        <MobileHeader />
 
         {/* CHARACTERS */}
-        <div className="px-6 mt-20" id="characters">
+        <div className="px-6 mt-12 bg-[#FBFBFB] py-8" id="characters">
           <h2 className="text-base font-bold mb-4">Characters</h2>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 justify-between">
             {allCharacters.map((character, i) => {
@@ -40,8 +37,8 @@ export default function Home() {
         </div>
 
         {/* DIARY APP SECTION */}
-        <div className="px-6 mt-20" id="diaryApp">
-          <h2 className="text-base font-bold mb-4">Diary App</h2>
+        <div className="px-6 mt-12" id="diaryApp">
+          <h2 className="text-base font-bold mb-4 sm:hidden">Diary App</h2>
           <DiaryAppSection />
         </div>
 
