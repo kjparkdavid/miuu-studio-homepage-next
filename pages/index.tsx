@@ -1,13 +1,12 @@
 import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import Head from "next/head";
-import MobileHeader from "@/components/mobileHeader";
+import Header from "@/components/Header";
 import { getAllCharacters } from "@/lib/characters";
 import CharacterThumbnail from "@/components/characterThumbnail";
 import DiaryAppSection from "@/components/diaryAppSection";
 import MiuuShopSection from "@/components/miuuShopSection";
 import Footer from "@/components/footer";
-import Header, { Routes } from "@/components/header";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -24,7 +23,7 @@ export default function Home() {
       <main
         className={`flex min-h-screen flex-col justify-between ${montserrat.className}`}
       >
-        <MobileHeader />
+        <Header />
 
         {/* CHARACTERS */}
         <div className="px-6 mt-12 bg-[#FBFBFB] py-8" id="characters">
