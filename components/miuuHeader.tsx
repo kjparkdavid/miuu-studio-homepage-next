@@ -8,7 +8,7 @@ import instagram from "@/public/images/footer/instagram.png";
 import tiktok from "@/public/images/footer/tiktok.png";
 import youtube from "@/public/images/footer/youtube.png";
 
-const Header = () => {
+const MiuuHeader = () => {
   return (
     <div className="w-full">
       <div className="bg-[#FFFFDB] h-screen w-full items-center flex flex-col">
@@ -99,4 +99,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default MiuuHeader;

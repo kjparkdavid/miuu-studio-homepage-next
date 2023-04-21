@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import Head from "next/head";
-import Header from "@/components/Header";
+import MiuuHeader from "@/components/miuuHeader";
 import { getAllCharacters } from "@/lib/characters";
 import CharacterThumbnail from "@/components/characterThumbnail";
 import DiaryAppSection from "@/components/diaryAppSection";
@@ -23,7 +23,7 @@ export default function Home() {
       <main
         className={`flex min-h-screen flex-col justify-between ${montserrat.className}`}
       >
-        <Header />
+        <MiuuHeader />
 
         {/* CHARACTERS */}
         <div
