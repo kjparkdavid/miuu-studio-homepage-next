@@ -54,6 +54,7 @@ const Header = () => {
           alt={"mainCharacters"}
           className="absolute bottom-0 absolute m-auto left-0 right-0 sm:w-1/2 sm:max-w-4xl"
           width={362}
+          unoptimized={true}
         />
 
         <div className="hidden sm:flex absolute bottom-8 right-10">

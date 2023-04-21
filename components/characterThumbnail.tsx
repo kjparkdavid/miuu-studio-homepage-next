@@ -5,7 +5,7 @@ const CharacterThumbnail = (character: Character) => {
   const { id, name } = character;
 
   return (
-    <div className="rounded-xl border-2 border-[#423224]">
+    <div className="rounded-xl border-2 border-[#423224] hover:scale-105 duration-200">
       <Image
         className="w-full rounded-t-xl"
         src={getCharacteThumbnail(id)}
