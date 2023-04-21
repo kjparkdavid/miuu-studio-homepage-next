@@ -32,16 +32,18 @@ const Footer = () => {
 
       <span className="w-full h-[1px] bg-black my-6 sm:mt-16"></span>
 
-      <div className="w-full sm:w-1/2 grid grid-cols-2 sm:grid-cols-3 gap-3 justify-between text-left">
-        <a href="#" className="font-bold">
-          Home
-        </a>
-        <a href="#characters" className="font-bold">
-          Characters
-        </a>
-        <a href="#diaryApp" className="font-bold">
-          Miuu Diary App
-        </a>
+      <div className="sm:container ">
+        <div className="w-full sm:w-1/2 grid grid-cols-2 sm:grid-cols-3 gap-3 justify-between text-left sm:text-center m-auto left-0 right-0">
+          <a href="#" className="font-bold">
+            Home
+          </a>
+          <a href="#characters" className="font-bold">
+            Characters
+          </a>
+          <a href="#diaryApp" className="font-bold">
+            Miuu Diary App
+          </a>
+        </div>
       </div>
 
       <div className="mt-6 sm:mt-10 text-xs sm:flex">

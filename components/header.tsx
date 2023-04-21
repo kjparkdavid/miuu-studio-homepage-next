@@ -76,7 +76,7 @@ const Header = () => {
           </a>
         </div>
       </div>
-      <div className="px-6 sm:container">
+      <div className="px-6 sm:container m-auto left-0 right-0">
         <div className="mt-12">
           <h1 className="text-xl sm:text-4xl font-bold">
             Welcome to Miuu Studio!{" "}

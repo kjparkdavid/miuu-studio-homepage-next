@@ -26,9 +26,12 @@ export default function Home() {
         <Header />
 
         {/* CHARACTERS */}
-        <div className="px-6 mt-12 bg-[#FBFBFB] py-8" id="characters">
+        <div
+          className="px-6 mt-12 bg-[#FBFBFB] py-8 sm:container m-auto left-0 right-0"
+          id="characters"
+        >
           <h2 className="text-base font-bold mb-4">Characters</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 justify-between">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 justify-between ">
             {allCharacters.map((character, i) => {
               return <CharacterThumbnail {...character} key={i} />;
             })}
@@ -36,7 +39,10 @@ export default function Home() {
         </div>
 
         {/* DIARY APP SECTION */}
-        <div className="px-6 mt-12" id="diaryApp">
+        <div
+          className="px-6 mt-12 sm:container m-auto left-0 right-0"
+          id="diaryApp"
+        >
           <h2 className="text-base font-bold mb-4 sm:hidden">Diary App</h2>
           <DiaryAppSection />
         </div>
