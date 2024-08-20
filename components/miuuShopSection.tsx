@@ -11,7 +11,7 @@ const MiuuShopSection = () => {
         width={129}
         className="mt-6 mb-8"
       />
-      <a className="text-md" href="https://miuustudio.com/" target="_blank">
+      <a className="text-lg" href="https://miuustudio.com/" target="_blank">
         Visit Miuu Studio Store
       </a>
     </div>
