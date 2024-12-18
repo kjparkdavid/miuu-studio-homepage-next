@@ -12,7 +12,7 @@ const PrivacyPolicyPage = () => {
         <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
       </Head>
 
-      <main
+     <main
   className={`flex min-h-screen flex-col justify-between ${montserrat.className} p-6`}
 >
   <strong>Privacy Policy</strong>
@@ -53,7 +53,7 @@ const PrivacyPolicyPage = () => {
     entries). This ensures your data is recoverable if you switch devices or
     reinstall the app. Miuu Studio retains management control of the data stored
     on Google Cloud but does not directly host or access it. For more
-    information, please review{" "}
+    information, please review{' '}
     <a
       href="https://cloud.google.com/privacy"
       target="_blank"
@@ -67,21 +67,21 @@ const PrivacyPolicyPage = () => {
     <strong>Google Login Users</strong>: For users who sign in with Google Login,
     user-input data is backed up directly to your Google Drive. This means no
     data is sent to or stored by Miuu Studio. You retain full ownership and
-    control of the data stored in your Google Drive. Please refer to{" "}
+    control of the data stored in your Google Drive. Please refer to{' '}
     <a
       href="https://policies.google.com/privacy"
       target="_blank"
       rel="noopener noreferrer"
     >
       Google Drive’s Privacy Policy
-    </a>{" "}
+    </a>{' '}
     for details on their data handling practices.
   </p>
   <p>
     <strong>Log Data</strong>
   </p>
   <p>
-    If the app encounters an error, it collects data such as your device's IP
+    If the app encounters an error, it collects data such as your device&apos;s IP
     address, name, operating system, and usage statistics through third-party
     services. No user-input data is ever collected.
   </p>
@@ -122,7 +122,7 @@ const PrivacyPolicyPage = () => {
     Privacy Policies for more information.
   </p>
   <p>
-    <strong>Children’s Privacy</strong>
+    <strong>Children&apos;s Privacy</strong>
   </p>
   <p>
     This Service is not intended for children under 13. We do not knowingly
@@ -137,15 +137,18 @@ const PrivacyPolicyPage = () => {
     review this page regularly. Changes will be posted here and are effective
     immediately.
   </p>
-  <p>Effective Date: July 1, 2022</p>
+  <p>
+    Effective Date: July 1, 2022
+  </p>
   <p>
     <strong>Contact Us</strong>
   </p>
   <p>
-    For questions or suggestions, contact us at:{" "}
+    For questions or suggestions, contact us at:{' '}
     <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>
   </p>
 </main>
+
     </>
   );
 };
