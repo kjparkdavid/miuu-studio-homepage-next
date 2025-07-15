@@ -60,7 +60,7 @@ const PrivacyPolicyPage = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Google Cloud's Privacy Policy
+            Google Cloud&apos;s Privacy Policy
           </a>
           .
         </p>
@@ -91,7 +91,7 @@ const PrivacyPolicyPage = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Google's Privacy Policy
+            Google&apos;s Privacy Policy
           </a>{" "}
           and{" "}
           <a
@@ -99,7 +99,7 @@ const PrivacyPolicyPage = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Google Cloud's Privacy Policy
+            Google Cloud&apos;s Privacy Policy
           </a>{" "}
           for details on their data handling practices.
         </p>
@@ -208,9 +208,9 @@ const PrivacyPolicyPage = () => {
         <p>
           This Service is rated for everyone and may be used by children. We are
           committed to protecting the privacy of children under 13 in compliance
-          with the Children's Online Privacy Protection Act (COPPA). We do not
-          knowingly collect personal information from children under 13 without
-          verifiable parental consent.
+          with the Children&apos;s Online Privacy Protection Act (COPPA). We do
+          not knowingly collect personal information from children under 13
+          without verifiable parental consent.
         </p>
         <p>
           All user data is stored locally on the device or in user-controlled
