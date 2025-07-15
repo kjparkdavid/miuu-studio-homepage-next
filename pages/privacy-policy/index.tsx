@@ -140,6 +140,61 @@ const PrivacyPolicyPage = () => {
           transmission and electronic storage.
         </p>
         <p>
+          <strong>Data Breach Response</strong>
+        </p>
+        <p>
+          In the event of a data breach that may affect your Personal
+          Information, we will:
+        </p>
+        <ul>
+          <li>
+            Investigate the incident promptly and take immediate steps to
+            contain the breach
+          </li>
+          <li>
+            Notify affected users within 72 hours of discovering the breach,
+            where technically feasible
+          </li>
+          <li>
+            Provide details about what information was involved, steps we are
+            taking to address the breach, and recommended actions for users
+          </li>
+          <li>
+            Comply with applicable data protection laws and regulations
+            regarding breach notification
+          </li>
+          <li>
+            Implement additional security measures to prevent similar incidents
+          </li>
+        </ul>
+        <p>
+          <strong>Limitation of Liability</strong>
+        </p>
+        <p>
+          While we implement industry-standard security measures and follow best
+          practices to protect your data, we cannot be held liable for:
+        </p>
+        <ul>
+          <li>
+            Unauthorized access due to user negligence (sharing passwords, using
+            insecure devices, etc.)
+          </li>
+          <li>
+            Breaches caused by third-party services beyond our control (Apple
+            iCloud, Google Drive, etc.)
+          </li>
+          <li>
+            Acts of nature, cyber attacks, or other events beyond our reasonable
+            control
+          </li>
+          <li>Data loss due to device failure, app deletion, or user error</li>
+        </ul>
+        <p>
+          Our liability is limited to the maximum extent permitted by applicable
+          law. We recommend users maintain their own backups and use strong,
+          unique passwords.
+        </p>
+        <p>
           <strong>Links to Other Sites</strong>
         </p>
         <p>
@@ -164,7 +219,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: July 1, 2022</p>
+        <p>Effective Date: January 15, 2025</p>
         <p>
           <strong>Contact Us</strong>
         </p>
