@@ -206,10 +206,23 @@ const PrivacyPolicyPage = () => {
           <strong>Children&apos;s Privacy</strong>
         </p>
         <p>
-          This Service is not intended for children under 13. We do not
-          knowingly collect data from children under 13. If you believe your
-          child has provided Personal Information, please contact us for prompt
-          deletion.
+          This Service is rated for everyone and may be used by children. We are
+          committed to protecting the privacy of children under 13 in compliance
+          with the Children's Online Privacy Protection Act (COPPA). We do not
+          knowingly collect personal information from children under 13 without
+          verifiable parental consent.
+        </p>
+        <p>
+          All user data is stored locally on the device or in user-controlled
+          cloud storage (Apple iCloud, Google Drive, or our secure backup system
+          with user authentication). We do not collect, store, or share personal
+          information from children under 13 for marketing or advertising
+          purposes.
+        </p>
+        <p>
+          Parents or guardians who believe their child has provided personal
+          information to us should contact us immediately at
+          support@miuustudio.com for prompt deletion of such information.
         </p>
         <p>
           <strong>Changes to This Policy</strong>
@@ -219,7 +232,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: January 15, 2025</p>
+        <p>Effective Date: July 14, 2025</p>
         <p>
           <strong>Contact Us</strong>
         </p>
