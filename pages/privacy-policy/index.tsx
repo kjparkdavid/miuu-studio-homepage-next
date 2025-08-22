@@ -187,7 +187,7 @@ const PrivacyPolicyPage = () => {
             Acts of nature, cyber attacks, or other events beyond our reasonable
             control
           </li>
-          <li>Data loss due to device failure, app deletion, or user error</li>
+          <li>Data loss, corruption, or unavailability resulting from device failure, app deletion, user error, or failed backup/restore processes.</li>
         </ul>
         <p>
           Our liability is limited to the maximum extent permitted by applicable
