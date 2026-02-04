@@ -29,13 +29,17 @@ const PrivacyPolicyPage = () => {
           the Service, you agree to the collection and use of information as
           described in this policy.
         </p>
+
         <p>
           <strong>Information Collection and Use</strong>
         </p>
         <p>
           The app may request personally identifiable information for a better
-          user experience. This information is stored on your device and is not
-          collected by Miuu Studio.
+          user experience. <strong>User-generated content</strong> (such as
+          diary entries and images) is stored on your device and is not
+          collected by Miuu Studio. Limited anonymous or pseudonymous usage data
+          may be collected through third-party analytics services for product
+          improvement, as described below.
         </p>
         <p>
           However, the app uses third-party services that may collect data to
@@ -43,7 +47,49 @@ const PrivacyPolicyPage = () => {
         </p>
         <ul>
           <li>Google Play Services</li>
+          <li>PostHog (Product analytics)</li>
         </ul>
+
+        <p>
+          <strong>Analytics &amp; Product Usage Data</strong>
+        </p>
+        <p>
+          We use a third-party analytics service (PostHog) to understand how
+          users interact with the app and to improve features, usability, and
+          performance.
+        </p>
+        <p>
+          PostHog may collect <strong>anonymous or pseudonymous usage data</strong>, such as:
+        </p>
+        <ul>
+          <li>App feature interactions (e.g., button taps, screen views)</li>
+          <li>Device type, operating system, and app version</li>
+          <li>Approximate location (derived from IP address, anonymized)</li>
+          <li>Event timestamps and session duration</li>
+        </ul>
+        <p>
+          <strong>What we do NOT collect through analytics:</strong>
+        </p>
+        <ul>
+          <li>Diary content or text entries</li>
+          <li>Photos, images, or attachments</li>
+          <li>User names, email addresses, or login credentials</li>
+          <li>Any personally identifiable journal data</li>
+        </ul>
+        <p>
+          Analytics data is used strictly for product improvement and is never
+          sold or used for advertising purposes. For more information, please
+          review{" "}
+          <a
+            href="https://posthog.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            PostHog&apos;s Privacy Policy
+          </a>
+          .
+        </p>
+
         <p>
           <strong>Data Backup and Storage</strong>
         </p>
@@ -103,6 +149,7 @@ const PrivacyPolicyPage = () => {
           </a>{" "}
           for details on their data handling practices.
         </p>
+
         <p>
           <strong>Log Data</strong>
         </p>
@@ -111,6 +158,7 @@ const PrivacyPolicyPage = () => {
           device&apos;s IP address, name, operating system, and usage statistics
           through third-party services. No user-input data is ever collected.
         </p>
+
         <p>
           <strong>Cookies</strong>
         </p>
@@ -119,6 +167,7 @@ const PrivacyPolicyPage = () => {
           or libraries that do. You can choose to accept or refuse cookies in
           your settings, but some features may be affected.
         </p>
+
         <p>
           <strong>Third-Party Service Providers</strong>
         </p>
@@ -131,6 +180,7 @@ const PrivacyPolicyPage = () => {
           These providers may access your Personal Information but are obligated
           not to misuse it.
         </p>
+
         <p>
           <strong>Security</strong>
         </p>
@@ -139,6 +189,7 @@ const PrivacyPolicyPage = () => {
           cannot guarantee absolute security due to the nature of internet
           transmission and electronic storage.
         </p>
+
         <p>
           <strong>Data Breach Response</strong>
         </p>
@@ -167,6 +218,7 @@ const PrivacyPolicyPage = () => {
             Implement additional security measures to prevent similar incidents
           </li>
         </ul>
+
         <p>
           <strong>Limitation of Liability</strong>
         </p>
@@ -187,13 +239,18 @@ const PrivacyPolicyPage = () => {
             Acts of nature, cyber attacks, or other events beyond our reasonable
             control
           </li>
-          <li>Data loss, corruption, or unavailability resulting from device failure, app deletion, user error, or failed backup/restore processes.</li>
+          <li>
+            Data loss, corruption, or unavailability resulting from device
+            failure, app deletion, user error, or failed backup/restore
+            processes.
+          </li>
         </ul>
         <p>
           Our liability is limited to the maximum extent permitted by applicable
           law. We recommend users maintain their own backups and use strong,
           unique passwords.
         </p>
+
         <p>
           <strong>Links to Other Sites</strong>
         </p>
@@ -202,6 +259,7 @@ const PrivacyPolicyPage = () => {
           responsible for the privacy practices or content of these sites.
           Review their Privacy Policies for more information.
         </p>
+
         <p>
           <strong>Children&apos;s Privacy</strong>
         </p>
@@ -221,9 +279,11 @@ const PrivacyPolicyPage = () => {
         </p>
         <p>
           Parents or guardians who believe their child has provided personal
-          information to us should contact us immediately at
-          support@miuustudio.com for prompt deletion of such information.
+          information to us should contact us immediately at{" "}
+          <a href="mailto:support@miuustudio.com">support@miuustudio.com</a> for
+          prompt deletion of such information.
         </p>
+
         <p>
           <strong>Changes to This Policy</strong>
         </p>
@@ -232,7 +292,8 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: July 14, 2025</p>
+        <p>Effective Date: February 4, 2026</p>
+
         <p>
           <strong>Contact Us</strong>
         </p>
