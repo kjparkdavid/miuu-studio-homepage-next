@@ -34,12 +34,12 @@ const PrivacyPolicyPage = () => {
           <strong>Information Collection and Use</strong>
         </p>
         <p>
-          The app may request personally identifiable information for a better
-          user experience. <strong>User-generated content</strong> (such as
-          diary entries and images) is stored on your device and is not
-          collected by Miuu Studio. Limited anonymous or pseudonymous usage data
-          may be collected through third-party analytics services for product
-          improvement, as described below.
+          The app may request personally identifiable information for a better user experience. When you sign in with Apple 
+  Login or Google Login, we collect your email address and display name for account identification and customer
+  support purposes. This information is stored securely on our servers powered by Google Cloud. User-generated
+  content (such as diary entries and images) is stored on your device and is not collected by Miuu Studio. Limited
+  anonymous or pseudonymous usage data may be collected through third-party analytics services for product
+  improvement, as described below.
         </p>
         <p>
           However, the app uses third-party services that may collect data to
@@ -89,9 +89,17 @@ const PrivacyPolicyPage = () => {
           </a>
           .
         </p>
+        <p>
+        Note: Email addresses and display names collected at sign-in are used solely for account management and customer
+  support, not for analytics or advertising purposes.
+        </p>
 
         <p>
           <strong>Data Backup and Storage</strong>
+        </p>
+        <p>Account Information: When you sign in, your email address and display name are stored on our secure servers
+  (Google Cloud Firestore) for account identification, customer support, and data recovery purposes. This account
+  metadata is stored separately from your diary content and is not used for marketing or advertising.
         </p>
         <p>
           <strong>Apple Login Users</strong>: For users who sign in with Apple
@@ -292,7 +300,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: February 4, 2026</p>
+        <p>Effective Date: February 28, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
