@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { Montserrat } from "next/font/google";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
@@ -49,9 +50,9 @@ const PaceonSupportPage = () => {
           </a>
 
           <div className="mt-12 text-sm text-gray-400">
-            <a href="/paceon/privacy-policy" className="underline hover:text-gray-600">
+            <Link href="/paceon/privacy-policy" className="underline hover:text-gray-600">
               Privacy Policy
-            </a>
+            </Link>
           </div>
         </div>
       </main>
