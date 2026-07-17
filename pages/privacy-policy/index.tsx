@@ -37,9 +37,11 @@ const PrivacyPolicyPage = () => {
           The app may request personally identifiable information for a better user experience. When you sign in with Apple 
   Login or Google Login, we collect your email address and display name for account identification and customer
   support purposes. This information is stored securely on our servers powered by Google Cloud. User-generated
-  content (such as diary entries and images) is stored on your device and is not collected by Miuu Studio. Limited
-  anonymous or pseudonymous usage data may be collected through third-party analytics services for product
-  improvement, as described below.
+  content (such as diary entries and images) is stored on your device by default. It leaves your device only when you
+  use our backup service (see &ldquo;Data Backup and Storage&rdquo;) or when you choose to enable optional AI-powered
+  features (see &ldquo;AI Features and Third-Party AI Processing&rdquo;). We do not otherwise collect your diary
+  content. Limited anonymous or pseudonymous usage data may be collected through third-party analytics services for
+  product improvement, as described below.
         </p>
         <p>
           However, the app uses third-party services that may collect data to
@@ -159,6 +161,56 @@ const PrivacyPolicyPage = () => {
         </p>
 
         <p>
+          <strong>AI Features and Third-Party AI Processing</strong>
+        </p>
+        <p>
+          The app offers optional, AI-powered features (for example, features
+          that answer questions about your notes, or that automatically organize
+          the people, places, and themes you write about). These features are
+          <strong> turned off by default</strong> and only operate if you
+          explicitly turn them on. They are intended for adult users (18 and
+          older).
+        </p>
+        <p>
+          If you enable an AI feature, the text of the relevant notes is sent to
+          a third-party AI provider, <strong>Anthropic</strong> (the maker of
+          Claude), to process your request. Depending on the feature, this may
+          happen only when you ask a question, or continuously in the background
+          as you write. We never send your photos, images, or voice notes to the
+          AI provider &mdash; only text.
+        </p>
+        <p>Under our commercial agreement with Anthropic:</p>
+        <ul>
+          <li>
+            Your content is <strong>not used to train AI models</strong>.
+          </li>
+          <li>
+            Your content is processed to return a result and then deleted by the
+            provider a short time afterward; it is not retained long-term.
+          </li>
+          <li>
+            Miuu Studio does not keep the AI results on our servers beyond what
+            is needed to operate the feature (such as counting usage against any
+            free limit).
+          </li>
+        </ul>
+        <p>
+          You can decline these features and continue using the rest of the app
+          normally, and you can turn them off at any time. Because these features
+          send the content of personal journal entries to a third party, we do
+          not knowingly make them available to, or process the content of,
+          children. For details on how the provider handles data, please review{" "}
+          <a
+            href="https://www.anthropic.com/legal/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Anthropic&apos;s Privacy Policy
+          </a>
+          .
+        </p>
+
+        <p>
           <strong>Log Data</strong>
         </p>
         <p>
@@ -272,18 +324,18 @@ const PrivacyPolicyPage = () => {
           <strong>Children&apos;s Privacy</strong>
         </p>
         <p>
-          This Service is rated for everyone and may be used by children. We are
-          committed to protecting the privacy of children under 13 in compliance
-          with the Children&apos;s Online Privacy Protection Act (COPPA). We do
-          not knowingly collect personal information from children under 13
-          without verifiable parental consent.
+          This app is intended for users aged 18 and older and is not directed to
+          or designed for children. On the Google Play Store it is declared for a
+          target audience of 18 and over.
         </p>
         <p>
-          All user data is stored locally on the device or in user-controlled
-          cloud storage (Apple iCloud, Google Drive, or our secure backup system
-          with user authentication). We do not collect, store, or share personal
-          information from children under 13 for marketing or advertising
-          purposes.
+          Consistent with the Children&apos;s Online Privacy Protection Act
+          (COPPA), we do not knowingly collect personal information from children
+          under 13, and we do not knowingly send any child&apos;s content to
+          third-party AI providers. The optional AI features described above are
+          intended for adult users only. If we learn that we have collected
+          personal information from a child under 13 without appropriate parental
+          consent, we will delete it.
         </p>
         <p>
           Parents or guardians who believe their child has provided personal
@@ -300,7 +352,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: February 28, 2026</p>
+        <p>Effective Date: July 16, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
