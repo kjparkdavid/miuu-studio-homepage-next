@@ -19,8 +19,9 @@ const TermsPage = () => {
         <strong>Terms of Use</strong>
         <p>
           These terms apply to the Miuu Note &mdash; Diary With Lock app
-          (&ldquo;the app&rdquo;), published by Miuu Studio
-          (&ldquo;we&rdquo;, &ldquo;us&rdquo;). By using the app you agree to
+          (&ldquo;the app&rdquo;), published by Miuu Studio, a sole
+          proprietorship registered in Ontario, Canada (&ldquo;we&rdquo;,
+          &ldquo;us&rdquo;). By using the app you agree to
           them. If you obtained the app from the Apple App Store, Apple&apos;s
           Licensed Application End User License Agreement also applies and takes
           precedence where the two differ.
@@ -152,9 +153,9 @@ const TermsPage = () => {
           <strong>Governing law</strong>
         </p>
         <p>
-          These terms are governed by the laws of [JURISDICTION], without
-          affecting any mandatory consumer protections in your country of
-          residence.
+          These terms are governed by the laws of the Province of Ontario and
+          the federal laws of Canada applicable therein, without affecting any
+          mandatory consumer protections in your country of residence.
         </p>
 
         <p>
@@ -165,7 +166,7 @@ const TermsPage = () => {
           <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>
         </p>
 
-        <p>Effective Date: [DATE]</p>
+        <p>Effective Date: September 19, 2026</p>
       </main>
     </>
   );
