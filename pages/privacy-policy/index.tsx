@@ -479,6 +479,11 @@ const PrivacyPolicyPage = () => {
           <strong>Your Rights and Choices</strong>
         </p>
         <p>
+          The app is published by Miuu Studio, a sole proprietorship registered
+          in Ontario, Canada, which is responsible for the personal information
+          described here. Canadian federal privacy law (PIPEDA) applies to us.
+        </p>
+        <p>
           Wherever you live, you can ask us to give you a copy of the personal
           information we hold, correct it, or delete it. If you are in the
           European Economic Area or the UK, you also have the right to object to
@@ -513,13 +518,17 @@ const PrivacyPolicyPage = () => {
           We do not sell your personal information, and we do not share it for
           cross-context behavioural advertising. California residents may
           exercise the rights above without being treated differently for doing
-          so.
+          so. If you are in Canada and we have not resolved your concern, you
+          may contact the Office of the Privacy Commissioner of Canada.
         </p>
         <p>
-          <strong>Where your data is processed</strong>: our servers and the
-          providers listed above operate in the United States. Where the law
-          requires it, transfers out of your region rely on the standard
-          contractual clauses or an equivalent safeguard offered by the provider.
+          <strong>Where your data is processed</strong>: we are based in Canada,
+          and the providers listed above &mdash; Google Cloud, Firebase,
+          RevenueCat, Sentry and Anthropic &mdash; process data in the United
+          States. Personal information handled by us in Canada is protected
+          under Canadian federal privacy law; for transfers on to those
+          providers we rely on the safeguards in our agreements with them, such
+          as the standard contractual clauses, where the law requires them.
         </p>
 
         <p>
