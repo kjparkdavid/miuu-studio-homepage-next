@@ -49,19 +49,23 @@ const PrivacyPolicyPage = () => {
         </p>
         <ul>
           <li>Google Play Services</li>
-          <li>PostHog (Product analytics)</li>
+          <li>Google Firebase (Analytics and Crashlytics)</li>
+          <li>Sentry (error reporting)</li>
+          <li>Google AdMob (advertising)</li>
         </ul>
 
         <p>
           <strong>Analytics &amp; Product Usage Data</strong>
         </p>
         <p>
-          We use a third-party analytics service (PostHog) to understand how
+          We use third-party analytics and error-reporting services (Google
+          Firebase Analytics and Crashlytics, and Sentry) to understand how
           users interact with the app and to improve features, usability, and
           performance.
         </p>
         <p>
-          PostHog may collect <strong>anonymous or pseudonymous usage data</strong>, such as:
+          These services may collect{" "}
+          <strong>anonymous or pseudonymous usage data</strong>, such as:
         </p>
         <ul>
           <li>App feature interactions (e.g., button taps, screen views)</li>
@@ -80,14 +84,29 @@ const PrivacyPolicyPage = () => {
         </ul>
         <p>
           Analytics data is used strictly for product improvement and is never
-          sold or used for advertising purposes. For more information, please
-          review{" "}
+          sold. For more information, please review{" "}
           <a
-            href="https://posthog.com/privacy"
+            href="https://firebase.google.com/support/privacy"
             target="_blank"
             rel="noopener noreferrer"
           >
-            PostHog&apos;s Privacy Policy
+            Firebase&apos;s Privacy and Security page
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://sentry.io/privacy/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Sentry&apos;s Privacy Policy
+          </a>
+          . The app also shows ads through Google AdMob; see{" "}
+          <a
+            href="https://policies.google.com/technologies/partner-sites"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Google&apos;s advertising policies
           </a>
           .
         </p>
@@ -179,14 +198,32 @@ const PrivacyPolicyPage = () => {
           as you write. We never send your photos, images, or voice notes to the
           AI provider &mdash; only text.
         </p>
+        <p>
+          For features that build a picture of the people, places and things you
+          write about, <strong>you choose which past entries are included</strong>{" "}
+          when you turn the feature on &mdash; for example your most recent
+          entries, or entries you pick yourself &mdash; and each new entry is
+          sent when you save it. You can change that choice at any time in the
+          app.
+        </p>
         <p>Under our commercial agreement with Anthropic:</p>
         <ul>
           <li>
             Your content is <strong>not used to train AI models</strong>.
           </li>
           <li>
-            Your content is processed to return a result and then deleted by the
-            provider a short time afterward; it is not retained long-term.
+            Your content is processed to return a result and is not retained
+            long-term. When past entries are processed together in the
+            background, the provider holds them until the results have been
+            delivered to your app, and we delete them as soon as they are; if
+            they are never collected, the provider deletes them within 30 days.
+          </li>
+          <li>
+            The results &mdash; such as the names of people, places and things
+            you wrote about, together with short quotes from your own entries
+            &mdash; are stored <strong>on your device</strong>, and, like your
+            entries, in your backup if you use our backup service. You can
+            remove them at any time from the app&apos;s settings.
           </li>
           <li>
             Miuu Studio does not keep the AI results on our servers beyond what
@@ -217,6 +254,12 @@ const PrivacyPolicyPage = () => {
           If the app encounters an error, it collects data such as your
           device&apos;s IP address, name, operating system, and usage statistics
           through third-party services. No user-input data is ever collected.
+        </p>
+        <p>
+          To protect the AI features from abuse, the app may also send our
+          service a short-lived token from Apple App Attest or Google Play
+          Integrity confirming that the request comes from a genuine copy of the
+          app. These tokens contain no personal content and are not stored.
         </p>
 
         <p>
@@ -352,7 +395,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: July 16, 2026</p>
+        <p>Effective Date: September 19, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
