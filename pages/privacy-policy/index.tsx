@@ -48,10 +48,16 @@ const PrivacyPolicyPage = () => {
           identify you. These include:
         </p>
         <ul>
-          <li>Google Play Services</li>
-          <li>Google Firebase (Analytics and Crashlytics)</li>
-          <li>Sentry (error reporting)</li>
-          <li>Google AdMob (advertising)</li>
+          <li>Google Play Services / Apple App Store</li>
+          <li>
+            Google Firebase &mdash; sign-in, analytics, crash reporting, push
+            notifications and feature configuration
+          </li>
+          <li>Sentry &mdash; error reporting</li>
+          <li>Google AdMob &mdash; advertising in the free version</li>
+          <li>RevenueCat &mdash; subscription and purchase status</li>
+          <li>Google Cloud &mdash; our servers, backup storage</li>
+          <li>Anthropic &mdash; the optional AI features (see below)</li>
         </ul>
 
         <p>
@@ -113,6 +119,54 @@ const PrivacyPolicyPage = () => {
         <p>
         Note: Email addresses and display names collected at sign-in are used solely for account management and customer
   support, not for analytics or advertising purposes.
+        </p>
+
+        <p>
+          <strong>Purchases and Subscriptions</strong>
+        </p>
+        <p>
+          Payment is handled entirely by the App Store or Google Play. We never
+          see your card details. We use <strong>RevenueCat</strong> to tell the
+          app whether a purchase or subscription is active; it receives an
+          anonymous app user identifier and the purchase information the store
+          provides. Cancelling or refunding a subscription is done through your
+          store account.
+        </p>
+
+        <p>
+          <strong>Advertising</strong>
+        </p>
+        <p>
+          The free version shows ads through <strong>Google AdMob</strong>.
+          Buying the ad-free upgrade or a subscription removes them.
+        </p>
+        <ul>
+          <li>
+            In the European Economic Area and the UK, the app shows Google&apos;s
+            consent form before any personalised ads. You may choose
+            non-personalised ads, and you can change your choice later.
+          </li>
+          <li>
+            On iOS, the system &ldquo;Allow app to track&rdquo; prompt asks
+            whether the app may use your device&apos;s advertising identifier.
+            If you decline, ads still appear but are non-personalised.
+          </li>
+          <li>
+            We never share your diary content, photos or voice notes with
+            advertising partners. Ads are not targeted using anything you write.
+          </li>
+        </ul>
+
+        <p>
+          <strong>Push Notifications</strong>
+        </p>
+        <p>
+          If you turn on reminders, the app registers a device notification
+          token with Firebase Cloud Messaging so we can send the reminder you
+          asked for. The token identifies a device installation, not you, and it
+          is removed when the reminder is turned off, the app is uninstalled, or
+          the token stops working. Notifications never contain your diary
+          content. You can turn them off in the app or in your device settings.
         </p>
 
         <p>
@@ -385,6 +439,96 @@ const PrivacyPolicyPage = () => {
           information to us should contact us immediately at{" "}
           <a href="mailto:support@miuustudio.com">support@miuustudio.com</a> for
           prompt deletion of such information.
+        </p>
+
+        <p>
+          <strong>How Long We Keep Data</strong>
+        </p>
+        <ul>
+          <li>
+            <strong>Backups</strong>: kept for as long as your account exists,
+            so a backup is there when you need it. We keep the current backup
+            and the previous one; older ones are replaced. Delete your account
+            (below) and they go with it.
+          </li>
+          <li>
+            <strong>Account record</strong> (email address, display name): kept
+            while your account exists.
+          </li>
+          <li>
+            <strong>Usage counters</strong> for free limits on the AI features:
+            monthly counts, and a one-time count for the first build of your
+            universe. They hold numbers, never your text.
+          </li>
+          <li>
+            <strong>Reminder schedules</strong>: kept while the reminder is on,
+            and removed shortly after it is turned off or stops working.
+          </li>
+          <li>
+            <strong>Diagnostic logs</strong> (errors, request records): kept for
+            a limited period, normally no more than 90 days.
+          </li>
+          <li>
+            <strong>Diary content on your device</strong>: yours, for as long as
+            you keep the app installed. Deleting the app deletes it, which is
+            why we recommend keeping a backup.
+          </li>
+        </ul>
+
+        <p>
+          <strong>Your Rights and Choices</strong>
+        </p>
+        <p>
+          The app is published by Miuu Studio, a sole proprietorship registered
+          in Ontario, Canada, which is responsible for the personal information
+          described here. Canadian federal privacy law (PIPEDA) applies to us.
+        </p>
+        <p>
+          Wherever you live, you can ask us to give you a copy of the personal
+          information we hold, correct it, or delete it. If you are in the
+          European Economic Area or the UK, you also have the right to object to
+          or restrict certain processing, to receive your data in a portable
+          form, and to complain to your local data protection authority.
+        </p>
+        <p>
+          Our legal bases for processing are: performing the service you asked
+          for (your account and backups); your consent (the AI features,
+          personalised ads, notifications), which you can withdraw at any time
+          without losing the rest of the app; and our legitimate interests in
+          keeping the service working and safe from abuse.
+        </p>
+        <p>
+          You can act on most of this inside the app: turn the AI features off
+          or choose &ldquo;Forget my universe&rdquo;, turn off reminders, change
+          your ads choice, delete individual entries, or stop backing up. For
+          anything else, write to us at{" "}
+          <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>.
+        </p>
+        <p>
+          <strong>Deleting your account and backups</strong>: email{" "}
+          <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>{" "}
+          from the address you signed in with, and we will delete your account
+          record and everything stored for it on our servers &mdash; your
+          backups, their media, your reminder schedules and your usage counters
+          &mdash; within 30 days. Diary entries on your own device are not
+          affected; delete the app to remove those. If you back up to your own
+          Google Drive, that copy is yours to delete from Drive.
+        </p>
+        <p>
+          We do not sell your personal information, and we do not share it for
+          cross-context behavioural advertising. California residents may
+          exercise the rights above without being treated differently for doing
+          so. If you are in Canada and we have not resolved your concern, you
+          may contact the Office of the Privacy Commissioner of Canada.
+        </p>
+        <p>
+          <strong>Where your data is processed</strong>: we are based in Canada,
+          and the providers listed above &mdash; Google Cloud, Firebase,
+          RevenueCat, Sentry and Anthropic &mdash; process data in the United
+          States. Personal information handled by us in Canada is protected
+          under Canadian federal privacy law; for transfers on to those
+          providers we rely on the safeguards in our agreements with them, such
+          as the standard contractual clauses, where the law requires them.
         </p>
 
         <p>
