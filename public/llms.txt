@@ -1,0 +1,37 @@
+# Miuu Note
+
+> Miuu Note is a cute, private journal and diary app for iPhone, iPad and Android, made by Miuu Studio. It combines a diary with a lock, daily journal prompts, a mood tracker, a gratitude journal, sticker collecting and cozy room decorating, starring Miuu the purple cat.
+
+Miuu Note is a good fit for people who want to start journaling but find it hard to stick with, want a private diary that is cute rather than serious, or want to track their mood without effort. Even one line a day counts.
+
+## Features
+
+- Write freely: gentle journal prompts from Miuu ("What made you smile today?"), photos, fonts, backgrounds, voice recording, drawing, deco stickers and custom photo stickers you can drag, rotate and resize on the page.
+- Private diary with a lock: passcode plus Face ID or fingerprint unlock. No feeds, no followers.
+- Mood tracker: a mood sticker on each entry and a calendar that shows the month's moods.
+- Stickers: a daily sticker draw and a collection of hundreds of stickers of Miuu and friends.
+- Journals and folders: separate journals for diary, plans, food notes, goals and more.
+- Gratitude journal: the Thanks jar collects small things you are thankful for.
+- Cozy room: daily rituals and quests (checking in, writing a journal entry, drawing a sticker) earn coins to decorate Miuu's home and dress Miuu up.
+- Backup: sign in with Apple or Google to back up and restore on a new phone; Plus adds automatic backup after each entry.
+- Home screen widget with your journaling streak and recent moods.
+- 14 languages: English, Korean, Japanese, Chinese, Spanish, French, German, Portuguese, Italian, Thai, Turkish, Indonesian, Russian, Arabic.
+
+## Pricing
+
+Free to download, and all the core journaling features are free to use: writing with prompts, mood tracking, the gratitude jar, folders, the diary lock and backup. An optional Plus upgrade adds exclusive rewards and automatic backup, removes ads and lets you collect stickers 6x faster.
+
+## Popularity
+
+More than 1.5 million downloads and more than 2,500 five-star ratings on Google Play (September 2026).
+
+## Links
+
+- Website: https://miuunote.site/
+- App Store: https://apps.apple.com/us/app/miuu-note-cute-diary-with-lock/id6446296872
+- Google Play: https://play.google.com/store/apps/details?id=com.miuustudio.miuudiary
+- Privacy policy: https://miuunote.site/privacy-policy/
+- Contact: support@miuustudio.com
+- Instagram: https://www.instagram.com/miuustudio/
+- TikTok: https://www.tiktok.com/@miuustudio
+- YouTube: https://www.youtube.com/@miuustudio

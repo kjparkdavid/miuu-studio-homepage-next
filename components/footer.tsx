@@ -1,58 +1,60 @@
 import Image from "next/image";
+import Link from "next/link";
 import instagram from "@/public/images/footer/instagram.png";
 import tiktok from "@/public/images/footer/tiktok.png";
 import youtube from "@/public/images/footer/youtube.png";
-import Link from "next/link";
+import logo from "@/public/images/mobileHeader/logo.png";
+import { SOCIAL_LINKS } from "@/lib/links";
+
+const SOCIAL_ICONS = { Instagram: instagram, TikTok: tiktok, YouTube: youtube };
 
 const Footer = () => {
   return (
-    <div className="flex flex-col text-center items-center pt-6 sm:pt-11 px-6 sm:px-0 pb-10 sm:pb-14">
-      <p className="text-sm sm:text-base">
-        Follow us @miuustudio for fun animations about Miuu friends!
-      </p>
-      <div className="flex mt-2 sm:mt-8">
-        <a
-          href="https://www.instagram.com/miuustudio/"
-          target={"_blank"}
-          className="me-6"
-        >
-          <Image src={instagram} alt={"instagram"} width={48} height={48} />
-        </a>
-        <a
-          href="https://www.tiktok.com/@miuustudio"
-          target={"_blank"}
-          className="me-6"
-        >
-          <Image src={tiktok} alt={"tiktok"} width={48} height={48} />
-        </a>
-        <a href="https://www.youtube.com/@miuustudio" target={"_blank"}>
-          <Image src={youtube} alt={"youtube"} width={48} height={48} />
-        </a>
-      </div>
+    <footer className="border-t border-ink/10 bg-canvas px-4 py-12 sm:px-6">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <Image src={logo} alt="Miuu Studio" width={160} />
+          <p className="mt-4 max-w-xs text-sm font-medium text-ink/60">
+            We make cute, gentle things starring Miuu and friends, to bring a little joy to every day.
+          </p>
+          <div className="mt-5 flex gap-3">
+            {SOCIAL_LINKS.map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-transform hover:-translate-y-0.5"
+              >
+                <Image
+                  src={SOCIAL_ICONS[social.name as keyof typeof SOCIAL_ICONS]}
+                  alt={`Miuu Studio on ${social.name}`}
+                  width={36}
+                  height={36}
+                />
+              </a>
+            ))}
+          </div>
+        </div>
 
-      <span className="w-full h-[1px] bg-black my-6 sm:mt-16"></span>
-
-      <div className="sm:container ">
-        <div className="w-full sm:w-1/2 grid grid-cols-2 sm:grid-cols-3 gap-3 justify-between text-left sm:text-center m-auto left-0 right-0">
-          <a href="#" className="font-bold">
-            Home
-          </a>
-          <a href="#characters" className="font-bold">
-            Characters
-          </a>
-          <a href="#diaryApp" className="font-bold">
-            Miuu Diary App
-          </a>
+        <div className="flex flex-col gap-3 text-sm font-semibold">
+          <div className="flex gap-8">
+            <a href="#features" className="hover:text-violet">Features</a>
+            <a href="#faq" className="hover:text-violet">FAQ</a>
+            <Link href="/privacy-policy" className="hover:text-violet">Privacy Policy</Link>
+          </div>
+          <p className="font-medium text-ink/60">
+            Contact:{" "}
+            <a href="mailto:support@miuustudio.com" className="font-semibold text-ink hover:text-violet">
+              support@miuustudio.com
+            </a>
+          </p>
         </div>
       </div>
-
-      <div className="mt-6 sm:mt-10 text-xs sm:flex">
-        <p className="me-3">2023 &copy; MiuuStudio</p>
-        <Link href={"/privacy-policy"}>
-          <p>Privacy Policy</p>
-        </Link>
-      </div>
-    </div>
+      <p className="mx-auto mt-10 max-w-6xl text-xs font-medium text-ink/50">
+        © {new Date().getFullYear()} Miuu Studio
+      </p>
+    </footer>
   );
 };
 

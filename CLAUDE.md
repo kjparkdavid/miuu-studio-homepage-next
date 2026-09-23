@@ -11,41 +11,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-This is a **Next.js 13 homepage** for Miuu Studio, a digital content creator featuring adorable animal characters. The site uses:
+This is a **Next.js 13 landing page for the Miuu Note app** (made by Miuu Studio), exported as a static site (`output: 'export'`). The site uses:
 
 - **Framework**: Next.js 13 with TypeScript
-- **Styling**: Tailwind CSS with custom colors (purple: #7e52ff, smoothRed: #FDD2D2)
-- **Font**: Montserrat from Google Fonts
+- **Styling**: Tailwind CSS. Brand tokens live in `tailwind.config.js` (`ink`, `violet`, `lilac`, `canvas`, `blush`, `mint`, `sky`, `night`); `purple` and `smoothRed` are kept for the privacy / paceon pages
+- **Font**: Montserrat (same as the app), headings in ExtraBold via `font-display`
 - **Path aliases**: `@/*` maps to project root
 
 ### Key Components Structure
 
-The homepage (`pages/index.tsx`) is composed of modular sections:
+The homepage (`pages/index.tsx`) stacks these sections:
 
-1. **MiuuHeader** (`components/miuuHeader.tsx`): Hero section with navigation, logo, and social links
-   - Responsive design with different layouts for mobile/desktop
-   - Navigation menu (desktop only): Home, Characters, Miuu Diary App
-   - Social media links: Instagram, TikTok, YouTube
+1. **SiteNav** (`components/siteNav.tsx`): fixed nav that slides in after scrolling past the hero, with a #features anchor and a "Get the app" button
+2. **Hero** (`components/hero.tsx`): violet hero with study Miuu at a desk, then three phones (journals list, home, dressing room) straddling its bottom edge
+3. **Features** (`components/features.tsx`): bento grid of cards (write freely, lock, mood calendar, sticker shelf, folders, thanks jar, backup + languages), each with its app screenshot
+4. **HomesSection** (`components/homesSection.tsx`): three decorated home themes from `public/images/homes/` plus the furniture shop
+5. **Testimonials** (`components/testimonials.tsx`): real Google Play reviews (the same ones the app's Pro page shows)
+6. **FriendsSection** (`components/friendsSection.tsx`): character marquee + store link
+7. **Faq** (`components/faq.tsx`): questions from `lib/faq.ts`, also emitted as FAQPage JSON-LD
+8. **DownloadCta** (`components/downloadCta.tsx`) and **Footer** (`components/footer.tsx`)
 
-2. **Characters Section**: Grid display of all studio characters
-   - Uses `CharacterThumbnail` component with data from `lib/characters.ts`
-   - Character data managed via enum (`CharacterId`) and interface (`Character`)
-   - 8 characters: Miuu, Miyomi, Kao, Kiki, Joy & Sky, Whispurr, Nunu, Bunsy
-
-3. **DiaryAppSection** (`components/diaryAppSection.tsx`): Promotes the studio's diary app
-
-4. **MiuuShopSection** (`components/miuuShopSection.tsx`): Merchandise/shop promotion
-
-5. **Footer** (`components/footer.tsx`): Site footer with additional links
+Store, shop and social URLs are in `lib/links.ts`; `components/storeBadges.tsx` renders the App Store / Google Play badges.
 
 ### Asset Organization
 
-Images are well-organized in `public/images/` by component:
+Images live in `public/images/`:
+- `/app/` - app screenshots as JPEGs (design exports / simulator shots; use Plus + release builds so no ads or dev buttons show)
+- `/outfits/` - transparent Miuu outfit PNGs (study.png is the hero Miuu)
+- `app-icon.png` - current app icon (also `public/icon.png`, `public/apple-touch-icon.png`)
 - `/characterThumbnails/` - Individual character images
-- `/diaryApp/` - App store badges and app screenshots
+- `/diaryApp/` - store badges
 - `/footer/` - Social media icons
-- `/miuuShop/` - Shop-related graphics
-- `/mobileHeader/` - Header background images and logos
+- `/miuuShop/`, `/mobileHeader/` - Miyomi ribbon GIF, planet cat GIF, Miuu Studio logo
+
+Only feature shipped features: check with the owner before adding screenshots of anything unreleased (e.g. the Universe view).
 
 ### Data Management
 
@@ -56,10 +55,11 @@ Character data is centralized in `lib/characters.ts`:
 
 ### Responsive Design
 
-The site uses Tailwind's responsive utilities extensively:
-- Mobile-first approach with `sm:` breakpoints
-- Different layouts for mobile vs desktop (especially in header)
-- Grid systems adapt to screen size (2 columns mobile, 5 columns desktop for characters)
+Mobile-first Tailwind: single column on phones, `sm:` two-column bento, `lg:` side-by-side hero and three-column bento. Check 375px, ~700px and desktop widths for horizontal overflow.
+
+### SEO
+
+`pages/index.tsx` sets the title, description, canonical, Open Graph/Twitter tags and JSON-LD (MobileApplication, Organization, FAQPage). `public/robots.txt`, `public/sitemap.xml` and `public/llms.txt` (a plain summary for AI search) live alongside. Keep FAQ answers, `llms.txt` and the Play stats in `lib/links.ts` true to the shipped app.
 
 ## Development Notes
 
