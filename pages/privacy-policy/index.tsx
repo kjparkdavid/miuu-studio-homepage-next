@@ -78,6 +78,10 @@ const PrivacyPolicyPage = () => {
           <li>Device type, operating system, and app version</li>
           <li>Approximate location (derived from IP address, anonymized)</li>
           <li>Event timestamps and session duration</li>
+          <li>
+            Estimated age range, gender and interests, seen only as totals
+            across many users (see Google signals below)
+          </li>
         </ul>
         <p>
           <strong>What we do NOT collect through analytics:</strong>
@@ -88,6 +92,28 @@ const PrivacyPolicyPage = () => {
           <li>User names, email addresses, or login credentials</li>
           <li>Any personally identifiable journal data</li>
         </ul>
+        <p>
+          <strong>Google signals</strong>: we have turned on Google signals in
+          Google Analytics. If you are signed in to a Google account and have
+          allowed Google to personalise ads for you, Google may link the
+          app&apos;s analytics data to that account so that it can give us
+          estimates of our users&apos; age ranges, genders and interests. We
+          only ever see totals across many users. Google hides any group too
+          small to stay anonymous, and we never receive your Google account
+          details. We use these reports to understand who uses Miuu Note, not
+          to target ads. In the European Economic Area and the UK this happens
+          only if you agreed to personalised ads in the consent form described
+          under Advertising. You can switch it off for your Google account at
+          any time by turning off ad personalisation in{" "}
+          <a
+            href="https://myadcenter.google.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            My Ad Center
+          </a>
+          .
+        </p>
         <p>
           Analytics data is used strictly for product improvement and is never
           sold. For more information, please review{" "}
@@ -493,7 +519,7 @@ const PrivacyPolicyPage = () => {
         <p>
           Our legal bases for processing are: performing the service you asked
           for (your account and backups); your consent (the AI features,
-          personalised ads, notifications), which you can withdraw at any time
+          personalised ads and Google signals, notifications), which you can withdraw at any time
           without losing the rest of the app; and our legitimate interests in
           keeping the service working and safe from abuse.
         </p>
@@ -539,7 +565,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: September 19, 2026</p>
+        <p>Effective Date: September 23, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
