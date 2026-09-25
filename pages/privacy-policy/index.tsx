@@ -196,6 +196,55 @@ const PrivacyPolicyPage = () => {
         </p>
 
         <p>
+          <strong>Invite a Friend</strong>
+        </p>
+        <p>
+          When you invite a friend, or accept a friend&apos;s invite, the app uses
+          our referral service so that both of you can receive in-app coins and
+          rewards. This is what it stores and why:
+        </p>
+        <ul>
+          <li>
+            <strong>Invite codes</strong>: your personal code, when it was
+            created, whether your phone is iOS or Android, and a one-way hash of
+            the secret key that proves the code is yours. The key itself stays on
+            your device.
+          </li>
+          <li>
+            <strong>A device check</strong>: so that a phone cannot invite itself
+            or be invited twice, the app sends a{" "}
+            <strong>one-way, salted hash of your device&apos;s identifier</strong>{" "}
+            (on Android, the Android ID; on iPhone, the identifier Apple gives
+            each app developer). The identifier itself never leaves your device
+            and cannot be recovered from the hash, and it is{" "}
+            <strong>never linked to your advertising identifier</strong>. We use
+            it only to prevent fraud.
+          </li>
+          <li>
+            <strong>The link between friends</strong>: when a friend uses your
+            code, we record that their (hashed) device used it, when, whether it
+            came through a link or was typed, and when they wrote their first
+            entry. We never record a friend&apos;s name, email or diary content,
+            and the person who invited them sees only how many friends joined,
+            not who they are.
+          </li>
+          <li>
+            <strong>Install referrer</strong>: on Android, when you install Miuu
+            from an invite link, the app reads the invite code that Google Play
+            passes along with the install.
+          </li>
+          <li>
+            <strong>Abuse limits</strong>: our server counts invite requests from
+            each network address per hour. It stores only a one-way hash of the
+            address and deletes it within about two days.
+          </li>
+          <li>
+            <strong>Backups</strong>: your own code and any invite you accepted
+            are included in your backup, so they come back when you restore.
+          </li>
+        </ul>
+
+        <p>
           <strong>Data Backup and Storage</strong>
         </p>
         <p>Account Information: When you sign in, your email address and display name are stored on our secure servers
@@ -465,6 +514,12 @@ const PrivacyPolicyPage = () => {
           <strong>How Long We Keep Data</strong>
         </p>
         <ul>
+          <li>
+            <strong>Invite records</strong> (codes, the hashed device check and
+            the link between friends): kept while the invite program runs, so a
+            phone cannot be invited twice. To have yours deleted, email us with
+            your invite code (Settings &rarr; Invite friends).
+          </li>
           <li>
             <strong>Backups</strong>: kept for as long as your account exists,
             so a backup is there when you need it. We keep the current backup
