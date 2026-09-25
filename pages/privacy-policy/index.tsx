@@ -203,12 +203,13 @@ const PrivacyPolicyPage = () => {
   metadata is stored separately from your diary content and is not used for marketing or advertising.
         </p>
         <p>
-          <strong>Apple Login Users</strong>: For users who sign in with Apple
-          Login, we use our secure backup system powered by Google Cloud Storage
-          to back up user-input data (such as diary entries). This ensures your
-          data is recoverable if you switch devices or reinstall the app. Miuu
-          Studio retains management control of the data stored on Google Cloud
-          but does not directly access or read your personal content. For more
+          <strong>Your backups</strong>: Whether you sign in with Apple or
+          Google, the backup service stores your user-input data (such as
+          diary entries, images and voice notes) on our secure servers powered
+          by Google Cloud Storage. This keeps your data recoverable if you
+          switch devices or reinstall the app, on iOS or Android. Miuu Studio
+          retains management control of the data stored on Google Cloud but
+          does not directly access or read your personal content. For more
           information, please review{" "}
           <a
             href="https://cloud.google.com/privacy"
@@ -220,25 +221,18 @@ const PrivacyPolicyPage = () => {
           .
         </p>
         <p>
-          <strong>Google Login Users</strong>: For users who sign in with Google
-          Login, you can choose between two backup methods:
+          <strong>Older Google Drive backups</strong>: Before February 2026,
+          Android users who signed in with Google could choose to back up to
+          their own Google Drive instead. Those backups were never sent to or
+          stored by Miuu Studio. This option is no longer offered and is being
+          retired: updated versions of the app move those devices to the backup
+          service above, and no longer write to Google Drive. If you have an
+          old Drive backup, it stays in your Drive, and the app reads it only
+          when you ask it to import it. For this, when you sign in with Google
+          the app asks for access to the files it created in your Drive
+          (Google&apos;s &ldquo;drive.file&rdquo; permission), which does not
+          let it see anything else in your Drive.
         </p>
-        <ul>
-          <li>
-            <strong>Cross-Platform Backup (Recommended)</strong>: Your data is
-            backed up to our secure servers powered by Google Cloud Storage.
-            This provides seamless backup and restore across both iOS and
-            Android devices. Miuu Studio retains management control of the data
-            stored on Google Cloud but does not directly access or read your
-            personal content.
-          </li>
-          <li>
-            <strong>Google Drive Backup</strong>: Your data is backed up
-            directly to your personal Google Drive. This means no data is sent
-            to or stored by Miuu Studio. You retain full ownership and control
-            of the data stored in your Google Drive.
-          </li>
-        </ul>
         <p>
           Please refer to{" "}
           <a
@@ -537,8 +531,8 @@ const PrivacyPolicyPage = () => {
           record and everything stored for it on our servers &mdash; your
           backups, their media, your reminder schedules and your usage counters
           &mdash; within 30 days. Diary entries on your own device are not
-          affected; delete the app to remove those. If you back up to your own
-          Google Drive, that copy is yours to delete from Drive.
+          affected; delete the app to remove those. If you have an older backup
+          in your own Google Drive, that copy is yours to delete from Drive.
         </p>
         <p>
           We do not sell your personal information, and we do not share it for
@@ -565,7 +559,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: September 23, 2026</p>
+        <p>Effective Date: September 25, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
