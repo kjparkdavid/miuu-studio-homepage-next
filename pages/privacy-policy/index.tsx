@@ -55,7 +55,10 @@ const PrivacyPolicyPage = () => {
           </li>
           <li>Sentry &mdash; error reporting</li>
           <li>Google AdMob &mdash; advertising in the free version</li>
-          <li>RevenueCat &mdash; subscription and purchase status</li>
+          <li>
+            RevenueCat &mdash; subscription and purchase status, and Apple
+            Search Ads attribution on iOS
+          </li>
           <li>Google Cloud &mdash; our servers, backup storage</li>
           <li>Anthropic &mdash; the optional AI features (see below)</li>
         </ul>
@@ -158,6 +161,12 @@ const PrivacyPolicyPage = () => {
           provides. Cancelling or refunding a subscription is done through your
           store account.
         </p>
+        <p>
+          On iOS, if you installed the app from an Apple Search Ads ad,
+          RevenueCat also receives Apple&apos;s attribution token, which tells
+          us which ad campaign led to the install. It contains no advertising
+          identifier and does not require tracking permission.
+        </p>
 
         <p>
           <strong>Advertising</strong>
@@ -175,7 +184,9 @@ const PrivacyPolicyPage = () => {
           <li>
             On iOS, the system &ldquo;Allow app to track&rdquo; prompt asks
             whether the app may use your device&apos;s advertising identifier.
-            If you decline, ads still appear but are non-personalised.
+            If you decline, ads still appear but are non-personalised. Apple
+            Search Ads attribution (see Purchases and Subscriptions) does not
+            use this permission.
           </li>
           <li>
             We never share your diary content, photos or voice notes with
@@ -614,7 +625,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: September 25, 2026</p>
+        <p>Effective Date: September 26, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
