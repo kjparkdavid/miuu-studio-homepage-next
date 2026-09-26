@@ -9,13 +9,25 @@ import { GOOGLE_PLAY_URL } from "@/lib/links";
  *
  * Only the Play link can carry it: the App Store drops query strings.
  *
- * Tag a social profile's link with `?utm_source=instagram&utm_medium=social`.
- * An untagged visit from another site falls back to that site's host, and a
- * visit with neither is credited to the site itself.
+ * A social profile links to its short link (`miuunote.site/ig`), which is the
+ * home page credited to that network. Otherwise a landing's `utm_*` query
+ * counts, then the referring site's host, and a visit with none of these is
+ * credited to the site itself.
  */
 export type Attribution = { source: string; medium: string; campaign?: string };
 
 export const SITE_ATTRIBUTION: Attribution = { source: "miuunote.site", medium: "website" };
+
+/**
+ * The short links for social bios: `miuunote.site/<key>` is the home page
+ * (`pages/[short].tsx`) credited to that network. They win over the query
+ * string, because Instagram appends its own `utm_source=ig` to bio links.
+ */
+export const SHORT_LINKS: Record<string, Attribution> = {
+  ig: { source: "instagram", medium: "social" },
+  tt: { source: "tiktok", medium: "social" },
+  yt: { source: "youtube", medium: "social" },
+};
 
 const STORAGE_KEY = "miuu_attribution";
 const MAX_LENGTH = 50;
@@ -28,14 +40,17 @@ const clean = (value: string | null | undefined): string | null => {
 };
 
 /**
- * The attribution a landing carried, from its query string or referring page;
- * null if it carried none. A referrer on `ownHost` is a hop within the site.
+ * The attribution a landing carried, from its short link, query string or
+ * referring page; null if it carried none. A referrer on the page's own host
+ * is a hop within the site.
  */
 export const attributionFromLanding = (
-  search: string,
+  { pathname, search, hostname }: Pick<Location, "pathname" | "search" | "hostname">,
   referrer: string,
-  ownHost: string,
 ): Attribution | null => {
+  const short = pathname.replace(/^\/|\/$/g, "");
+  if (Object.prototype.hasOwnProperty.call(SHORT_LINKS, short)) return SHORT_LINKS[short];
+
   const params = new URLSearchParams(search);
   const source = clean(params.get("utm_source"));
   if (source) {
@@ -48,7 +63,7 @@ export const attributionFromLanding = (
   }
   try {
     const host = clean(new URL(referrer).hostname.replace(/^www\./, ""));
-    const own = clean(ownHost.replace(/^www\./, ""));
+    const own = clean(hostname.replace(/^www\./, ""));
     if (host && host !== own) return { source: host, medium: "referral" };
   } catch {
     // No referrer, or not a URL
@@ -87,11 +102,7 @@ const store = (attribution: Attribution) => {
  * a page without store badges still counts.
  */
 export const captureAttribution = (): Attribution | null => {
-  const landing = attributionFromLanding(
-    window.location.search,
-    document.referrer,
-    window.location.hostname,
-  );
+  const landing = attributionFromLanding(window.location, document.referrer);
   if (landing) store(landing);
   return landing ?? readStored();
 };
