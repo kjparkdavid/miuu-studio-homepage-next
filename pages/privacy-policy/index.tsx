@@ -397,12 +397,39 @@ const PrivacyPolicyPage = () => {
         </p>
 
         <p>
+          <strong>Our Website</strong>
+        </p>
+        <p>
+          Our website, miuunote.site, uses Google Analytics to count visits:
+          which pages are viewed, which site or link a visit came from (for
+          example our Instagram profile), how far a page is scrolled, and
+          whether the App Store or Google Play button is tapped. Google
+          Analytics also records the browser, device type and approximate
+          location (country or city, from the IP address). It does not receive
+          the invite code in an invite link. Google signals and advertising
+          features are turned off for the website, and this data is kept
+          separate from the app&apos;s analytics. In the European Economic
+          Area, the UK and Switzerland, the website sets no analytics cookie
+          and Google Analytics receives only cookieless signals. See{" "}
+          <a
+            href="https://policies.google.com/technologies/partner-sites"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            how Google uses information from sites that use its services
+          </a>
+          .
+        </p>
+
+        <p>
           <strong>Cookies</strong>
         </p>
         <p>
           The app itself does not use cookies but may include third-party code
           or libraries that do. You can choose to accept or refuse cookies in
-          your settings, but some features may be affected.
+          your settings, but some features may be affected. Our website uses
+          Google Analytics cookies, outside the regions named above, to tell
+          one visit from a returning visitor.
         </p>
 
         <p>
@@ -625,7 +652,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: September 26, 2026</p>
+        <p>Effective Date: September 30, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
