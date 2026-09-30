@@ -4,6 +4,7 @@ import { Montserrat } from "next/font/google";
 
 import { APP_STORE_URL } from "@/lib/links";
 import { formatCode, isAndroid, normalizeCode, playInviteUrl } from "@/lib/invite";
+import { trackStoreClick } from "@/lib/analytics";
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -110,6 +111,7 @@ const InvitePage = () => {
               </p>
               <a
                 href={APP_STORE_URL}
+                onClick={() => trackStoreClick("app_store")}
                 className="mt-10 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
               >
                 Get Miuu on the App Store
@@ -144,6 +146,7 @@ const InvitePage = () => {
                 <>
                   <a
                     href={playInviteUrl(view.code)}
+                    onClick={() => trackStoreClick("google_play")}
                     className="mt-10 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
                   >
                     Get Miuu on Google Play
@@ -154,6 +157,7 @@ const InvitePage = () => {
                 <>
                   <a
                     href={APP_STORE_URL}
+                    onClick={() => trackStoreClick("app_store")}
                     className="mt-10 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
                   >
                     Get Miuu on the App Store
@@ -164,6 +168,7 @@ const InvitePage = () => {
                   {desktop && view.kind === "invite" && (
                     <a
                       href={playInviteUrl(view.code)}
+                      onClick={() => trackStoreClick("google_play")}
                       className="mt-6 text-[13px] font-semibold text-[#651DFF]"
                     >
                       On Android? Get it on Google Play — the code comes with it
