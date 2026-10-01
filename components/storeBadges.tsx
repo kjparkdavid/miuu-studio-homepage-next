@@ -1,19 +1,19 @@
 import Image from "next/image";
 import googlePlay from "@/public/images/diaryApp/googlePlay.png";
 import appleStore from "@/public/images/diaryApp/appleStore.png";
-import { APP_STORE_URL } from "@/lib/links";
-import { usePlayUrl } from "@/lib/attribution";
+import { useStoreUrls } from "@/lib/attribution";
 import { trackStoreClick } from "@/lib/analytics";
 
 const StoreBadges = ({ className = "" }: { className?: string }) => {
-  const playUrl = usePlayUrl();
+  const { appStoreUrl, playUrl } = useStoreUrls();
 
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`}>
       <a
-        href={APP_STORE_URL}
+        href={appStoreUrl}
         target="_blank"
-        rel="noopener noreferrer"
+        // No noreferrer: App Store Connect credits miuunote.site as a web referrer
+        rel="noopener"
         onClick={() => trackStoreClick("app_store")}
         className="transition-transform duration-200 hover:-translate-y-0.5"
       >
