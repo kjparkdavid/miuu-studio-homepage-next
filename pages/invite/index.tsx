@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
 
-import { APP_STORE_URL } from "@/lib/links";
+import { appStoreUrlWithCampaign } from "@/lib/attribution";
 import { formatCode, isAndroid, normalizeCode, playInviteUrl } from "@/lib/invite";
 import { trackStoreClick } from "@/lib/analytics";
 
@@ -14,6 +14,8 @@ const TITLE = "Your friend invited you to Miuu";
 // (App Store 3.2.2, secret-note#1184) — the page says so, and never frames
 // the coins as a reward for installing.
 const GIFT_LINE = "Write your first entry to get 150 coins.";
+// App Store installs from invite links, as their own campaign in App Store Connect
+const INVITE_APP_STORE_URL = appStoreUrlWithCampaign("invite");
 
 type View =
   | { kind: "loading" }
@@ -110,7 +112,7 @@ const InvitePage = () => {
                 This invite link is missing its code. Ask your friend to send it again, or get Miuu now.
               </p>
               <a
-                href={APP_STORE_URL}
+                href={INVITE_APP_STORE_URL}
                 onClick={() => trackStoreClick("app_store")}
                 className="mt-10 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
               >
@@ -156,7 +158,7 @@ const InvitePage = () => {
               ) : (
                 <>
                   <a
-                    href={APP_STORE_URL}
+                    href={INVITE_APP_STORE_URL}
                     onClick={() => trackStoreClick("app_store")}
                     className="mt-10 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
                   >

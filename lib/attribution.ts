@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GOOGLE_PLAY_URL } from "@/lib/links";
+import { APP_STORE_URL, GOOGLE_PLAY_URL } from "@/lib/links";
 
 /**
  * Where a visitor came from, carried into the Google Play link as the install
@@ -7,7 +7,9 @@ import { GOOGLE_PLAY_URL } from "@/lib/links";
  * first open, so an install from the site shows up in GA4 under "First user
  * source" (e.g. `instagram / social`) instead of `google-play / organic`.
  *
- * Only the Play link can carry it: the App Store drops query strings.
+ * The App Store link carries it as a campaign token instead (`ct`), which App
+ * Store Connect counts in App Analytics → Acquisition → Campaigns: page views,
+ * downloads and proceeds per campaign, for opted-in users.
  *
  * A social profile links to its short link (`miuunote.site/ig`), which is the
  * home page credited to that network. Otherwise a landing's `utm_*` query
@@ -71,6 +73,24 @@ export const attributionFromLanding = (
   return null;
 };
 
+/** The App Store Connect provider ID (Jin Park), required beside `ct` for a campaign link. */
+const APP_STORE_PROVIDER_ID = "126163554";
+const CAMPAIGN_TOKEN_MAX = 40;
+
+/**
+ * The App Store link credited to a campaign token: the source alone
+ * (`instagram`, `miuunote.site`), because App Store Connect lists campaigns by
+ * name only and caps them at 40 characters.
+ */
+export const appStoreUrlWithCampaign = (campaign: string): string => {
+  const params = new URLSearchParams({
+    pt: APP_STORE_PROVIDER_ID,
+    ct: campaign.slice(0, CAMPAIGN_TOKEN_MAX),
+    mt: "8",
+  });
+  return `${APP_STORE_URL}?${params.toString()}`;
+};
+
 /** The Play link with this attribution as its install referrer. */
 export const playUrlWithAttribution = ({ source, medium, campaign }: Attribution): string => {
   const referrer = new URLSearchParams({ utm_source: source, utm_medium: medium });
@@ -107,17 +127,22 @@ export const captureAttribution = (): Attribution | null => {
   return landing ?? readStored();
 };
 
+const storeUrls = (attribution: Attribution) => ({
+  appStoreUrl: appStoreUrlWithCampaign(attribution.source),
+  playUrl: playUrlWithAttribution(attribution),
+});
+
 /**
- * The Play link for this visitor. The static render (and a visitor without
+ * Both store links for this visitor. The static render (and a visitor without
  * JS) gets the site's own attribution.
  */
-export const usePlayUrl = (): string => {
-  const [url, setUrl] = useState(() => playUrlWithAttribution(SITE_ATTRIBUTION));
+export const useStoreUrls = (): { appStoreUrl: string; playUrl: string } => {
+  const [urls, setUrls] = useState(() => storeUrls(SITE_ATTRIBUTION));
 
   useEffect(() => {
     const attribution = captureAttribution();
-    if (attribution) setUrl(playUrlWithAttribution(attribution));
+    if (attribution) setUrls(storeUrls(attribution));
   }, []);
 
-  return url;
+  return urls;
 };
