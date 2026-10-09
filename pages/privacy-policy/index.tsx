@@ -422,6 +422,56 @@ const PrivacyPolicyPage = () => {
         </p>
 
         <p>
+          <strong>Miuu&apos;s Diary Chase (our web game)</strong>
+        </p>
+        <p>
+          Our website hosts a small game, Miuu&apos;s Diary Chase, at
+          miuunote.site/game. You can play it without an account, and it never
+          asks for your email address or real name.
+        </p>
+        <ul>
+          <li>
+            <strong>Tilt steering</strong>: if you choose to steer by tilting
+            your phone, your browser asks for permission to read its motion
+            sensors. Those readings are used only inside the game on your phone
+            and are never sent to us.
+          </li>
+          <li>
+            <strong>On your device</strong>: the game keeps a random game ID it
+            creates itself, your best time and the nickname you last used in
+            your browser&apos;s storage. Clearing your browser data removes them.
+          </li>
+          <li>
+            <strong>Leaderboard</strong>: if you catch the squirrel and choose
+            to add your score, we store the nickname you type, your catch time,
+            how many acorns you collected and the date.{" "}
+            <strong>
+              Your nickname, time and acorn count are shown publicly
+            </strong>{" "}
+            on the weekly and all-time leaderboards, so please don&apos;t use
+            your real name or anything that identifies you. Nicknames that are
+            offensive or pretend to be someone else may be blocked or removed.
+          </li>
+          <li>
+            <strong>Keeping the board fair</strong>: when you start a race, our
+            server records the start time so it can check that a submitted
+            time is possible. To keep one entry per player and limit spam, it
+            uses a one-way, salted hash of your game ID and of your network
+            address. The ID and address themselves are not stored and cannot
+            be recovered from the hashes. Race records and spam counters are
+            deleted automatically within about two days. Like any web service,
+            the server&apos;s standard request logs also record network
+            addresses for up to 30 days.
+          </li>
+        </ul>
+        <p>
+          The leaderboard runs on Google Firebase (Cloud Functions and
+          Firestore) in the United States, in a project separate from the Miuu
+          Note app. Nothing from the game is linked to your app account, your
+          diary, or the app&apos;s analytics.
+        </p>
+
+        <p>
           <strong>Cookies</strong>
         </p>
         <p>
@@ -582,6 +632,13 @@ const PrivacyPolicyPage = () => {
             a limited period, normally no more than 90 days.
           </li>
           <li>
+            <strong>Game leaderboard</strong> (nickname, catch time, acorn count,
+            date): kept while the game is online, and shown publicly. To have an
+            entry removed, email us the nickname and roughly when you played.
+            Race records and spam counters delete themselves within about two
+            days.
+          </li>
+          <li>
             <strong>Diary content on your device</strong>: yours, for as long as
             you keep the app installed. Deleting the app deletes it, which is
             why we recommend keeping a backup.
@@ -652,7 +709,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: September 30, 2026</p>
+        <p>Effective Date: October 9, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
