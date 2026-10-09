@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#4b3a6e">
+<title>Miuu's Diary Chase</title>
+<meta name="description" content="A squirrel ran off with Miuu's diary. Turn your phone like a steering wheel and chase it through the burrow!">
+<meta property="og:title" content="Miuu's Diary Chase">
+<meta property="og:description" content="Turn your phone like a steering wheel and help Miuu get his diary back.">
+<meta property="og:image" content="img/bg_title.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #4b3a6e;
+    --purple: #b9a0f0;
+    --purple-d: #a084de;
+    --pink: #f7a8c8;
+    --cream: #fff8f0;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden; background: #2b2140;
+    font-family: Poppins, system-ui, sans-serif; color: var(--ink);
+    touch-action: none; overscroll-behavior: none; user-select: none; -webkit-user-select: none;
+  }
+  #stage {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    overflow: hidden; background: #f6e6ee; border-radius: 0;
+  }
+  @media (min-aspect-ratio: 10/16) { #stage { border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.45); } }
+  #game { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+  .overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: 8% 7%; transition: opacity .25s;
+  }
+  .overlay.hide { opacity: 0; pointer-events: none; }
+
+  #title { background: url(img/bg_title.png) center / cover no-repeat; justify-content: space-between; }
+  .logo {
+    margin-top: 6%; font-weight: 800; line-height: 1.02; color: #fff; font-size: clamp(30px, 11cqw, 52px);
+    -webkit-text-stroke: 0.16em var(--ink); paint-order: stroke fill; letter-spacing: .5px;
+  }
+  .tag {
+    margin-top: 14px; font-weight: 700; font-size: clamp(13px, 4cqw, 18px); color: var(--ink);
+    background: rgba(255,248,240,.88); padding: 8px 14px; border-radius: 14px; border: 3px solid var(--ink);
+  }
+  .panel {
+    width: 100%; background: rgba(255,248,240,.94); border: 4px solid var(--ink); border-radius: 26px;
+    padding: 16px 16px 18px; box-shadow: 0 6px 0 var(--ink);
+  }
+  .modes { display: flex; gap: 8px; justify-content: center; }
+  .modes button {
+    flex: 1; font: 700 15px Poppins, system-ui; color: var(--ink); background: #fff; border: 3px solid var(--ink);
+    border-radius: 14px; padding: 8px 6px; cursor: pointer;
+  }
+  .modes button.on { background: var(--purple); color: #fff; }
+  .modes button:disabled { opacity: .4; }
+  #modeNote { font-size: 13px; font-weight: 600; margin: 10px 2px 14px; min-height: 2.6em; }
+  .big {
+    width: 100%; font: 800 22px Poppins, system-ui; color: #fff; background: var(--pink); border: 4px solid var(--ink);
+    border-radius: 20px; padding: 12px; box-shadow: 0 5px 0 var(--ink); cursor: pointer;
+  }
+  .big:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+
+  #result { background: rgba(43,33,64,.35); justify-content: center; }
+  #result .panel { padding: 22px 18px; }
+  #result img { width: 34%; max-width: 160px; margin: -70px auto 0; display: block; filter: drop-shadow(0 6px 0 rgba(75,58,110,.25)); }
+  #resultTitle { font-size: 44px; font-weight: 800; color: #fff; -webkit-text-stroke: 0.16em var(--ink); paint-order: stroke fill; margin: 4px 0 2px; }
+  #resultSub { font-weight: 700; font-size: 15px; margin: 0 0 10px; }
+  #resultStats { font-size: 15px; font-weight: 600; margin-bottom: 16px; line-height: 1.6; }
+  #resultStats b { font-size: 22px; }
+  .link { display: block; margin-top: 12px; font-weight: 700; font-size: 14px; color: var(--ink); }
+
+  #muteBtn {
+    position: absolute; right: 12px; top: 76px; width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid var(--ink); background: rgba(255,248,240,.9); font-size: 16px; cursor: pointer; z-index: 5;
+  }
+  #toast {
+    position: absolute; left: 50%; bottom: 24%; transform: translate(-50%, 20px); opacity: 0;
+    background: var(--ink); color: #fff; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 14px;
+    transition: .25s; width: max-content; max-width: 86%; pointer-events: none; z-index: 6;
+  }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  #loading { background: #f6e6ee; justify-content: center; font-weight: 800; font-size: 20px; }
+  #stage { container-type: inline-size; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="540" height="960"></canvas>
+
+  <div id="title" class="overlay">
+    <div>
+      <div class="logo">Miuu's<br>Diary Chase</div>
+      <div class="tag">🐿️ A squirrel ran off with Miuu's diary!</div>
+    </div>
+    <div class="panel">
+      <div class="modes">
+        <button id="modeTilt" type="button">📱 Tilt</button>
+        <button id="modeTouch" type="button">👆 Touch</button>
+      </div>
+      <div id="modeNote"></div>
+      <button id="startBtn" class="big" type="button">Tap to start</button>
+    </div>
+  </div>
+
+  <div id="result" class="overlay hide">
+    <div class="panel">
+      <img id="resultImg" alt="">
+      <div id="resultTitle"></div>
+      <p id="resultSub"></p>
+      <div id="resultStats"></div>
+      <button id="againBtn" class="big" type="button">Play again</button>
+      <a class="link" href="/" target="_top">💜 Get the Miuu Note app</a>
+    </div>
+  </div>
+
+  <div id="loading" class="overlay">Loading…</div>
+  <button id="muteBtn" type="button" aria-label="Toggle sound">🔊</button>
+  <div id="toast"></div>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>
