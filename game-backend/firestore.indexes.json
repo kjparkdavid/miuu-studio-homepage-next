@@ -1,0 +1,25 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "bests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "scope", "order": "ASCENDING" },
+        { "fieldPath": "time", "order": "ASCENDING" },
+        { "fieldPath": "acorns", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "bests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "scope", "order": "ASCENDING" },
+        { "fieldPath": "time", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    { "collectionGroup": "runs", "fieldPath": "expireAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "ratelimits", "fieldPath": "expireAt", "ttl": true, "indexes": [] }
+  ]
+}

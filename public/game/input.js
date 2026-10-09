@@ -96,6 +96,7 @@ export class TouchKeys {
     el.addEventListener("touchcancel", (e) => this.te(e), { passive: false });
     el.addEventListener("dblclick", (e) => { e.preventDefault(); this.onBoost(); });
     window.addEventListener("keydown", (e) => {
+      if (e.target instanceof HTMLElement && e.target.closest("input, textarea")) return;
       if (e.code === "Space") { e.preventDefault(); if (!e.repeat) this.onBoost(); }
       this.keys.add(e.code);
     });

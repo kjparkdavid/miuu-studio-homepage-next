@@ -2,6 +2,7 @@ import { N, EXIT, P_STOP, ROAD_W, SEG_LEN, edgeR, inside, curveAt, speedAt, floo
 import { W, H, render, loadImages, drawWheel, outlinedText, drawSprite, IMG } from "./renderer.js";
 import { Tilt, TouchKeys } from "./input.js";
 import { sfx } from "./sfx.js";
+import * as lb from "./leaderboard.js";
 
 // ---------------- tuning ----------------
 const T = {
@@ -156,6 +157,7 @@ ui.start.addEventListener("click", () => {
     }
     ui.title.classList.add("hide");
     reset();
+    lb.onRaceStart();
     if (intro && !introPlayed) { introPlayed = true; state.phase = "intro"; }
     layout();
   });
@@ -163,6 +165,7 @@ ui.start.addEventListener("click", () => {
 ui.again.addEventListener("click", () => {
   ui.result.classList.add("hide");
   reset();
+  lb.onRaceStart();
   layout();
 });
 canvas.addEventListener("pointerdown", () => {
@@ -364,6 +367,7 @@ function finish() {
   ui.resultStats.innerHTML = s.caught
     ? `<b>${time.toFixed(1)}s</b> catch time${isBest ? " · new best!" : best ? ` · best ${best.time.toFixed(1)}s` : ""}<br>🌰 ${s.acorns} acorns · ${s.bumps} bonks`
     : `It was ${Math.max(1, Math.round(s.escapeGap * 2))} m ahead at the exit<br>🌰 ${s.acorns} acorns · ${s.bumps} bonks`;
+  lb.showResult({ caught: s.caught, time, acorns: s.acorns, bumps: s.bumps });
   ui.result.classList.remove("hide");
 }
 
@@ -548,6 +552,7 @@ function idleState() {
   try { await document.fonts.load("800 30px Poppins"); } catch {}
   await loadImages("img/");
   ui.loading.classList.add("hide");
+  lb.initUI();
   loadIntro();
   idleState();
   layout();

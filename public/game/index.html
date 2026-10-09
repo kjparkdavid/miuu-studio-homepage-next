@@ -21,6 +21,7 @@
     --cream: #fff8f0;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
   html, body {
     margin: 0; height: 100%; overflow: hidden; background: #2b2140;
     font-family: Poppins, system-ui, sans-serif; color: var(--ink);
@@ -87,6 +88,34 @@
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
   #loading { background: #f6e6ee; justify-content: center; font-weight: 800; font-size: 20px; }
   #stage { container-type: inline-size; }
+  .small {
+    font: 700 14px Poppins, system-ui; color: var(--ink); background: #fff; border: 3px solid var(--ink);
+    border-radius: 14px; padding: 7px 14px; cursor: pointer;
+  }
+  #boardBtn { display: block; margin: 12px auto 0; }
+  #lbBox { margin: 0 0 14px; }
+  #lbForm { display: flex; gap: 8px; }
+  #lbName {
+    flex: 1; min-width: 0; font: 600 16px Poppins, system-ui; color: var(--ink); padding: 9px 12px;
+    border: 3px solid var(--ink); border-radius: 14px; background: #fff; user-select: text; -webkit-user-select: text;
+  }
+  #lbSend { background: var(--purple); color: #fff; }
+  #lbSend:disabled { opacity: .5; }
+  #lbNote { font-size: 13px; font-weight: 600; min-height: 1.2em; margin-top: 6px; }
+  #lbRank { font-size: 17px; font-weight: 800; }
+  #lbRank:empty { display: none; }
+  #board { background: rgba(43,33,64,.55); justify-content: center; z-index: 7; }
+  #board .panel { padding: 16px 14px; max-height: 88%; display: flex; flex-direction: column; }
+  #board h2 { margin: 0 0 10px; font-size: 26px; font-weight: 800; color: #fff; -webkit-text-stroke: 0.16em var(--ink); paint-order: stroke fill; }
+  #boardList { list-style: none; margin: 10px 0; padding: 0; overflow-y: auto; text-align: left; flex: 1; }
+  #boardList li { display: grid; grid-template-columns: 34px 1fr auto 54px; gap: 6px; align-items: center; padding: 7px 8px; border-radius: 12px; font-size: 14px; font-weight: 600; }
+  #boardList li:nth-child(odd) { background: rgba(185,160,240,.16); }
+  #boardList li.me { background: var(--pink); color: #fff; }
+  #boardList li.empty { display: block; text-align: center; padding: 18px 8px; }
+  #boardList .rk { text-align: center; font-weight: 800; }
+  #boardList .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #boardList .tm { font-weight: 800; }
+  #boardList .ac { text-align: right; font-size: 12px; }
 </style>
 </head>
 <body>
@@ -105,6 +134,7 @@
       </div>
       <div id="modeNote"></div>
       <button id="startBtn" class="big" type="button">Tap to start</button>
+      <button id="boardBtn" class="small" type="button" hidden>🏆 Leaderboard</button>
     </div>
   </div>
 
@@ -114,12 +144,32 @@
       <div id="resultTitle"></div>
       <p id="resultSub"></p>
       <div id="resultStats"></div>
+      <div id="lbBox" hidden>
+        <form id="lbForm" autocomplete="off">
+          <input id="lbName" maxlength="24" placeholder="Your name" enterkeyhint="send" aria-label="Name for the leaderboard">
+          <button id="lbSend" class="small" type="submit">Add 🏆</button>
+        </form>
+        <div id="lbRank"></div>
+        <div id="lbNote"></div>
+        <button id="resultBoardBtn" class="small" type="button">See leaderboard</button>
+      </div>
       <button id="againBtn" class="big" type="button">Play again</button>
       <a class="link" href="/" target="_top">💜 Get the Miuu Note app</a>
     </div>
   </div>
 
   <div id="loading" class="overlay">Loading…</div>
+  <div id="board" class="overlay hide">
+    <div class="panel">
+      <h2>🏆 Fastest catchers</h2>
+      <div class="modes">
+        <button id="tabWeek" type="button" class="on">This week</button>
+        <button id="tabAll" type="button">All time</button>
+      </div>
+      <ol id="boardList"></ol>
+      <button id="boardClose" class="big" type="button">Close</button>
+    </div>
+  </div>
   <button id="muteBtn" type="button" aria-label="Toggle sound">🔊</button>
   <div id="toast"></div>
 </div>
