@@ -462,15 +462,15 @@ export function drawSprite(ctx, kind, x, yBottom, scale, squashX = 1) {
 }
 
 // ---------------- cockpit + text helpers ----------------
-export function drawWheel(ctx, deg) {
+export function drawWheel(ctx, deg, dy = 0, head = true) {
   const img = IMG.wheel;
   ctx.save();
-  ctx.translate(W / 2, 940);
+  ctx.translate(W / 2, 940 + dy);
   ctx.rotate((deg * Math.PI) / 180);
   ctx.drawImage(img, -250, -250, 500, 500);
   ctx.restore();
-  // Miuu in the driver's seat (back of head, from the ocean intro clip's last frame)
-  ctx.drawImage(IMG.miuu, 157, 824, 230, 136);
+  // Miuu in the driver's seat (back of head = the intro clip's last frame)
+  if (head) ctx.drawImage(IMG.miuu, 156.84, 829.36, 229.3, 130.53);
 }
 
 export function outlinedText(ctx, text, x, y, size, opts = {}) {

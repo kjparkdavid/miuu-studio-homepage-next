@@ -96,6 +96,16 @@ function layout() {
 window.addEventListener("resize", layout);
 window.addEventListener("orientationchange", () => setTimeout(layout, 120));
 
+// ---------------- intro clip (packed frames; iPhone can't play transparent WebM) ----------------
+let intro = null, introPlayed = false;
+function loadIntro() {
+  const img = new Image();
+  const data = fetch("img/intro_burrow.json").then((r) => r.json());
+  const pic = new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = "img/intro_burrow.webp"; });
+  Promise.all([data, pic]).then(([d]) => { intro = { img, ...d, dur: d.order.length / d.fps }; }).catch(() => {});
+}
+const WHEEL_SLIDE = 0.45;
+
 // ---------------- game state ----------------
 const state = { phase: "loading" };
 let gp = buildGameplay();
@@ -129,7 +139,9 @@ function startBoost(label) {
   vibrate(30);
 }
 function banner(text, dur = 1.2, size = 64) { state.banner = { text, t: 0, dur, size }; }
-function vibrate(ms) { try { navigator.vibrate && navigator.vibrate(ms); } catch {} }
+function vibrate(ms) {
+  try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(ms); } catch {}
+}
 
 // ---------------- start flow ----------------
 ui.start.addEventListener("click", () => {
@@ -144,6 +156,7 @@ ui.start.addEventListener("click", () => {
     }
     ui.title.classList.add("hide");
     reset();
+    if (intro && !introPlayed) { introPlayed = true; state.phase = "intro"; }
     layout();
   });
 });
@@ -151,6 +164,9 @@ ui.again.addEventListener("click", () => {
   ui.result.classList.add("hide");
   reset();
   layout();
+});
+canvas.addEventListener("pointerdown", () => {
+  if (state.phase === "intro" && intro && state.phaseT < intro.dur) state.phaseT = intro.dur;   // tap to skip
 });
 ui.mute.addEventListener("click", () => { sfx.muted = !sfx.muted; ui.mute.textContent = sfx.muted ? "🔇" : "🔊"; });
 
@@ -178,6 +194,8 @@ function update(dt) {
   const autopilot = s.caught || s.escaped || s.phase === "finish";
   if (autopilot) target = Math.max(-1, Math.min(1, -s.camX / 500 + (curveAt(s.pos) * T.centrifugal) / T.steerRate));
   s.steer += (target - s.steer) * Math.min(1, dt * 14);
+
+  if (s.phase === "intro" && s.phaseT >= intro.dur + WHEEL_SLIDE) { s.phase = "countdown"; s.phaseT = 0; }
 
   if (s.phase === "countdown") {
     const prev = Math.ceil(COUNT - (s.phaseT - dt));
@@ -342,7 +360,7 @@ function finish() {
   }
   ui.resultTitle.textContent = s.caught ? "yay!" : s.escapeGap < 12 ? "So close!" : "It got away!";
   ui.resultSub.textContent = s.caught ? "You caught the squirrel. Miuu got his diary back 💜" : "The squirrel got away with Miuu's diary. Try again?";
-  ui.resultImg.src = s.caught ? "img/acorn_big.png" : "img/squirrel_waving.png";
+  ui.resultImg.src = s.caught ? "img/miuu_diary.png" : "img/squirrel_waving.png";
   ui.resultStats.innerHTML = s.caught
     ? `<b>${time.toFixed(1)}s</b> catch time${isBest ? " · new best!" : best ? ` · best ${best.time.toFixed(1)}s` : ""}<br>🌰 ${s.acorns} acorns · ${s.bumps} bonks`
     : `It was ${Math.max(1, Math.round(s.escapeGap * 2))} m ahead at the exit<br>🌰 ${s.acorns} acorns · ${s.bumps} bonks`;
@@ -358,20 +376,34 @@ function draw() {
   const tiltRot = mode === "tilt" && s.phase !== "title" ? (-tilt.angle() * T.levelHorizon * Math.PI) / 180 : 0;
   const sqHop = Math.abs(Math.sin(s.t * Math.PI * 4.2)) * 90;
   const entities = [];
-  if (!(s.caught || s.escaped) || s.sqRun < 1.2) entities.push({ kind: s.caught ? "sq_empty" : "sq_acorn", pos: s.sqPos, x: s.sqX, y: sqHop });
+  if (s.phase !== "intro" && (!(s.caught || s.escaped) || s.sqRun < 1.2)) entities.push({ kind: s.caught ? "sq_empty" : "sq_acorn", pos: s.sqPos, x: s.sqX, y: sqHop });
   render(ctx, {
     pos: s.pos, camX: s.camX, pitch: s.pitch, yaw: s.yaw, jitter, t: s.t,
     rot: leanRot + tiltRot + Math.sin(s.t * 40) * s.shake * 0.01,
-    speedNorm: s.phase === "countdown" ? 0 : Math.min(1.6, s.speed / T.baseSpeed), boostE: s.boostE,
+    speedNorm: s.phase === "countdown" || s.phase === "intro" ? 0 : Math.min(1.6, s.speed / T.baseSpeed), boostE: s.boostE,
     pickups: gp.pickups, obstacles: gp.obstacles, entities,
   });
-  drawWheel(ctx, s.wheelDeg);
+  if (s.phase === "intro") {
+    const e = s.phaseT - intro.dur;
+    if (e < 0) {
+      const i = intro.order[Math.min(intro.order.length - 1, Math.floor(s.phaseT * intro.fps))];
+      const f = intro.frames[i];
+      if (f) ctx.drawImage(intro.img, f.sx, f.sy, f.sw, f.sh, f.x, f.y, f.w, f.h);
+    } else {
+      const k = Math.min(1, e / WHEEL_SLIDE);
+      drawWheel(ctx, 0, 520 * (1 - k) * (1 - k), true);
+    }
+  } else drawWheel(ctx, s.wheelDeg);
   drawHud();
 }
 
 function drawHud() {
   const s = state;
   if (s.phase === "title") return;
+  if (s.phase === "intro") {
+    if (s.phaseT < intro.dur) outlinedText(ctx, "tap to skip", W - 70, 40, 16, { alpha: 0.85 });
+    return;
+  }
   if (s.phase === "countdown") {
     const n = Math.ceil(COUNT - s.phaseT);
     if (mode === "tilt") {
@@ -516,6 +548,7 @@ function idleState() {
   try { await document.fonts.load("800 30px Poppins"); } catch {}
   await loadImages("img/");
   ui.loading.classList.add("hide");
+  loadIntro();
   idleState();
   layout();
   requestAnimationFrame(frame);
