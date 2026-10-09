@@ -93,7 +93,7 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
       boardCache.set(scope, cached);
     }
     const mine = typeof req.query.deviceId === "string" && DEVICE_RE.test(req.query.deviceId) ? `${scope}_${hash(req.query.deviceId)}` : null;
-    res.set("Cache-Control", mine ? "private, max-age=10" : "public, max-age=15");
+    res.set("Cache-Control", mine ? "private, no-store" : "public, max-age=15");
     send(res, 200, {
       scope: scopeParam, weekId: weekId(now()),
       entries: cached.entries.map(({ id, ...e }, i) => ({ rank: i + 1, ...e, me: id === mine })),

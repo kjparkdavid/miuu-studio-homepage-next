@@ -1,7 +1,7 @@
 // Leaderboard client: talks to the `api` Cloud Function (see /game-backend). Only catches can be submitted.
 
-// Set after the Firebase project is deployed, e.g. "https://us-central1-<project>.cloudfunctions.net/api".
-const DEFAULT_API = "";
+// Firebase project miuu-diary-chase, function `api` (see /game-backend).
+const DEFAULT_API = "https://us-central1-miuu-diary-chase.cloudfunctions.net/api";
 const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 const API = (local && new URLSearchParams(location.search).get("api")) || DEFAULT_API;
 export const enabled = !!API;
@@ -36,6 +36,7 @@ function deviceId() {
 async function call(method, path, body) {
   const res = await fetch(API + path, {
     method,
+    cache: "no-store", // the board must show your new score right after submitting; the server caches instead
     headers: body ? { "Content-Type": "application/json" } : undefined,
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -53,16 +54,17 @@ export function onRaceStart() {
 // ---------------- UI ----------------
 const $ = (id) => document.getElementById(id);
 let last = null;    // { caught, time, acorns, bumps }
-let scope = "week";
+const views = {};   // list element id -> scope currently shown (ignores stale responses)
 
 export function initUI() {
   if (!enabled) return;
   $("boardBtn").hidden = false;
   $("boardBtn").onclick = () => openBoard("week");
-  $("resultBoardBtn").onclick = () => openBoard("week");
   $("boardClose").onclick = () => $("board").classList.add("hide");
   $("tabWeek").onclick = () => openBoard("week");
   $("tabAll").onclick = () => openBoard("all");
+  $("rTabWeek").onclick = () => showBoard("rBoardList", "rTabWeek", "rTabAll", "week");
+  $("rTabAll").onclick = () => showBoard("rBoardList", "rTabWeek", "rTabAll", "all");
   $("lbForm").addEventListener("submit", (e) => { e.preventDefault(); submit(); });
 }
 
@@ -76,6 +78,9 @@ export function showResult(result) {
   $("lbRank").textContent = "";
   $("lbName").value = store.get("miuu-name") || "";
   $("lbSend").disabled = false;
+  // desktop: put the cursor in the name box (on phones that would pop the keyboard over the board)
+  if (result.caught && !matchMedia("(pointer: coarse)").matches) setTimeout(() => $("lbName").focus(), 50);
+  showBoard("rBoardList", "rTabWeek", "rTabAll", "week");
 }
 
 async function submit() {
@@ -92,6 +97,7 @@ async function submit() {
     $("lbForm").hidden = true;
     note.textContent = "";
     $("lbRank").textContent = `#${r.week.rank} this week · #${r.all.rank} all-time` + (r.all.improved ? "" : ` (your best is ${r.all.best.toFixed(2)}s)`);
+    showBoard("rBoardList", "rTabWeek", "rTabAll", views.rBoardList || "week");
   } catch (e) {
     btn.disabled = false;
     note.textContent = MESSAGES[e.code] || "The leaderboard is offline right now";
@@ -99,16 +105,20 @@ async function submit() {
   }
 }
 
-async function openBoard(s) {
-  scope = s;
+function openBoard(s) {
   $("board").classList.remove("hide");
-  $("tabWeek").classList.toggle("on", s === "week");
-  $("tabAll").classList.toggle("on", s === "all");
-  const list = $("boardList");
-  list.replaceChildren(row("…", "Loading", "", ""));
+  showBoard("boardList", "tabWeek", "tabAll", s);
+}
+
+async function showBoard(listId, weekTab, allTab, s) {
+  views[listId] = s;
+  $(weekTab).classList.toggle("on", s === "week");
+  $(allTab).classList.toggle("on", s === "all");
+  const list = $(listId);
+  if (!list.children.length) list.replaceChildren(row("…", "Loading", "", ""));
   try {
     const d = await call("GET", `/board?scope=${s}&deviceId=${encodeURIComponent(deviceId())}`);
-    if (scope !== s) return;
+    if (views[listId] !== s) return;
     if (!d.entries.length) {
       list.replaceChildren(empty(s === "week" ? "No catches yet this week. Be the first!" : "No catches yet. Be the first!"));
       return;

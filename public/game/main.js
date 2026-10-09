@@ -122,7 +122,7 @@ function reset() {
     pitch: 0, lean: 0, yaw: 0, shake: 0, stun: 0,
     boostT: 0, boostE: 0, meter: 0, acorns: 0, bumps: 0,
     sqPos: T.squirrelStartGap, sqSpeed: 0, sqX: 0, sqRun: 0, caught: false, escaped: false,
-    pop: [], banner: null, zoneShown: "out", finishT: 0, offroad: false,
+    pop: [], banner: null, zoneShown: "out", finishT: 0, endT: 0, offroad: false,
   });
 }
 
@@ -208,7 +208,7 @@ function update(dt) {
     if (s.phaseT >= COUNT) { s.phase = "play"; s.phaseT = 0; sfx.go(); banner("Go!", 0.8, 80); }
   }
 
-  const racing = s.phase === "play" || s.phase === "finish";
+  const racing = s.phase === "play" || s.phase === "finish" || s.phase === "done";
   if (racing) {
     // speed
     const profile = speedAt(s.pos);
@@ -255,6 +255,10 @@ function update(dt) {
 
     updateSquirrel(dt);
     if (s.phase === "play" && !s.caught) s.raceT += dt;
+    if (s.caught || s.escaped) {
+      s.endT += dt;
+      if (s.endT > (s.caught ? 1.3 : 1.8) && s.phase !== "done") finish();
+    }
     if (s.pos >= P_STOP - 0.05 && s.speed < 1.5) {
       s.finishT += dt;
       if (s.finishT > 0.6 && s.phase !== "done") finish();
@@ -528,8 +532,7 @@ function frame(now) {
   last = now;
   if (state.phase !== "loading") {
     const t0 = performance.now();
-    if (state.phase !== "title" && state.phase !== "done") update(dt);
-    else if (state.phase === "done") { state.t += dt; }
+    if (state.phase !== "title") update(dt);
     draw();
     perf.work += (performance.now() - t0 - perf.work) * 0.05;
     // adaptive resolution: step down if we can't hold ~60fps
