@@ -12,14 +12,14 @@ export const DRAW_DIST = 150;
 const OUTLINE = "rgb(75,58,110)";
 
 export const WW = {
-  sq_acorn: 620, sq_empty: 620, big_acorn: 330, tree_p: 1100, tree_g: 1100, tree_o: 1100, flowers: 460,
+  sq_diary: 620, sq_empty: 620, big_acorn: 330, diary: 300, tree_p: 1100, tree_g: 1100, tree_o: 1100, flowers: 460,
   door: 540, mush: 380, acorn: 300, pile: 1150, squirrel: 420, glow_c: 700, glow_p: 700, crystal: 520,
   lantern_p: 200, lantern_o: 200, chev_l: 520, chev_r: 520,
   sign_burrow: 987, sign_store: 911, sign_grotto: 868, sign_village: 944, sign_warp: 893,
   pickup: 170, mush_ob: 360, crystal_ob: 400,
 };
 export const FILES = {
-  sq_acorn: "squirrel_back_with_acorn", sq_empty: "squirrel_back_empty", big_acorn: "acorn_big",
+  sq_diary: "squirrel_back_with_diary", diary: "diary", sq_empty: "squirrel_back_empty", big_acorn: "acorn_big",
   tree_p: "tree_pink", tree_g: "tree_green", tree_o: "tree_orange", flowers: "flowers", door: "burrow_door",
   mush: "mushrooms", acorn: "acorns_small", pile: "acorn_pile", squirrel: "squirrel_waving",
   glow_c: "glow_mushroom_cyan", glow_p: "glow_mushroom_pink", crystal: "crystals",

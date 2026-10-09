@@ -317,7 +317,7 @@ function updateSquirrel(dt) {
   const s = state;
   const hopT = s.t;
   if (s.caught || s.escaped) {
-    // scurries off sideways (dropping the acorn if caught)
+    // scurries off sideways (empty-handed if caught)
     s.sqRun += dt;
     s.sqPos += s.speed * dt * 0.6 + dt * 4;
     s.sqX += (s.sqX >= 0 ? 1 : -1) * (900 + s.sqRun * 4000) * dt;
@@ -376,7 +376,7 @@ function draw() {
   const tiltRot = mode === "tilt" && s.phase !== "title" ? (-tilt.angle() * T.levelHorizon * Math.PI) / 180 : 0;
   const sqHop = Math.abs(Math.sin(s.t * Math.PI * 4.2)) * 90;
   const entities = [];
-  if (s.phase !== "intro" && (!(s.caught || s.escaped) || s.sqRun < 1.2)) entities.push({ kind: s.caught ? "sq_empty" : "sq_acorn", pos: s.sqPos, x: s.sqX, y: sqHop });
+  if (s.phase !== "intro" && (!(s.caught || s.escaped) || s.sqRun < 1.2)) entities.push({ kind: s.caught ? "sq_empty" : "sq_diary", pos: s.sqPos, x: s.sqX, y: sqHop });
   render(ctx, {
     pos: s.pos, camX: s.camX, pitch: s.pitch, yaw: s.yaw, jitter, t: s.t,
     rot: leanRot + tiltRot + Math.sin(s.t * 40) * s.shake * 0.01,
@@ -477,7 +477,7 @@ function drawHud() {
     if (p.big) {
       const k = p.t / p.dur;
       const sc = 0.0016 * (k < 0.2 ? k / 0.2 : 1) * (1 + 0.05 * Math.sin(p.t * 12));
-      drawSprite(ctx, "big_acorn", W / 2, 600 - 40 * Math.sin(k * Math.PI), sc);
+      drawSprite(ctx, "diary", W / 2, 600 - 40 * Math.sin(k * Math.PI), sc);
     } else {
       outlinedText(ctx, "+1", p.x, p.y - p.t * 120, 26, { alpha: 1 - p.t / p.dur });
     }
