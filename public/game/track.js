@@ -211,6 +211,36 @@ export const PADS = [
 ];
 export const PAD_LEN = 4;
 
+// A hazard has to be dodgeable by someone who has never seen the track. Left alone, the layouts below can
+// put one a few segments behind a line of pickups in the same lane, or just past a boost pad in the pad's
+// lane: at speed that is a fraction of a second, less than anyone's reaction time. This moves such a
+// hazard to the lane furthest from where the player is being led, or drops it when no lane is clear.
+//   side      how far out the side lanes are
+//   lead      segments before the hazard in which the last pickup counts as leading the player to it
+//   afterPad  segments after a pad's end in which the pad's lane counts the same way (a third of a second boosted)
+//   reach     how close (sideways) to that led line a hazard may not be
+export function fairObstacles(pickups, obstacles, pads, padLen, side, { lead = 12, afterPad = 20, reach = 420 } = {}) {
+  for (const [seg, list] of obstacles) {
+    const led = [];   // the lines the player is being drawn along as they reach this hazard
+    for (let s = seg - 1; s >= seg - lead; s--) {
+      const pk = pickups.get(s);
+      if (pk) { for (const p of pk) led.push(p.x); break; }
+    }
+    for (const p of pads) if (seg > p.seg && seg <= p.seg + padLen + afterPad) led.push(p.x);
+    const room = (x) => Math.min(...led.map((l) => Math.abs(x - l)));   // Infinity when nothing leads here
+    const kept = [];
+    for (const o of list) {
+      if (room(o.x) < reach) {
+        const lane = [-side, 0, side].filter((x) => room(x) >= reach).sort((a, b) => room(b) - room(a))[0];
+        if (lane === undefined) continue;
+        o.x = lane;
+      }
+      kept.push(o);
+    }
+    if (kept.length) obstacles.set(seg, kept); else obstacles.delete(seg);
+  }
+}
+
 export function buildGameplay(seed = 11) {
   const r = mulberry32(seed);
   const pick = (arr) => arr[Math.floor(r() * arr.length)];
@@ -237,5 +267,6 @@ export function buildGameplay(seed = 11) {
       obstacles.set(o, [{ x, kind: z === "grotto" || z === "warp" ? "crystal_ob" : "mush_ob", hit: false }]);
     }
   }
+  fairObstacles(pickups, obstacles, PADS, PAD_LEN, 450);
   return { pickups, obstacles };
 }

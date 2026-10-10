@@ -6,7 +6,7 @@
 // point itself, the furthest behind anyone can be.
 const STAGES = {
   burrow: { minTime: 14, maxItems: 110, minMissTime: 25, maxGap: 1090 },     // bot: ~16.4s; 110 acorns; escape at 28.0s, 1086 units in
-  ocean: { minTime: 14.5, maxItems: 95, minMissTime: 21, maxGap: 940 },      // bot: ~16.9s; 95 starfish; escape at 23.1s, 938 units in
+  ocean: { minTime: 12, maxItems: 95, minMissTime: 21, maxGap: 940 },        // bot: ~14.6s; 95 starfish; escape at 23.1s, 938 units in
 };
 
 const RULES = {

@@ -106,8 +106,9 @@ async function submit() {
     track("leaderboard_submit", { stage, result: last.caught ? "caught" : "escaped", rank_week: r.week.rank, rank_all: r.all.rank });   // ranks only, never the nickname
     $("lbForm").hidden = true;
     note.textContent = "";
-    const best = r.all.caught === false ? `${metres(r.all.gap)} m behind` : `${r.all.best.toFixed(2)}s`;
-    $("lbRank").textContent = `#${r.week.rank} this week · #${r.all.rank} all-time` + (r.all.improved ? "" : ` (your best is ${best})`);
+    // one entry per player per board, their best: a run that beats neither changes nothing, so say so plainly
+    const mark = (b) => (b.caught === false ? `${metres(b.gap)} m behind` : `${b.best.toFixed(2)}s`);
+    $("lbRank").textContent = (r.week.improved || r.all.improved ? "Saved! " : `Your best stays ${mark(r.week)} · `) + `#${r.week.rank} this week · #${r.all.rank} all-time`;
     showBoard("rBoardList", "rTabWeek", "rTabAll", views.rBoardList || "week", true);
   } catch (e) {
     btn.disabled = false;

@@ -1,7 +1,7 @@
 // Sea / submarine track — ported from source/sea.py (the ocean reel's renderer).
 // The camera follows a "current" ribbon through open water: path_y is the ribbon's height
 // (0 = the surface, negative = deeper), floor_y the sea bed far below it.
-import { mulberry32 } from "./track.js";
+import { mulberry32, fairObstacles } from "./track.js";
 
 export const N = 1500;
 export const SEG_LEN = 200;
@@ -177,5 +177,6 @@ export function buildGameplay(seed = 23) {
       obstacles.set(o, [{ x, kind, hit: false, y: z === "abyss" ? 150 : 120 }]);
     }
   }
+  fairObstacles(pickups, obstacles, PADS, PAD_LEN, 430);
   return { pickups, obstacles };
 }

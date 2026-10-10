@@ -53,7 +53,7 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
     const stage = b.stage === undefined ? "burrow" : b.stage;
     if (!Object.hasOwn(STAGES, stage)) return send(res, 400, { error: "bad_stage" });
     const nm = cleanName(b.name);
-    if (!nm.ok) return send(res, 400, { error: nm.reason });
+    if (!nm.ok) return refuse(res, 400, nm.reason, stage);
     const control = cleanControl(b.control), country = cleanCountry(b.country);
     const how = { ...(control && { control }), ...(country && { country }) };   // each left off the documents when unknown
     if (!(await rateLimit(ip, "submit"))) return send(res, 429, { error: "slow_down" });
@@ -86,7 +86,7 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
         return out;
       });
     } catch (e) {
-      if (e.status) return send(res, e.status, { error: e.message });
+      if (e.status) return refuse(res, e.status, e.message, stage);
       throw e;
     }
     // rank = number of devices strictly ahead of this device's best, plus one. `best` is the catch
@@ -144,6 +144,8 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
 }
 
 function httpError(status, message) { const e = new Error(message); e.status = status; return e; }
+// A refused save, with its reason in the log (the reason code and stage only: never the name or the score).
+function refuse(res, status, reason, stage) { console.warn(`submit refused: ${reason} (${stage})`); send(res, status, { error: reason }); }
 function send(res, status, body) { res.status(status).json(body); }
 
 module.exports = { createApi, LIMITS };
