@@ -37,7 +37,7 @@ let BOT = Number(params.get("bot") || 0);   // 1 = center line, 2 = racing line 
 // ---------------- setup ----------------
 const stage = document.getElementById("stage");
 const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: false });   // every frame paints the whole canvas: opaque is cheaper to show
 const ui = {
   title: document.getElementById("title"),
   start: document.getElementById("startBtn"),
@@ -54,6 +54,7 @@ const ui = {
   mute: document.getElementById("muteBtn"),
   toast: document.getElementById("toast"),
   tiltHelp: document.getElementById("tiltHelp"),
+  stageSwitch: document.getElementById("stageSwitch"),
   loading: document.getElementById("loading"),
   stagePick: document.getElementById("stagePick"),
   mapRow: document.getElementById("mapRow"),
@@ -143,8 +144,18 @@ function layout() {
     syncQrCard();
     document.getElementById("qrInline").hidden = roomy || vh < 680;   // too short: the panel would not fit
   }
+  // Resizing the canvas throws its pixels away, which is costly. In-app browsers resize the page a
+  // little whenever their bars slide in or out, so mid-race the canvas waits for the size to settle
+  // (it stretches to fit in the meantime).
+  stageW = cw;
+  clearTimeout(sizeTimer);
+  if (state.phase === "play") sizeTimer = setTimeout(sizeCanvas, 250);
+  else sizeCanvas();
+}
+let stageW = W, sizeTimer = 0;
+function sizeCanvas() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  renderScale = Math.min(qualityCap, (cw * dpr) / W);
+  renderScale = Math.min(qualityCap, (stageW * dpr) / W);
   const bw = Math.round(W * renderScale), bh = Math.round(H * renderScale);
   if (canvas.width !== bw || canvas.height !== bh) { canvas.width = bw; canvas.height = bh; }
 }
@@ -161,7 +172,8 @@ function loadIntro(st) {
   const img = new Image();
   const data = fetch(st.intro + ".json").then((r) => r.json());
   const pic = new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = st.intro + ".webp"; });
-  Promise.all([data, pic]).then(([d]) => {
+  pic.then(() => img.decode && img.decode().catch(() => {}), () => {});   // decode the big sheet now, not on its first frame (not waited for)
+  entry.ready = Promise.all([data, pic]).then(([d]) => {
     Object.assign(entry, { img, ...d, dur: d.order.length / d.fps });
     if (ST === st) intro = entry;
   }).catch(() => {});
@@ -726,7 +738,38 @@ function roundRect(c, x, y, w, h, r) {
 
 // ---------------- loop ----------------
 let last = performance.now();
-const perf = { work: 0, interval: 16.7 };
+// win*: frames and time in the current judging window; slowRuns: slow windows in a row; probe: the
+// drop being tested; settled: no more changes this visit
+const perf = { work: 0, interval: 16.7, winN: 0, winT: 0, slowRuns: 0, probe: null, settled: false };
+const QUALITY_WINDOW = 1500;   // ms of racing judged at a time
+const QUALITY_FLOOR = 0.85;
+// Adaptive resolution: if the phone can't keep a steady frame rate, draw fewer pixels. Judged by the
+// time between frames, not only by time spent in our code: iPhones draw the canvas in another process,
+// so slow drawing never shows up as slow JavaScript there. Screens show whole frames only, so a small
+// saving often changes nothing visible; the drop therefore goes straight to the floor, and is undone if
+// even that doesn't help (Low Power Mode holds iPhones at 30 frames a second whatever we draw).
+function judgeQuality(frameMs) {
+  if (state.phase !== "play") { perf.winN = perf.winT = 0; return; }
+  perf.winN++; perf.winT += frameMs;
+  if (perf.winT < QUALITY_WINDOW || perf.settled) return;
+  const avg = perf.winT / perf.winN;
+  perf.winN = perf.winT = 0;
+  const setCap = (cap) => { qualityCap = cap; sizeCanvas(); };
+  if (perf.probe) {
+    const p = perf.probe;
+    p.best = Math.min(p.best, avg);
+    if (++p.windows < 2) return;
+    if (p.best > p.before * 0.9) setCap(p.cap);   // no faster with far fewer pixels: put the sharpness back
+    perf.probe = null; perf.settled = true;
+    return;
+  }
+  const slow = avg > 21 || perf.work > 12;   // under ~48 frames a second
+  perf.slowRuns = slow ? perf.slowRuns + 1 : 0;
+  if (perf.slowRuns >= 3 && renderScale > QUALITY_FLOOR + 0.05) {   // slow for 4.5s on end, not a passing hiccup
+    perf.probe = { cap: qualityCap, before: avg, best: Infinity, windows: 0 };
+    setCap(QUALITY_FLOOR);
+  }
+}
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000);
   perf.interval += ((now - last) - perf.interval) * 0.05;
@@ -736,12 +779,7 @@ function frame(now) {
     if (state.phase !== "title" && !(DEBUG && window.__freeze)) update(dt);
     draw();
     perf.work += (performance.now() - t0 - perf.work) * 0.05;
-    // adaptive resolution: step down if we can't hold ~60fps
-    if (state.phase === "play" && now - (perf.lastAdjust || 0) > 1500 && perf.work > 12 && renderScale > 0.9) {
-      perf.lastAdjust = now;
-      qualityCap = Math.max(0.85, renderScale * 0.8);
-      layout();
-    }
+    judgeQuality(dt * 1000);
   }
   requestAnimationFrame(frame);
 }
@@ -767,8 +805,35 @@ async function selectStage(id) {
     ? `🏁 A friend caught the ${ST.text.thief} in ${challenge.time.toFixed(1)}s. Can you beat it?`
     : ST.tag;
   for (const b of ui.stagePick.querySelectorAll("button")) b.classList.toggle("on", b.dataset.stage === ST.id);
+  for (const b of ui.stageSwitch.children) b.hidden = b.dataset.stage === ST.id;
   ui.loading.classList.add("hide");
   idleState();
+  layout();
+}
+// Result card: a button per other map, which loads it and starts a race right away.
+function initStageSwitch() {
+  for (const id of STAGE_ORDER) {
+    const b = document.createElement("button");
+    b.type = "button"; b.dataset.stage = id;
+    b.textContent = `${STAGES[id].emoji} Play ${STAGES[id].name}`;
+    b.onclick = () => switchStage(id);
+    ui.stageSwitch.append(b);
+  }
+}
+async function switchStage(id) {
+  if (state.phase !== "done" || id === ST.id) return;
+  ui.result.classList.add("hide");
+  sfx.unlock();
+  sfx.music(STAGES[id].music, { restart: true });   // here, inside the tap, not after the loading below
+  track("stage_select", { stage: id });
+  await selectStage(id);
+  // the map's intro clip is still downloading the first time: give it a moment, then go without it
+  state.phase = "loading";
+  ui.loading.classList.remove("hide");
+  await Promise.race([intros[id].ready, new Promise((r) => setTimeout(r, 1500))]);
+  ui.loading.classList.add("hide");
+  beginRace();
+  if (intro && !intro.played) { intro.played = true; state.phase = "intro"; }
   layout();
 }
 function initStagePicker() {
@@ -788,8 +853,9 @@ function initStagePicker() {
   trackPageView();
   lb.initUI();
   initStagePicker();
+  if (OCEAN_PUBLIC) initStageSwitch();
   await selectStage(ST.id);
   requestAnimationFrame(frame);
 })();
 
-if (DEBUG) window.__game = { state, T, tilt, update, reset, selectStage, stage: () => ST, setBot: (b) => (BOT = b) };
+if (DEBUG) window.__game = { state, T, tilt, update, reset, selectStage, judgeQuality, perf, stage: () => ST, setBot: (b) => (BOT = b) };
