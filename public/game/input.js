@@ -19,13 +19,23 @@ export class Tilt {
   }
   static supported() { return typeof window !== "undefined" && "DeviceMotionEvent" in window; }
 
-  // Must be called synchronously from a tap handler (iOS permission rule).
+  // Must be called synchronously from a tap handler (iOS permission rule). Resolves to:
+  //   "granted"
+  //   "denied"   the visitor was asked and said no
+  //   "blocked"  refused at once, with no prompt: an earlier "no" is remembered until the page (or the
+  //              app showing it) is closed, or an in-app browser doesn't allow motion access at all
+  //   "error"    the request itself failed
+  //   "unsupported"
   requestPermission() {
     const DME = window.DeviceMotionEvent;
     if (DME && typeof DME.requestPermission === "function") {
-      return DME.requestPermission().then((r) => r === "granted").catch(() => false);
+      const t0 = performance.now();
+      return DME.requestPermission().then(
+        (r) => (r === "granted" ? "granted" : performance.now() - t0 < 300 ? "blocked" : "denied"),   // nobody answers a prompt in 0.3s
+        () => "error",
+      );
     }
-    return Promise.resolve(Tilt.supported());
+    return Promise.resolve(Tilt.supported() ? "granted" : "unsupported");
   }
 
   start() { window.addEventListener("devicemotion", this.onMotion); }

@@ -159,6 +159,7 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   #lbNote { font-size: 13px; font-weight: 600; min-height: 1.2em; margin-top: 6px; }
   #lbRank { font-size: 17px; font-weight: 800; }
   #lbRank:empty { display: none; }
+  #tiltHelp { margin: 0 0 10px; font-size: 12px; font-weight: 600; line-height: 1.35; opacity: .8; }
   #board { background: rgba(43,33,64,.55); justify-content: center; z-index: 7; }
   #board .panel { padding: 16px 14px; max-height: 88%; display: flex; flex-direction: column; }
   #board h2 { margin: 0 0 10px; font-size: 26px; font-weight: 800; color: #fff; -webkit-text-stroke: 0.16em var(--ink); paint-order: stroke fill; }
@@ -230,6 +231,7 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
         </div>
         <ol id="rBoardList" class="boardList"></ol>
       </div>
+      <p id="tiltHelp" hidden></p>
       <button id="againBtn" class="big" type="button">Play again</button>
       <button id="shareBtn" class="big alt" type="button">📣 Challenge a friend</button>
       <a id="appLink" class="appBanner" href="/" data-placement="result">

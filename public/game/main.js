@@ -53,6 +53,7 @@ const ui = {
   again: document.getElementById("againBtn"),
   mute: document.getElementById("muteBtn"),
   toast: document.getElementById("toast"),
+  tiltHelp: document.getElementById("tiltHelp"),
   loading: document.getElementById("loading"),
   stagePick: document.getElementById("stagePick"),
   mapRow: document.getElementById("mapRow"),
@@ -93,6 +94,17 @@ if (!isTouchDevice) {
   ui.again.textContent = "Play again · Enter";
 }
 setMode(mode);
+
+// Why tilting was refused and how to get it back, for the result card (iPhones only: other phones
+// never refuse). In-app browsers such as Instagram's often don't allow motion access at all.
+const IN_APP = /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|BytedanceWebview|Line\//i.test(navigator.userAgent);
+function tiltHelp(result) {
+  if (result !== "blocked" && result !== "denied" && result !== "error") return null;
+  if (IN_APP) return "📱 To steer by tilting, open this page in Safari: tap ••• at the top, then “Open in external browser”.";
+  return result === "denied"
+    ? "📱 To steer by tilting, close this tab, open the game again and tap Allow."
+    : "📱 Tilt steering is switched off for this page. Close this tab and open the game again, then tap Allow.";
+}
 
 function toast(msg, ms = 2600) {
   ui.toast.textContent = msg;
@@ -217,8 +229,10 @@ function vibrate(ms) {
 // which switches to the stage's track).
 const MENU_MUSIC = { src: "audio/menu.mp3", vol: 0.8 };   // a quiet master: evened out against the stage tracks
 let startTapped = false;   // Start can take a moment (motion permission) while the phase is still "title"
-function menuMusicOnGesture() {
+function menuMusicOnGesture(e) {
   if (state.phase !== "title" || startTapped) return;
+  // not on Start itself: its handler asks for motion access and that has to come first in the tap
+  if (e.target instanceof Element && e.target.closest("#startBtn")) return;
   sfx.unlock();
   sfx.music(MENU_MUSIC);
 }
@@ -226,17 +240,23 @@ document.addEventListener("click", menuMusicOnGesture, true);
 document.addEventListener("keydown", menuMusicOnGesture, true);
 ui.start.addEventListener("click", () => {
   // iOS: the motion permission prompt must be requested directly inside the tap.
-  const perm = mode === "tilt" ? tilt.requestPermission() : Promise.resolve(false);
+  const perm = mode === "tilt" ? tilt.requestPermission() : Promise.resolve(null);
   sfx.unlock();
   startTapped = true;
   sfx.music(ST.music, { restart: true });
   tryFullscreenPortrait();
-  perm.then(async (ok) => {
+  perm.then(async (result) => {
     if (mode === "tilt") {
-      let result = ok ? "granted" : "denied";
+      let ok = result === "granted";
       if (ok) { tilt.start(); ok = await tilt.waitForData(); if (!ok) result = "no_data"; }
       track("tilt_permission", { result });
-      if (!ok) { setMode("touch"); toast("Motion sensor not available, so touch steering is on."); }
+      if (!ok) {
+        setMode("touch");
+        const help = tiltHelp(result);
+        toast(help ? "Tilt steering is blocked here, so touch steering is on." : "Motion sensor not available, so touch steering is on.", help ? 4000 : 2600);
+        ui.tiltHelp.textContent = help || "";
+        ui.tiltHelp.hidden = !help;
+      }
     }
     ui.title.classList.add("hide");
     beginRace();
