@@ -18,6 +18,22 @@
 <meta name="twitter:description" content="Turn your phone like a steering wheel and help Miuu get his diary back.">
 <meta name="twitter:image" content="https://miuunote.site/game/img/og.png">
 <link rel="canonical" href="https://miuunote.site/game/">
+<!-- Google Analytics: the same property, consent defaults and settings as the rest of miuunote.site
+     (lib/analytics.ts; keep in step). Page views and events are sent from analytics.js with a URL
+     stripped to the path and utm_* tags. gtag.js only loads on the real site, never on localhost. -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', region: ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "IS", "LI", "NO", "GB", "CH"] });
+gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted' });
+gtag('js', new Date());
+gtag('config', 'G-EY9SN90KM6', { send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false });
+if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
+  var s = document.createElement('script'); s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=G-EY9SN90KM6';
+  document.head.appendChild(s);
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">

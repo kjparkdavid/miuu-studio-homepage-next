@@ -438,8 +438,9 @@ const PrivacyPolicyPage = () => {
           </li>
           <li>
             <strong>On your device</strong>: the game keeps a random game ID it
-            creates itself, your best time and the nickname you last used in
-            your browser&apos;s storage. Clearing your browser data removes them.
+            creates itself, your best times, how many races you have started
+            and the nickname you last used in your browser&apos;s storage.
+            Clearing your browser data removes them.
           </li>
           <li>
             <strong>Leaderboard</strong>: if you catch the squirrel and choose
@@ -462,6 +463,24 @@ const PrivacyPolicyPage = () => {
             deleted automatically within about two days. Like any web service,
             the server&apos;s standard request logs also record network
             addresses for up to 30 days.
+          </li>
+          <li>
+            <strong>Play statistics</strong>: like the rest of our website, the
+            game page uses Google Analytics, under the rules described in
+            &ldquo;Our Website&rdquo; above (no advertising features, and no
+            analytics cookie in the European Economic Area, the UK and
+            Switzerland). It counts how the game is used: that it was opened and
+            which link brought you, which map and steering you chose, whether
+            you caught the thief and in what time, how many tries it took, and
+            taps on the share, leaderboard and app store buttons. These never
+            include your nickname or anything you type.
+          </li>
+          <li>
+            <strong>Sharing and store links</strong>: a link you send with
+            &ldquo;Challenge a friend&rdquo; contains the map and your catch
+            time, so your friend sees the time to beat, and nothing else about
+            you. The app banner opens the App Store or Google Play with a tag
+            that tells us the install came from the game.
           </li>
         </ul>
         <p>
