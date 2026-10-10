@@ -23,8 +23,8 @@ const T_BASE = {
 const T = { ...T_BASE };
 
 const params = new URLSearchParams(location.search);
-// The ocean stage still has stand-in art, so it only opens with ?stage=ocean until this is flipped.
-const OCEAN_PUBLIC = false;
+// Every stage in STAGE_ORDER is offered on the start screen. (?stage=ocean still jumps straight to one.)
+const OCEAN_PUBLIC = true;
 let ST = STAGES[params.get("stage")] || STAGES.burrow;
 const DEBUG = params.has("debug");
 let BOT = Number(params.get("bot") || 0);   // 1 = center line, 2 = racing line (debug only)
