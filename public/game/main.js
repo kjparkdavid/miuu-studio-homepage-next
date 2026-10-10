@@ -216,6 +216,7 @@ ui.start.addEventListener("click", () => {
   // iOS: the motion permission prompt must be requested directly inside the tap.
   const perm = mode === "tilt" ? tilt.requestPermission() : Promise.resolve(false);
   sfx.unlock();
+  sfx.music(ST.music);
   tryFullscreenPortrait();
   perm.then(async (ok) => {
     if (mode === "tilt") {
@@ -232,6 +233,8 @@ ui.start.addEventListener("click", () => {
 });
 ui.again.addEventListener("click", () => {
   ui.result.classList.add("hide");
+  sfx.unlock();
+  sfx.music(ST.music);
   track("play_again", { stage: ST.id });
   beginRace();
   layout();
@@ -273,7 +276,7 @@ window.addEventListener("keydown", (e) => {
   else if (state.phase === "intro" && intro && state.phaseT < intro.dur) { e.preventDefault(); state.phaseT = intro.dur; }
   else if (state.phase === "done" && e.code === "Enter") { e.preventDefault(); ui.again.click(); }
 });
-ui.mute.addEventListener("click", () => { sfx.muted = !sfx.muted; ui.mute.textContent = sfx.muted ? "🔇" : "🔊"; });
+ui.mute.addEventListener("click", () => { sfx.setMuted(!sfx.muted); ui.mute.textContent = sfx.muted ? "🔇" : "🔊"; });
 
 function tryFullscreenPortrait() {
   // Android only: lock portrait so big turns can't flip the screen. iOS ignores this.
@@ -718,6 +721,7 @@ function idleState() {
 // ---------------- stages ----------------
 async function selectStage(id) {
   ST = STAGES[id] || STAGES.burrow;
+  sfx.music(null);
   Object.assign(T, T_BASE, ST.tune);
   state.phase = "loading";
   ui.loading.classList.remove("hide");

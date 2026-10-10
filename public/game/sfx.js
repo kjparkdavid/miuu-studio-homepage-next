@@ -1,4 +1,4 @@
-// Tiny synthesized sound effects (placeholder until real audio is supplied).
+// Sound: tiny synthesized effects (placeholders until real ones are supplied) and each stage's music.
 let ac = null;
 
 function tone(freq, dur, { type = "sine", vol = 0.18, slide = 0, delay = 0 } = {}) {
@@ -15,8 +15,42 @@ function tone(freq, dur, { type = "sine", vol = 0.18, slide = 0, delay = 0 } = {
   o.start(t); o.stop(t + dur + 0.02);
 }
 
+// ---------------- background music ----------------
+// One track per stage (stages.js `music`), streamed, restarted at each race start and looping until
+// the next one. It goes through the audio context so its level can be set: on iOS an <audio>
+// element's own volume is fixed at full.
+let song = null;   // { src, el } once a race has started on a stage that has music
+
+function syncMusic() {
+  if (!song) return;
+  if (sfx.muted || document.hidden) song.el.pause();
+  else song.el.play().catch(() => {});   // refused outside a tap: the next race start tries again
+}
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && ac && ac.state !== "running") ac.resume().catch(() => {});
+  syncMusic();
+});
+
 export const sfx = {
   muted: false,
+  setMuted(on) { this.muted = on; syncMusic(); },
+  // Start this stage's track from the top (call inside the tap that starts a race), or stop with null.
+  music(track) {
+    if (song && (!track || song.src !== track.src)) { song.el.pause(); song = null; }
+    if (!track) return;
+    if (!song) {
+      const el = new Audio(track.src);
+      el.loop = true;
+      try {
+        const gain = ac.createGain();
+        gain.gain.value = track.vol;
+        ac.createMediaElementSource(el).connect(gain).connect(ac.destination);
+      } catch { el.volume = track.vol; }   // no Web Audio: plain element volume
+      song = { src: track.src, el };
+    }
+    try { song.el.currentTime = 0; } catch {}
+    syncMusic();
+  },
   unlock() {
     try {
       if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();

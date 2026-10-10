@@ -12,6 +12,7 @@ const burrow = {
   imageKeys: BURROW_KEYS,
   intro: "img/intro_burrow",
   titleBg: "img/bg_title.png",
+  music: { src: "audio/burrow.mp3", vol: 0.3 },      // vol evens out how loud the two tracks are mastered
   tag: "🐿️ A squirrel ran off with Miuu's diary!",
   // Balanced with the human-like test player (bot 4): an average gamer catches the squirrel ~90% of the
   // time, a first-timer ~1 in 4. Re-run the simulation before changing these.
@@ -63,6 +64,7 @@ const ocean = {
   imageKeys: [...OCEAN_KEYS, "diary", "sign_miuu"],   // shared with the burrow: the catch pop and the app billboard
   intro: "img/ocean/intro_ocean",
   titleBg: "img/ocean/bg_title.png",
+  music: { src: "audio/ocean.mp3", vol: 0.36 },
   tag: "🐟 A fish swam off with Miuu's diary!",
   // the sea's sweeps are much tighter than the burrow's, so each unit of curve pushes less
   // Thief: an average gamer catches the fish ~69% of the time (bot 4); the harder second stage.
