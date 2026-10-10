@@ -81,6 +81,20 @@ test("weekly board resets on Monday but all-time keeps everyone", async () => {
   assert.deepEqual([r.body.week.rank, r.body.all.rank], [1, 4]);
 });
 
+test("ocean scores go on the ocean boards only", async () => {
+  const s = await call("POST", "/start", { ip: "7.7.7.7" });
+  clock += 30 * 1000;
+  const r = await call("POST", "/submit", { ip: "7.7.7.7", body: { runId: s.body.runId, stage: "ocean", deviceId: dev(6), name: "Bubbles", time: 19.4, acorns: 60, bumps: 0 } });
+  assert.equal(r.status, 200, JSON.stringify(r.body));
+  assert.deepEqual([r.body.stage, r.body.week.rank, r.body.all.rank], ["ocean", 1, 1]);
+  const sea = await call("GET", "/board", { query: { scope: "all", stage: "ocean" } });
+  assert.deepEqual(sea.body.entries.map((e) => e.name), ["Bubbles"]);
+  const land = await call("GET", "/board", { query: { scope: "all" } });
+  assert.ok(!land.body.entries.some((e) => e.name === "Bubbles"));
+  const bad = await call("GET", "/board", { query: { scope: "all", stage: "moon" } });
+  assert.equal(bad.status, 400);
+});
+
 test("rate limit kicks in for a flood from one IP", async () => {
   let last;
   for (let i = 0; i < 45; i++) last = await call("POST", "/start", { ip: "5.5.5.5" });

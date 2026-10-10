@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert");
-const { weekId, checkScore, cleanName, RULES } = require("../lib/rules");
+const { weekId, scopeIds, checkScore, cleanName, RULES } = require("../lib/rules");
 
 test("weekId follows ISO weeks in UTC", () => {
   assert.equal(weekId(Date.UTC(2026, 9, 9, 12)), "2026-W41");      // Fri Oct 9 2026
@@ -23,6 +23,19 @@ test("checkScore rejects impossible or forged runs", () => {
   // claimed 25s race but only 20s passed since /start (plus the 3.2s countdown has to fit too)
   assert.equal(checkScore({ time: 25, acorns: 1 }, 20).reason, "too_fast_for_run");
   assert.equal(checkScore({ time: 25, acorns: 1 }, 25 + RULES.countdown - RULES.tolerance).ok, true);
+});
+
+test("each stage has its own limits and its own boards", () => {
+  assert.equal(checkScore({ time: 24, acorns: 110 }, 60).ok, true);                       // burrow by default, all 110 acorns
+  assert.equal(checkScore({ time: 24, acorns: 111 }, 60).reason, "bad_acorns");
+  assert.equal(checkScore({ time: 19, acorns: 80, stage: "ocean" }, 60).ok, true);        // too quick for the burrow, fine in the sea
+  assert.equal(checkScore({ time: 19, acorns: 80, stage: "burrow" }, 60).reason, "implausible_time");
+  assert.equal(checkScore({ time: 19, acorns: 96, stage: "ocean" }, 60).reason, "bad_acorns");
+  assert.equal(checkScore({ time: 25, acorns: 1, stage: "sky" }, 60).reason, "bad_stage");
+  assert.equal(checkScore({ time: 25, acorns: 1, stage: "__proto__" }, 60).reason, "bad_stage");
+  const t = Date.UTC(2026, 9, 9, 12);
+  assert.deepEqual(scopeIds("burrow", t), { week: "2026-W41", all: "all" });               // unchanged ids for existing scores
+  assert.deepEqual(scopeIds("ocean", t), { week: "ocean:2026-W41", all: "ocean:all" });
 });
 
 test("cleanName keeps friendly names", () => {

@@ -1,9 +1,13 @@
 // Pure leaderboard rules: score plausibility, nickname filter, week ids. No Firebase imports.
 
+// Per-stage limits. minTime sits a little under what the perfect-line test bot manages on that stage.
+const STAGES = {
+  burrow: { minTime: 21, maxItems: 110 },   // bot: ~23.7s; 110 acorns on the track
+  ocean: { minTime: 17.5, maxItems: 95 },   // bot: ~20.1s; 95 starfish on the track
+};
+
 const RULES = {
-  minTime: 21,          // the perfect-line test bot catches the squirrel in ~23.7s
   maxTime: 300,
-  maxAcorns: 105,       // acorns placed on the burrow track
   countdown: 3.2,       // always shown between /start and the race clock starting
   tolerance: 1.5,       // seconds of slack for clocks / network
   nameMin: 2,
@@ -21,11 +25,13 @@ function weekId(ms) {
   return `${thursday.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
 }
 
-function checkScore({ time, acorns, bumps }, elapsedSec) {
+function checkScore({ time, acorns, bumps, stage = "burrow" }, elapsedSec) {
+  if (typeof stage !== "string" || !Object.hasOwn(STAGES, stage)) return { ok: false, reason: "bad_stage" };
+  const st = STAGES[stage];
   if (typeof time !== "number" || !Number.isFinite(time)) return { ok: false, reason: "bad_time" };
-  if (!Number.isInteger(acorns) || acorns < 0 || acorns > RULES.maxAcorns) return { ok: false, reason: "bad_acorns" };
+  if (!Number.isInteger(acorns) || acorns < 0 || acorns > st.maxItems) return { ok: false, reason: "bad_acorns" };
   if (bumps !== undefined && (!Number.isInteger(bumps) || bumps < 0 || bumps > 100)) return { ok: false, reason: "bad_bumps" };
-  if (time < RULES.minTime || time > RULES.maxTime) return { ok: false, reason: "implausible_time" };
+  if (time < st.minTime || time > RULES.maxTime) return { ok: false, reason: "implausible_time" };
   // the race can't have taken longer than the time since this run's /start
   if (elapsedSec + RULES.tolerance < time + RULES.countdown) return { ok: false, reason: "too_fast_for_run" };
   return { ok: true, time: Math.round(time * 100) / 100 };
@@ -60,4 +66,10 @@ function cleanName(raw) {
 
 const DEVICE_RE = /^[A-Za-z0-9-]{16,64}$/;
 
-module.exports = { RULES, weekId, checkScore, cleanName, DEVICE_RE };
+// Board scope ids. The burrow keeps its original ids ("all", "2026-W41"); other stages are prefixed.
+function scopeIds(stage, ms) {
+  const pre = stage === "burrow" ? "" : stage + ":";
+  return { week: pre + weekId(ms), all: pre + "all" };
+}
+
+module.exports = { RULES, STAGES, weekId, scopeIds, checkScore, cleanName, DEVICE_RE };
