@@ -167,6 +167,7 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   .boardList li:nth-child(odd) { background: rgba(185,160,240,.16); }
   .boardList li.me { background: var(--pink); color: #fff; }
   .boardList li.empty { display: block; text-align: center; padding: 18px 8px; }
+  .boardList li.sep { display: block; text-align: center; padding: 7px 8px 3px; font-size: 11px; font-weight: 700; background: none; opacity: .7; }
   .boardList .rk { text-align: center; font-weight: 800; }
   .boardList .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .boardList .ct { text-align: center; font-size: 13px; line-height: 1; }
@@ -242,7 +243,7 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   <div id="loading" class="overlay">Loading…</div>
   <div id="board" class="overlay hide">
     <div class="panel">
-      <h2>🏆 Fastest catchers</h2>
+      <h2>🏆 Leaderboard</h2>
       <div class="modes">
         <button id="tabWeek" type="button" class="on">This week</button>
         <button id="tabAll" type="button">All time</button>

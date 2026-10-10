@@ -1,20 +1,30 @@
 // HTTP API for the Diary Chase leaderboard.
 //   POST /start                 -> { runId }                  (called when the player taps Start / Play again)
-//   POST /submit {runId, deviceId, name, time, acorns, bumps[, stage, control]} -> ranks (only catches are submitted)
-//   GET  /board?scope=week|all[&deviceId=] -> top entries
+//   POST /submit {runId, deviceId, name, time, acorns, bumps[, stage, control, caught, gap]} -> ranks
+//   GET  /board?scope=week|all[&stage=][&deviceId=] -> top entries, plus the caller's own entry when it is further down
+// Catches rank by time; misses (caught: false, gap = how far ahead the thief was) rank below every
+// catch, closest first. Both sort on one stored field, `order` (see rules.js).
 // Firestore layout (clients have no direct access; see firestore.rules):
 //   runs/{runId}            one per race start; used once
-//   bests/{scope}_{device}  best catch per device per scope ("2026-W41" or "all")
+//   bests/{scope}_{device}  best result per device per scope ("2026-W41" or "all")
 //   ratelimits/{ip}_{slot}  request counters
 const crypto = require("crypto");
 const { Timestamp } = require("firebase-admin/firestore");
 const { RULES, STAGES, weekId, scopeIds, checkScore, cleanName, cleanControl, DEVICE_RE } = require("./rules");
 
-const LIMITS = { start: 40, submit: 15, windowMs: 10 * 60 * 1000 };
+const LIMITS = { start: 40, submit: 40, windowMs: 10 * 60 * 1000 };   // every race can end in a submit now, and each needs its own /start
 const BOARD_CACHE_MS = 15000;
+
+// What the board shows for a stored best. Entries from before misses existed have no `caught` or `order`.
+const orderOf = (e) => e.order ?? e.time;
+function publicEntry(e) {
+  const caught = e.caught !== false;
+  return { name: e.name, caught, time: e.time, ...(caught ? {} : { gap: e.gap }), acorns: e.acorns, control: cleanControl(e.control) };
+}
 
 function createApi({ db, now = () => Date.now(), salt = "" }) {
   const hash = (s) => crypto.createHash("sha256").update(salt + ":" + s).digest("hex").slice(0, 32);
+  const ahead = (scope, order) => db.collection("bests").where("scope", "==", scope).where("order", "<", order).count().get().then((a) => a.data().count);
   const boardCache = new Map(); // scopeId -> { at, entries }
 
   async function rateLimit(ip, kind) {
@@ -59,17 +69,19 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
         const run = await tx.get(runRef);
         if (!run.exists) throw httpError(404, "unknown_run");
         if (run.get("used")) throw httpError(409, "run_used");
-        const check = checkScore({ time: b.time, acorns: b.acorns, bumps: b.bumps, stage }, (t - run.get("startedAt")) / 1000);
+        const check = checkScore({ time: b.time, acorns: b.acorns, bumps: b.bumps, stage, caught: b.caught, gap: b.gap }, (t - run.get("startedAt")) / 1000);
         if (!check.ok) throw httpError(400, check.reason);
+        const { ok, ...score } = check;   // caught, time, order, and gap for a miss
+        const entry = { name: nm.name, acorns: b.acorns, ...score, ...how };
         const refs = scopes.map((s) => db.collection("bests").doc(`${s}_${device}`));
         const prev = await Promise.all(refs.map((r) => tx.get(r)));
-        tx.update(runRef, { used: true, stage, time: check.time, acorns: b.acorns, name: nm.name, device, ...how });
+        tx.update(runRef, { used: true, stage, device, ...entry });
         const out = {};
         scopes.forEach((s, i) => {
           const old = prev[i].exists ? prev[i].data() : null;
-          const improved = !old || check.time < old.time;
-          if (improved) tx.set(refs[i], { scope: s, name: nm.name, time: check.time, acorns: b.acorns, updatedAt: t, ...how });
-          out[s] = { best: improved ? check.time : old.time, improved };
+          const improved = !old || entry.order < orderOf(old);   // any catch beats any miss
+          if (improved) tx.set(refs[i], { scope: s, ...entry, updatedAt: t });
+          out[s] = { best: improved ? entry : old, improved };
         });
         return out;
       });
@@ -77,11 +89,13 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
       if (e.status) return send(res, e.status, { error: e.message });
       throw e;
     }
-    // rank = number of devices strictly faster than this device's best, plus one
+    // rank = number of devices strictly ahead of this device's best, plus one. `best` is the catch
+    // time (null when the best is a miss, which has `gap` instead).
     const ranks = {};
     for (const s of scopes) {
-      const agg = await db.collection("bests").where("scope", "==", s).where("time", "<", result[s].best).count().get();
-      ranks[s === ids.all ? "all" : "week"] = { rank: agg.data().count + 1, best: result[s].best, improved: result[s].improved };
+      const { best, improved } = result[s];
+      const caught = best.caught !== false;
+      ranks[s === ids.all ? "all" : "week"] = { rank: (await ahead(s, orderOf(best))) + 1, improved, caught, best: caught ? best.time : null, ...(caught ? {} : { gap: best.gap }) };
     }
     boardCache.clear();
     send(res, 200, { time: Math.round(b.time * 100) / 100, stage, weekId: weekId(t), ...ranks });
@@ -95,15 +109,22 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
     let cached = boardCache.get(scope);
     if (!cached || now() - cached.at > BOARD_CACHE_MS) {
       const snap = await db.collection("bests").where("scope", "==", scope)
-        .orderBy("time", "asc").orderBy("acorns", "desc").limit(RULES.boardSize).get();
-      cached = { at: now(), entries: snap.docs.map((d) => ({ id: d.id, name: d.get("name"), time: d.get("time"), acorns: d.get("acorns"), control: cleanControl(d.get("control")) })) };
+        .orderBy("order", "asc").orderBy("acorns", "desc").limit(RULES.boardSize).get();
+      cached = { at: now(), entries: snap.docs.map((d) => ({ id: d.id, ...publicEntry(d.data()) })) };
       boardCache.set(scope, cached);
     }
     const mine = typeof req.query.deviceId === "string" && DEVICE_RE.test(req.query.deviceId) ? `${scope}_${hash(req.query.deviceId)}` : null;
+    // the caller's own entry when it isn't among the top ones, so the board can show it underneath
+    let own;
+    if (mine && !cached.entries.some((e) => e.id === mine)) {
+      const doc = await db.collection("bests").doc(mine).get();
+      if (doc.exists) own = { rank: (await ahead(scope, orderOf(doc.data()))) + 1, ...publicEntry(doc.data()) };
+    }
     res.set("Cache-Control", mine ? "private, no-store" : "public, max-age=15");
     send(res, 200, {
       scope: scopeParam, stage, weekId: weekId(now()),
       entries: cached.entries.map(({ id, ...e }, i) => ({ rank: i + 1, ...e, me: id === mine })),
+      ...(own ? { mine: own } : {}),
     });
   }
 

@@ -530,7 +530,7 @@ function finish() {
     stage: ST.id, control: controlName(), result: s.caught ? "caught" : "escaped", time_s: Math.round(time * 10) / 10,
     items: s.acorns, bonks: s.bumps, attempt: s.attempt || 0, challenged: challenge && challenge.stage === ST.id ? 1 : 0,
   });
-  lb.showResult({ caught: s.caught, time, acorns: s.acorns, bumps: s.bumps, control: controlName() });
+  lb.showResult({ caught: s.caught, time, gap: s.caught ? undefined : s.escapeGap, acorns: s.acorns, bumps: s.bumps, control: controlName() });
   ui.result.classList.remove("hide");
   syncQrCard();
 }

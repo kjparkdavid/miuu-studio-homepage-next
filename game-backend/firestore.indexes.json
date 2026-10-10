@@ -5,6 +5,23 @@
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "scope", "order": "ASCENDING" },
+        { "fieldPath": "order", "order": "ASCENDING" },
+        { "fieldPath": "acorns", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "bests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "scope", "order": "ASCENDING" },
+        { "fieldPath": "order", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "bests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "scope", "order": "ASCENDING" },
         { "fieldPath": "time", "order": "ASCENDING" },
         { "fieldPath": "acorns", "order": "DESCENDING" }
       ]

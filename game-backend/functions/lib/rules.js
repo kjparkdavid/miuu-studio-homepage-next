@@ -1,13 +1,18 @@
 // Pure leaderboard rules: score plausibility, nickname filter, week ids. No Firebase imports.
 
 // Per-stage limits. minTime sits a little under what the perfect-line test bot manages on that stage.
+// A miss ends when the thief reaches its escape point: minMissTime sits a little under the soonest
+// that can happen (thief at full pace with the player right behind it), and maxGap is the escape
+// point itself, the furthest behind anyone can be.
 const STAGES = {
-  burrow: { minTime: 15.5, maxItems: 110 },   // bot: ~17.9s; 110 acorns on the track
-  ocean: { minTime: 17, maxItems: 95 },       // bot: ~19.5s; 95 starfish on the track
+  burrow: { minTime: 15.5, maxItems: 110, minMissTime: 25, maxGap: 1090 },   // bot: ~17.9s; 110 acorns; escape at 27.4s, 1086 units in
+  ocean: { minTime: 17, maxItems: 95, minMissTime: 21, maxGap: 940 },        // bot: ~19.5s; 95 starfish; escape at 22.7s, 938 units in
 };
 
 const RULES = {
   maxTime: 300,
+  minGap: 2,            // the game counts anything closer than this as a catch
+  missBase: 1000,       // board order: a catch sorts by its time, a miss by missBase + gap, so below every catch
   countdown: 3.2,       // always shown between /start and the race clock starting
   tolerance: 1.5,       // seconds of slack for clocks / network
   nameMin: 2,
@@ -25,16 +30,24 @@ function weekId(ms) {
   return `${thursday.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
 }
 
-function checkScore({ time, acorns, bumps, stage = "burrow" }, elapsedSec) {
+const round2 = (n) => Math.round(n * 100) / 100;
+
+// `caught` is left out by game versions from before misses could be added: those only sent catches.
+// For a miss, `time` is how long the chase lasted and `gap` how far ahead the thief was when it escaped.
+function checkScore({ time, acorns, bumps, stage = "burrow", caught = true, gap }, elapsedSec) {
   if (typeof stage !== "string" || !Object.hasOwn(STAGES, stage)) return { ok: false, reason: "bad_stage" };
   const st = STAGES[stage];
+  if (typeof caught !== "boolean") return { ok: false, reason: "bad_result" };
   if (typeof time !== "number" || !Number.isFinite(time)) return { ok: false, reason: "bad_time" };
   if (!Number.isInteger(acorns) || acorns < 0 || acorns > st.maxItems) return { ok: false, reason: "bad_acorns" };
   if (bumps !== undefined && (!Number.isInteger(bumps) || bumps < 0 || bumps > 100)) return { ok: false, reason: "bad_bumps" };
-  if (time < st.minTime || time > RULES.maxTime) return { ok: false, reason: "implausible_time" };
+  if (!caught && (typeof gap !== "number" || !Number.isFinite(gap) || gap < RULES.minGap || gap > st.maxGap)) return { ok: false, reason: "bad_gap" };
+  if (time < (caught ? st.minTime : st.minMissTime) || time > RULES.maxTime) return { ok: false, reason: "implausible_time" };
   // the race can't have taken longer than the time since this run's /start
   if (elapsedSec + RULES.tolerance < time + RULES.countdown) return { ok: false, reason: "too_fast_for_run" };
-  return { ok: true, time: Math.round(time * 100) / 100 };
+  const t = round2(time);
+  if (caught) return { ok: true, caught, time: t, order: t };
+  return { ok: true, caught, time: t, gap: round2(gap), order: round2(RULES.missBase + gap) };
 }
 
 // Words are matched after lowercasing, undoing common leetspeak and dropping spaces/punctuation.

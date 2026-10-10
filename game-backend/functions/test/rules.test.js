@@ -11,7 +11,7 @@ test("weekId follows ISO weeks in UTC", () => {
 
 test("checkScore accepts a normal catch", () => {
   const r = checkScore({ time: 24.567, acorns: 60, bumps: 2 }, 32);
-  assert.deepEqual(r, { ok: true, time: 24.57 });
+  assert.deepEqual(r, { ok: true, caught: true, time: 24.57, order: 24.57 });
 });
 
 test("checkScore rejects impossible or forged runs", () => {
@@ -62,4 +62,22 @@ test("cleanName blocks abuse, impersonation and junk", () => {
 test("cleanControl keeps the three known controls and drops everything else", () => {
   assert.deepEqual(["tilt", "touch", "keyboard"].map(cleanControl), ["tilt", "touch", "keyboard"]);
   for (const bad of [undefined, null, "", "Tilt", "gamepad", "__proto__", 1, ["tilt"], { control: "tilt" }]) assert.equal(cleanControl(bad), null);
+});
+
+test("checkScore takes misses, which always sort below catches", () => {
+  const miss = checkScore({ time: 29.4, acorns: 30, bumps: 4, caught: false, gap: 6.126 }, 40);
+  assert.deepEqual(miss, { ok: true, caught: false, time: 29.4, gap: 6.13, order: 1006.13 });
+  const slowestCatch = checkScore({ time: RULES.maxTime, acorns: 1 }, 400);
+  const closestMiss = checkScore({ time: 30, acorns: 1, caught: false, gap: RULES.minGap }, 40);
+  assert.ok(slowestCatch.order < closestMiss.order);
+  assert.ok(closestMiss.order < miss.order);                                    // closer misses rank higher
+  for (const gap of [undefined, null, "6", NaN, 1.9, -5, 1091]) assert.equal(checkScore({ time: 30, acorns: 1, caught: false, gap }, 40).reason, "bad_gap", String(gap));
+  assert.equal(checkScore({ time: 30, acorns: 1, caught: false, gap: 1090 }, 40).ok, true);     // still at the start line when it escaped
+  assert.equal(checkScore({ time: 30, acorns: 1, caught: false, gap: 941, stage: "ocean" }, 40).reason, "bad_gap");
+  // the thief needs a while to reach its escape point, longer in the burrow than in the sea
+  assert.equal(checkScore({ time: 22, acorns: 1, caught: false, gap: 5 }, 40).reason, "implausible_time");
+  assert.equal(checkScore({ time: 22, acorns: 1, caught: false, gap: 5, stage: "ocean" }, 40).ok, true);
+  assert.equal(checkScore({ time: 30, acorns: 1, caught: false, gap: 5 }, 20).reason, "too_fast_for_run");
+  for (const caught of ["no", 0, null]) assert.equal(checkScore({ time: 30, acorns: 1, caught, gap: 5 }, 40).reason, "bad_result");
+  assert.equal(checkScore({ time: 24, acorns: 1, gap: 5 }, 40).caught, true);  // older game versions send no `caught`: a catch
 });

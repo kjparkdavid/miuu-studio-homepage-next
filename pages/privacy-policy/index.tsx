@@ -511,13 +511,14 @@ const PrivacyPolicyPage = () => {
             Clearing your browser data removes them.
           </li>
           <li>
-            <strong>Leaderboard</strong>: if you catch the squirrel and choose
-            to add your score, we store the nickname you type, your catch time,
-            how many acorns you collected, how you steered (tilt, touch or
-            keyboard) and the date.{" "}
+            <strong>Leaderboard</strong>: after a race, if you choose to add
+            your score, we store the nickname you type, whether you caught the
+            squirrel, your catch time or how far behind you finished, how many
+            acorns you collected, how you steered (tilt, touch or keyboard) and
+            the date.{" "}
             <strong>
-              Your nickname, time, acorn count and steering method are shown
-              publicly
+              Your nickname, result (catch time or distance behind), acorn count
+              and steering method are shown publicly
             </strong>{" "}
             on the weekly and all-time leaderboards, so please don&apos;t use
             your real name or anything that identifies you. Nicknames that are
@@ -721,9 +722,9 @@ const PrivacyPolicyPage = () => {
             a limited period, normally no more than 90 days.
           </li>
           <li>
-            <strong>Game leaderboard</strong> (nickname, catch time, acorn count,
-            steering method, date): kept while the game is online, and shown
-            publicly. To have an
+            <strong>Game leaderboard</strong> (nickname, result, catch time or
+            distance behind, acorn count, steering method, date): kept while the
+            game is online, and shown publicly. To have an
             entry removed, email us the nickname and roughly when you played.
             Race records and spam counters delete themselves within about two
             days.
@@ -799,7 +800,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: October 9, 2026</p>
+        <p>Effective Date: October 10, 2026</p>
 
         <p>
           <strong>Contact Us</strong>

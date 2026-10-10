@@ -1,4 +1,5 @@
-// Leaderboard client: talks to the `api` Cloud Function (see /game-backend). Only catches can be submitted.
+// Leaderboard client: talks to the `api` Cloud Function (see /game-backend). Any finished race can be
+// added: catches rank by time, misses below them by how far ahead the thief was when it got away.
 
 // Firebase project miuu-diary-chase, function `api` (see /game-backend).
 import { track } from "./analytics.js";
@@ -17,6 +18,7 @@ const MESSAGES = {
   name_missing: "Type a name first",
   too_fast_for_run: "We couldn't verify this run",
   implausible_time: "We couldn't verify this run",
+  bad_gap: "We couldn't verify this run",
   run_used: "This run is already on the board",
   unknown_run: "We couldn't verify this run",
   slow_down: "Too many tries. Take a breather and try again",
@@ -59,7 +61,7 @@ export function onRaceStart() {
 
 // ---------------- UI ----------------
 const $ = (id) => document.getElementById(id);
-let last = null;    // { caught, time, acorns, bumps, control }
+let last = null;    // { caught, time, gap (misses only), acorns, bumps, control }
 const views = {};   // list element id -> scope currently shown (ignores stale responses)
 
 export function initUI() {
@@ -78,19 +80,18 @@ export function showResult(result) {
   last = result;
   if (!enabled) return;
   $("lbBox").hidden = false;
-  const form = $("lbForm");
-  form.hidden = !result.caught;
-  $("lbNote").textContent = result.caught ? "" : "Catch the squirrel to get on the leaderboard 🏆";
+  $("lbForm").hidden = false;
+  $("lbNote").textContent = "";
   $("lbRank").textContent = "";
   $("lbName").value = store.get("miuu-name") || "";
   $("lbSend").disabled = false;
   // desktop: put the cursor in the name box (on phones that would pop the keyboard over the board)
-  if (result.caught && !matchMedia("(pointer: coarse)").matches) setTimeout(() => $("lbName").focus(), 50);
+  if (!matchMedia("(pointer: coarse)").matches) setTimeout(() => $("lbName").focus(), 50);
   showBoard("rBoardList", "rTabWeek", "rTabAll", "week");
 }
 
 async function submit() {
-  if (!last || !last.caught) return;
+  if (!last) return;
   const name = $("lbName").value;
   const btn = $("lbSend"), note = $("lbNote");
   btn.disabled = true;
@@ -98,13 +99,15 @@ async function submit() {
   try {
     const runId = await run;
     if (!runId) throw Object.assign(new Error("network"), { code: "network" });
-    const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, time: Math.round(last.time * 100) / 100, acorns: last.acorns, bumps: last.bumps, control: last.control });
+    const score = { time: Math.round(last.time * 100) / 100, caught: last.caught, ...(last.caught ? {} : { gap: Math.round(last.gap * 100) / 100 }) };
+    const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, ...score, acorns: last.acorns, bumps: last.bumps, control: last.control });
     store.set("miuu-name", name.trim());
-    track("leaderboard_submit", { stage, rank_week: r.week.rank, rank_all: r.all.rank });   // ranks only, never the nickname
+    track("leaderboard_submit", { stage, result: last.caught ? "caught" : "escaped", rank_week: r.week.rank, rank_all: r.all.rank });   // ranks only, never the nickname
     $("lbForm").hidden = true;
     note.textContent = "";
-    $("lbRank").textContent = `#${r.week.rank} this week · #${r.all.rank} all-time` + (r.all.improved ? "" : ` (your best is ${r.all.best.toFixed(2)}s)`);
-    showBoard("rBoardList", "rTabWeek", "rTabAll", views.rBoardList || "week");
+    const best = r.all.caught === false ? `${metres(r.all.gap)} m behind` : `${r.all.best.toFixed(2)}s`;
+    $("lbRank").textContent = `#${r.week.rank} this week · #${r.all.rank} all-time` + (r.all.improved ? "" : ` (your best is ${best})`);
+    showBoard("rBoardList", "rTabWeek", "rTabAll", views.rBoardList || "week", true);
   } catch (e) {
     btn.disabled = false;
     note.textContent = MESSAGES[e.code] || "The leaderboard is offline right now";
@@ -118,7 +121,8 @@ function openBoard(s) {
   showBoard("boardList", "tabWeek", "tabAll", s);
 }
 
-async function showBoard(listId, weekTab, allTab, s) {
+// reveal: scroll the list to the player's own row (used right after they add a score)
+async function showBoard(listId, weekTab, allTab, s, reveal = false) {
   views[listId] = s;
   $(weekTab).classList.toggle("on", s === "week");
   $(allTab).classList.toggle("on", s === "all");
@@ -129,16 +133,28 @@ async function showBoard(listId, weekTab, allTab, s) {
     const d = await call("GET", `/board?scope=${s}&stage=${stage}&deviceId=${encodeURIComponent(deviceId())}`);
     if (views[listId] !== s) return;
     if (!d.entries.length) {
-      list.replaceChildren(empty(s === "week" ? "No catches yet this week. Be the first!" : "No catches yet. Be the first!"));
+      list.replaceChildren(empty(s === "week" ? "Nobody on the board yet this week. Be the first!" : "Nobody on the board yet. Be the first!"));
       return;
     }
-    list.replaceChildren(...d.entries.map((e) => row(medal(e.rank), e.name, e.control, `${e.time.toFixed(2)}s`, `${item} ${e.acorns}`, e.me)));
+    const rows = [];
+    const add = (e, rank, me) => rows.push(row(rank, e.name, e.control, score(e), `${item} ${e.acorns}`, me));
+    d.entries.forEach((e, i) => {
+      // catches come first; this line marks where the misses start
+      if (e.caught === false && (i === 0 || d.entries[i - 1].caught !== false)) rows.push(divider("Almost caught it · how far behind"));
+      add(e, medal(e.rank), e.me);
+    });
+    if (d.mine) { rows.push(divider("⋯")); add(d.mine, String(d.mine.rank), true); }   // your own entry, further down than the board shows
+    list.replaceChildren(...rows);
+    const me = reveal && list.querySelector(".me");
+    if (me) list.scrollTop += Math.max(0, me.getBoundingClientRect().bottom - list.getBoundingClientRect().bottom);
   } catch {
     list.replaceChildren(empty("The leaderboard is offline right now"));
   }
 }
 
 const medal = (r) => (r === 1 ? "🥇" : r === 2 ? "🥈" : r === 3 ? "🥉" : String(r));
+const metres = (gap) => Math.max(1, Math.round(gap * 2));   // same rounding as "It was 12 m ahead" on the result card
+const score = (e) => (e.caught === false ? `💨 ${metres(e.gap)} m` : `${e.time.toFixed(2)}s`);
 // How each score was steered. Scores saved before this was recorded have no icon.
 const CONTROLS = { tilt: ["📱", "Tilt"], touch: ["👆", "Touch"], keyboard: ["⌨️", "Keyboard"] };
 function row(rank, name, control, time = "", acorns = "", me = false) {
@@ -157,6 +173,12 @@ function row(rank, name, control, time = "", acorns = "", me = false) {
 function empty(text) {
   const li = document.createElement("li");
   li.className = "empty";
+  li.textContent = text;
+  return li;
+}
+function divider(text) {
+  const li = document.createElement("li");
+  li.className = "sep";
   li.textContent = text;
   return li;
 }

@@ -9,6 +9,7 @@ const assert = require("node:assert");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 const { createApi } = require("../lib/api");
+const { RULES } = require("../lib/rules");
 
 initializeApp({ projectId: process.env.GCLOUD_PROJECT });
 const db = getFirestore();
@@ -27,10 +28,11 @@ function call(method, path, { body, query = {}, ip = "1.2.3.4" } = {}) {
   });
 }
 const dev = (n) => `device-${String(n).padStart(12, "0")}`;
-async function race(device, name, time, { acorns = 40, wait = time + 6, ip, control } = {}) {
+async function race(device, name, time, { acorns = 40, wait = time + 6, ip, control, stage, gap } = {}) {
   const s = await call("POST", "/start", { ip });
   clock += wait * 1000;
-  return call("POST", "/submit", { ip, body: { runId: s.body.runId, deviceId: device, name, time, acorns, bumps: 1, control } });
+  const miss = gap === undefined ? {} : { caught: false, gap };
+  return call("POST", "/submit", { ip, body: { runId: s.body.runId, deviceId: device, name, time, acorns, bumps: 1, control, stage, ...miss } });
 }
 
 test.before(async () => {
@@ -107,6 +109,52 @@ test("the board shows how each best was steered", async () => {
   await race(dev(7), "Tilty", 25, { control: "touch", ip: "6.6.6.1" });       // a new best brings its own icon
   const b2 = await call("GET", "/board", { query: { scope: "week" } });
   assert.equal(b2.body.entries.find((e) => e.name === "Tilty").control, "touch");
+});
+
+test("misses go below every catch, closest first, and a catch replaces a miss", async () => {
+  const far = await race(dev(11), "Faraway", 30, { gap: 10, ip: "8.8.1.1" });
+  assert.equal(far.status, 200, JSON.stringify(far.body));
+  assert.deepEqual(far.body.week, { rank: 6, improved: true, caught: false, best: null, gap: 10 });   // five catches this week
+  const near = await race(dev(12), "Nearly", 31, { gap: 4, ip: "8.8.1.2" });
+  assert.deepEqual([near.body.week.rank, near.body.week.gap], [6, 4]);
+  let b = await call("GET", "/board", { query: { scope: "week", deviceId: dev(11) } });
+  assert.deepEqual(b.body.entries.slice(-3).map((e) => [e.rank, e.name, e.caught, e.gap, e.me]), [[5, "Odd", true, undefined, false], [6, "Nearly", false, 4, false], [7, "Faraway", false, 10, true]]);
+  assert.equal(b.body.mine, undefined);                                          // already on the board: nothing to pin
+  const worse = await race(dev(12), "Nearly", 31, { gap: 9, ip: "8.8.1.2" });    // a worse miss keeps the better one
+  assert.deepEqual(worse.body.week, { rank: 6, improved: false, caught: false, best: null, gap: 4 });
+  const caught = await race(dev(11), "Faraway", 40, { ip: "8.8.1.1" });          // slowest catch still beats the closest miss
+  assert.deepEqual(caught.body.week, { rank: 6, improved: true, caught: true, best: 40 });
+  const again = await race(dev(11), "Faraway", 30, { gap: 3, ip: "8.8.1.1" });   // and a later miss doesn't undo it
+  assert.deepEqual(again.body.week, { rank: 6, improved: false, caught: true, best: 40 });
+  b = await call("GET", "/board", { query: { scope: "week" } });
+  assert.deepEqual(b.body.entries.slice(-2).map((e) => [e.name, e.caught, e.time, e.gap]), [["Faraway", true, 40, undefined], ["Nearly", false, 31, 4]]);
+  const forged = await race(dev(13), "Sneaky", 30, { gap: 0.5, ip: "8.8.1.3" });
+  assert.deepEqual([forged.status, forged.body.error], [400, "bad_gap"]);
+});
+
+test("your own entry comes back even when it is below the top of the board", async () => {
+  for (let i = 0; i < RULES.boardSize + 2; i++) {
+    const r = await race(dev(100 + i), `Miss${i}`, 24, { stage: "ocean", gap: 5 + i, ip: `8.9.0.${i}` });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+  }
+  const last = dev(100 + RULES.boardSize + 1);
+  const b = await call("GET", "/board", { query: { scope: "week", stage: "ocean", deviceId: last } });
+  assert.equal(b.body.entries.length, RULES.boardSize);
+  assert.deepEqual(b.body.entries.slice(0, 2).map((e) => [e.name, e.caught]), [["Bubbles", true], ["Miss0", false]]);   // this week's one ocean catch, then the misses
+  assert.ok(b.body.entries.every((e) => !e.me));
+  // Bubbles and 21 closer misses are ahead
+  assert.deepEqual(b.body.mine, { rank: RULES.boardSize + 3, name: `Miss${RULES.boardSize + 1}`, caught: false, time: 24, gap: 5 + RULES.boardSize + 1, acorns: 40, control: null });
+  const anon = await call("GET", "/board", { query: { scope: "week", stage: "ocean" } });
+  assert.equal(anon.body.mine, undefined);
+});
+
+test("scores saved before misses existed still count as catches", async () => {
+  const crypto = require("crypto");
+  const id = crypto.createHash("sha256").update("test:" + dev(50)).digest("hex").slice(0, 32);
+  await db.collection("bests").doc(`all_${id}`).set({ scope: "all", name: "Veteran", time: 20, acorns: 50, updatedAt: clock });   // no caught, no order
+  const miss = await race(dev(50), "Veteran", 30, { gap: 3, ip: "8.8.2.1" });
+  assert.deepEqual([miss.body.all.improved, miss.body.all.caught, miss.body.all.best], [false, true, 20]);
+  assert.deepEqual([miss.body.week.improved, miss.body.week.caught, miss.body.week.gap], [true, false, 3]);
 });
 
 test("rate limit kicks in for a flood from one IP", async () => {
