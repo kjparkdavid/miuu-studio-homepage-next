@@ -5,8 +5,8 @@
 // that can happen (thief at full pace with the player right behind it), and maxGap is the escape
 // point itself, the furthest behind anyone can be.
 const STAGES = {
-  burrow: { minTime: 15.5, maxItems: 110, minMissTime: 25, maxGap: 1090 },   // bot: ~17.9s; 110 acorns; escape at 27.4s, 1086 units in
-  ocean: { minTime: 17, maxItems: 95, minMissTime: 21, maxGap: 940 },        // bot: ~19.5s; 95 starfish; escape at 22.7s, 938 units in
+  burrow: { minTime: 14, maxItems: 110, minMissTime: 25, maxGap: 1090 },     // bot: ~16.4s; 110 acorns; escape at 28.0s, 1086 units in
+  ocean: { minTime: 14.5, maxItems: 95, minMissTime: 21, maxGap: 940 },      // bot: ~16.9s; 95 starfish; escape at 23.1s, 938 units in
 };
 
 const RULES = {

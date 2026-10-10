@@ -14,9 +14,10 @@ const burrow = {
   titleBg: "img/bg_title.png",
   music: { src: "audio/burrow.mp3", vol: 0.3 },      // vol evens out how loud the two tracks are mastered
   tag: "🐿️ A squirrel ran off with Miuu's diary!",
-  // Balanced with the human-like test player (bot 4): an average gamer catches the squirrel ~90% of the
-  // time, a first-timer ~1 in 4. Re-run the simulation before changing these.
-  tune: { squirrelPace: 1.17, squirrelTired: 0.6, squirrelRubber: 0.3 },
+  // The easy stage. Balanced with the human-like test player (bot 4): a first-timer catches the squirrel
+  // about half the time (55%), an average gamer almost always (99%). Re-run the simulation before
+  // changing these, and keep the leaderboard's limits (game-backend rules.js) under the perfect bot's time.
+  tune: { squirrelPace: 1.14, squirrelTired: 0.6, squirrelRubber: 0.36 },
   wrap: BT.mod,
   curveAt: BT.curveAt,
   speedAt: BT.speedAt,
@@ -67,8 +68,10 @@ const ocean = {
   music: { src: "audio/ocean.mp3", vol: 0.36 },
   tag: "🐟 A fish swam off with Miuu's diary!",
   // the sea's sweeps are much tighter than the burrow's, so each unit of curve pushes less
-  // Thief: an average gamer catches the fish ~69% of the time (bot 4); the harder second stage.
-  tune: { centrifugal: 185, squirrelPace: 1.2, squirrelTired: 0.74, squirrelRubber: 0.26 },
+  // The medium stage (bot 4): a first-timer catches the fish ~10% of the time, an average gamer ~92%,
+  // a practised one ~99%. The old, harder tune (pace 1.2, rubber 0.26: 2% / 70% / 95%) is roughly
+  // where a hard third stage would sit.
+  tune: { centrifugal: 185, squirrelPace: 1.17, squirrelTired: 0.74, squirrelRubber: 0.38 },
   wrap: (i) => i,
   curveAt: OT.curveAt,
   speedAt: OT.speedAt,

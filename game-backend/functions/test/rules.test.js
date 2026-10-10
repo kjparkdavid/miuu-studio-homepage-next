@@ -16,7 +16,7 @@ test("checkScore accepts a normal catch", () => {
 
 test("checkScore rejects impossible or forged runs", () => {
   assert.equal(checkScore({ time: 12, acorns: 10 }, 60).reason, "implausible_time");
-  assert.equal(checkScore({ time: 16, acorns: 10 }, 60).ok, true);   // quick but possible on the burrow
+  assert.equal(checkScore({ time: 14.2, acorns: 10 }, 60).ok, true);   // quick but possible on the burrow
   assert.equal(checkScore({ time: 25, acorns: 999 }, 60).reason, "bad_acorns");
   assert.equal(checkScore({ time: 25, acorns: 1.5 }, 60).reason, "bad_acorns");
   assert.equal(checkScore({ time: "25", acorns: 1 }, 60).reason, "bad_time");
@@ -29,8 +29,8 @@ test("checkScore rejects impossible or forged runs", () => {
 test("each stage has its own limits and its own boards", () => {
   assert.equal(checkScore({ time: 24, acorns: 110 }, 60).ok, true);                       // burrow by default, all 110 acorns
   assert.equal(checkScore({ time: 24, acorns: 111 }, 60).reason, "bad_acorns");
-  assert.equal(checkScore({ time: 16, acorns: 80, stage: "burrow" }, 60).ok, true);       // fine in the burrow, too quick for the sea
-  assert.equal(checkScore({ time: 16, acorns: 80, stage: "ocean" }, 60).reason, "implausible_time");
+  assert.equal(checkScore({ time: 14.2, acorns: 80, stage: "burrow" }, 60).ok, true);     // fine in the burrow, too quick for the sea
+  assert.equal(checkScore({ time: 14.2, acorns: 80, stage: "ocean" }, 60).reason, "implausible_time");
   assert.equal(checkScore({ time: 19, acorns: 96, stage: "ocean" }, 60).reason, "bad_acorns");
   assert.equal(checkScore({ time: 25, acorns: 1, stage: "sky" }, 60).reason, "bad_stage");
   assert.equal(checkScore({ time: 25, acorns: 1, stage: "__proto__" }, 60).reason, "bad_stage");
