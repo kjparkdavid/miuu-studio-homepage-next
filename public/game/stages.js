@@ -60,7 +60,7 @@ const ocean = {
   id: "ocean",
   name: "Ocean",
   emoji: "🐟",
-  imageKeys: [...OCEAN_KEYS, "diary"],   // "diary" is the shared pop shown on a catch
+  imageKeys: [...OCEAN_KEYS, "diary", "sign_miuu"],   // shared with the burrow: the catch pop and the app billboard
   intro: "img/ocean/intro_ocean",
   titleBg: "img/ocean/bg_title.png",
   tag: "🐟 A fish swam off with Miuu's diary!",

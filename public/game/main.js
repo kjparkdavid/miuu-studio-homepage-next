@@ -56,7 +56,7 @@ const ui = {
   stagePick: document.getElementById("stagePick"),
   mapRow: document.getElementById("mapRow"),
   share: document.getElementById("shareBtn"),
-  appLink: document.getElementById("appLink"),
+
   tagline: document.getElementById("tagline"),
 };
 
@@ -214,18 +214,22 @@ ui.share.addEventListener("click", async () => {
   const text = r.caught
     ? `I caught the ${tx.thief} in ${r.time.toFixed(1)}s in Miuu's Diary Chase ${tx.thiefEmoji} Can you beat me?`
     : `The ${tx.thief} got away with Miuu's diary ${tx.thiefEmoji} Can you catch it?`;
-  const method = await share({ text, url: shareUrl(ST.id, r.caught ? r.time : null) });
+  const url = shareUrl(ST.id, r.caught ? r.time : null);
+  let method = await share({ text, url });
+  if (method === "aborted") return;
   if (method === "copy") toast("Link copied! Paste it to a friend.");
-  if (method) track("share", { stage: ST.id, method, result: r.caught ? "caught" : "escaped" });
+  if (!method) { window.prompt("Copy this link and send it to a friend:", url); method = "manual"; }   // no share sheet, no clipboard
+  track("share", { stage: ST.id, method, result: r.caught ? "caught" : "escaped" });
 });
 {
   // "Get the Miuu Note app" goes straight to this phone's store, credited to the game
   const link = storeLink();
-  ui.appLink.href = link.href;
-  if (link.store) {
-    ui.appLink.target = "_blank";
-    ui.appLink.rel = "noopener";   // no noreferrer: App Store Connect credits miuunote.site as the web referrer
-    ui.appLink.addEventListener("click", () => track("store_click", { store: link.store, placement: "game" }));
+  for (const a of document.querySelectorAll(".appBanner")) {
+    a.href = link.href;
+    if (!link.store) continue;   // desktop: the home page, which shows both store badges
+    a.target = "_blank";
+    a.rel = "noopener";   // no noreferrer: App Store Connect credits miuunote.site as the web referrer
+    a.addEventListener("click", () => track("store_click", { store: link.store, placement: `game_${a.dataset.placement}` }));
   }
 }
 canvas.addEventListener("pointerdown", () => {

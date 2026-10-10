@@ -91,11 +91,11 @@ export function shareUrl(stageId, time) {
   return `${location.origin}${location.pathname}?${q}`;
 }
 
-/** Opens the phone's share sheet, or copies the link where there isn't one. Resolves to "native" | "copy" | null. */
+/** Opens the phone's share sheet, or copies the link where there isn't one. Resolves to "native" | "copy" | "aborted" | null (nothing worked). */
 export async function share({ text, url }) {
   if (navigator.share) {
     try { await navigator.share({ title: "Miuu's Diary Chase", text, url }); return "native"; }
-    catch (e) { if (e && e.name === "AbortError") return null; }   // closed the sheet: not a share
+    catch (e) { if (e && e.name === "AbortError") return "aborted"; }   // closed the sheet: not a share
   }
   try { await navigator.clipboard.writeText(`${text} ${url}`); return "copy"; } catch { return null; }
 }

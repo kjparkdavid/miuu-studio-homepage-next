@@ -122,6 +122,10 @@ for (let i = WRECK_END + 20; i < ABYSS_END - 10; i += 6) {
 }
 [RISE_END + 20, RISE_END + 48, RISE_END + 75, RISE_END + 110].forEach((i, j) => add(i, "buoy", (j % 2 ? 1 : -1) * (1500 + rng() * 900), "abs", -70));
 for (const i of [10, 22, 34]) add(i, "buoy", (i % 2 ? 1 : -1) * 1500, "abs", -70);
+// billboards for the app, standing in the water: beside the dock, and where the sub comes to rest
+add(16, "sign_miuu", 1500, "abs", -60);
+add(RISE_END + 30, "sign_miuu", -1400, "abs", -60);
+add(RISE_END + 66, "sign_miuu", 1350, "abs", -60);
 
 // fish schools crossing the path: {seg, x0, yrel, vx, colour, n}
 export const SCHOOLS = [];

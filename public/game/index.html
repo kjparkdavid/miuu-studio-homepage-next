@@ -79,12 +79,21 @@
 
   #result { background: rgba(43,33,64,.35); justify-content: center; }
   #result .panel { padding: 14px 16px 16px; max-height: 96%; overflow-y: auto; }
-  #result img { width: 72px; height: 72px; object-fit: contain; margin: 0 auto -4px; display: block; filter: drop-shadow(0 4px 0 rgba(75,58,110,.25)); }
+  #resultImg { width: 72px; height: 72px; object-fit: contain; margin: 0 auto -4px; display: block; filter: drop-shadow(0 4px 0 rgba(75,58,110,.25)); }
   #resultTitle { font-size: 38px; font-weight: 800; color: #fff; -webkit-text-stroke: 0.16em var(--ink); paint-order: stroke fill; margin: 4px 0 2px; }
   #resultSub { font-weight: 700; font-size: 15px; margin: 0 0 10px; }
   #resultStats { font-size: 15px; font-weight: 600; margin-bottom: 10px; line-height: 1.6; }
   #resultStats b { font-size: 22px; }
   .link { display: block; margin-top: 12px; font-weight: 700; font-size: 14px; color: var(--ink); }
+  .appBanner {
+    display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 7px 10px; text-align: left; text-decoration: none;
+    color: var(--ink); background: #fff; border: 3px solid var(--ink); border-radius: 16px;
+  }
+  .appBanner img { width: 42px; height: 42px; border-radius: 11px; border: 2px solid var(--ink); flex: none; }
+  .appBanner .ab-text { flex: 1; min-width: 0; line-height: 1.25; }
+  .appBanner b { display: block; font-size: 15px; font-weight: 800; }
+  .appBanner small { display: block; font-size: 11.5px; font-weight: 600; opacity: .8; }
+  .appBanner .ab-get { flex: none; font-weight: 800; font-size: 14px; color: #fff; background: var(--purple-d); border: 2px solid var(--ink); border-radius: 999px; padding: 5px 14px; }
 
   #muteBtn {
     position: absolute; right: 12px; top: 76px; width: 36px; height: 36px; border-radius: 50%;
@@ -155,6 +164,11 @@
       <div id="modeNote"></div>
       <button id="startBtn" class="big" type="button">Tap to start</button>
       <button id="boardBtn" class="small" type="button" hidden>🏆 Leaderboard</button>
+      <a id="appLinkTitle" class="appBanner" href="/" data-placement="title">
+        <img src="img/app_icon.png" alt="" width="42" height="42">
+        <span class="ab-text"><b>Miuu Note</b><small>The cute diary Miuu is chasing. Free app.</small></span>
+        <span class="ab-get">Get</span>
+      </a>
     </div>
   </div>
 
@@ -179,7 +193,11 @@
       </div>
       <button id="againBtn" class="big" type="button">Play again</button>
       <button id="shareBtn" class="big alt" type="button">📣 Challenge a friend</button>
-      <a id="appLink" class="link" href="/">💜 Get the Miuu Note app</a>
+      <a id="appLink" class="appBanner" href="/" data-placement="result">
+        <img src="img/app_icon.png" alt="" width="42" height="42">
+        <span class="ab-text"><b>Miuu Note</b><small>The cute diary Miuu is chasing. Free app.</small></span>
+        <span class="ab-get">Get</span>
+      </a>
     </div>
   </div>
 

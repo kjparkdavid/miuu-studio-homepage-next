@@ -153,6 +153,10 @@ for (const i of [...range(0, LIP - 4, 4), ...range(EXIT + 2, N, 4)]) {
   add(i + 2, "flowers", -side * (1050 + rng() * 250));
 }
 add(28, "sign_burrow", 1500);
+// billboards for the app: one at the start line, two where the car comes to rest
+add(12, "sign_miuu", -1500);
+add(EXIT + 22, "sign_miuu", -1450);
+add(EXIT + 60, "sign_miuu", 1350);
 for (const i of range(M(56), M(200), 5)) {
   if (rng() < 0.7) {
     const side = choice([-1, 1]);

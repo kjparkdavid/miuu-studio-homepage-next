@@ -15,7 +15,7 @@ export const WW = {
   sq_diary: 620, sq_empty: 620, big_acorn: 330, diary: 300, tree_p: 1100, tree_g: 1100, tree_o: 1100, flowers: 460,
   door: 540, mush: 380, acorn: 300, pile: 1150, squirrel: 420, glow_c: 700, glow_p: 700, crystal: 520,
   lantern_p: 200, lantern_o: 200, chev_l: 520, chev_r: 520,
-  sign_burrow: 987, sign_store: 911, sign_grotto: 868, sign_village: 944, sign_warp: 893,
+  sign_burrow: 987, sign_store: 911, sign_grotto: 868, sign_village: 944, sign_warp: 893, sign_miuu: 992,
   pickup: 170, mush_ob: 360, crystal_ob: 400,
 };
 export const FILES = {
@@ -25,7 +25,7 @@ export const FILES = {
   glow_c: "glow_mushroom_cyan", glow_p: "glow_mushroom_pink", crystal: "crystals",
   lantern_p: "lantern_pink", lantern_o: "lantern_orange", chev_l: "turn_sign_left", chev_r: "turn_sign_right",
   sign_burrow: "sign_squirrel_burrow", sign_store: "sign_acorn_storage", sign_grotto: "sign_glow_grotto",
-  sign_village: "sign_squirrel_village", sign_warp: "sign_warp_tunnel",
+  sign_village: "sign_squirrel_village", sign_warp: "sign_warp_tunnel", sign_miuu: "sign_miuu_note",
   pickup: "acorn_big", mush_ob: "mushrooms", crystal_ob: "crystals", wheel: "steering_wheel", miuu: "miuu_back",
 };
 
