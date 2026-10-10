@@ -16,15 +16,39 @@ function tone(freq, dur, { type = "sine", vol = 0.18, slide = 0, delay = 0 } = {
 }
 
 // ---------------- background music ----------------
-// One track per stage (stages.js `music`), streamed, restarted at each race start and looping until
-// the next one. It goes through the audio context so its level can be set: on iOS an <audio>
-// element's own volume is fixed at full.
-let song = null;   // { src, el } once a race has started on a stage that has music
+// Streamed tracks, one sounding at a time: the menu track on the title and result screens, the
+// stage's own track (stages.js `music`) during a race. They go through the audio context so their
+// level can be set and faded: on iOS an <audio> element's own volume is fixed at full.
+const FADE = 0.4;            // seconds, when one track hands over to another
+const songs = new Map();     // src -> { el, gain, vol }
+let current = null;          // the one that should be sounding
 
+function songFor(track) {
+  let song = songs.get(track.src);
+  if (!song) {
+    const el = new Audio(track.src);
+    el.loop = true;
+    let gain = null;
+    try {
+      gain = ac.createGain();
+      gain.gain.value = track.vol;
+      ac.createMediaElementSource(el).connect(gain).connect(ac.destination);
+    } catch { gain = null; el.volume = track.vol; }   // no Web Audio: plain element volume, no fades
+    songs.set(track.src, (song = { el, gain, vol: track.vol }));
+  }
+  return song;
+}
+function fade(song, to) {
+  if (!song.gain) return;
+  const g = song.gain.gain, t = ac.currentTime;
+  g.cancelScheduledValues(t);
+  g.setValueAtTime(g.value, t);
+  g.linearRampToValueAtTime(to, t + FADE);
+}
 function syncMusic() {
-  if (!song) return;
-  if (sfx.muted || document.hidden) song.el.pause();
-  else song.el.play().catch(() => {});   // refused outside a tap: the next race start tries again
+  if (!current) return;
+  if (sfx.muted || document.hidden) current.el.pause();
+  else current.el.play().catch(() => {});   // refused before the first tap: the next tap tries again
 }
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && ac && ac.state !== "running") ac.resume().catch(() => {});
@@ -34,21 +58,19 @@ document.addEventListener("visibilitychange", () => {
 export const sfx = {
   muted: false,
   setMuted(on) { this.muted = on; syncMusic(); },
-  // Start this stage's track from the top (call inside the tap that starts a race), or stop with null.
-  music(track) {
-    if (song && (!track || song.src !== track.src)) { song.el.pause(); song = null; }
-    if (!track) return;
-    if (!song) {
-      const el = new Audio(track.src);
-      el.loop = true;
-      try {
-        const gain = ac.createGain();
-        gain.gain.value = track.vol;
-        ac.createMediaElementSource(el).connect(gain).connect(ac.destination);
-      } catch { el.volume = track.vol; }   // no Web Audio: plain element volume
-      song = { src: track.src, el };
+  // Make `track` ({ src, vol }) the one that plays, or none with null. A track's first play has to
+  // happen inside a tap or key press. `restart` plays it from the top instead of where it paused.
+  music(track, { restart = false } = {}) {
+    const next = track ? songFor(track) : null;
+    if (current && current !== next) {
+      const old = current;
+      fade(old, 0);
+      setTimeout(() => { if (current !== old) old.el.pause(); }, old.gain ? FADE * 1000 : 0);
     }
-    try { song.el.currentTime = 0; } catch {}
+    current = next;
+    if (!next) return;
+    if (restart) { try { next.el.currentTime = 0; } catch {} }
+    fade(next, next.vol);
     syncMusic();
   },
   unlock() {

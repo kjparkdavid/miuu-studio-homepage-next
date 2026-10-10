@@ -212,11 +212,24 @@ function vibrate(ms) {
 }
 
 // ---------------- start flow ----------------
+// Menu music on the title and result screens. Browsers only let sound start from a tap or key press,
+// so on the title it begins with the visitor's first one (capture: before the Start button's own handler,
+// which switches to the stage's track).
+const MENU_MUSIC = { src: "audio/menu.mp3", vol: 0.8 };   // a quiet master: evened out against the stage tracks
+let startTapped = false;   // Start can take a moment (motion permission) while the phase is still "title"
+function menuMusicOnGesture() {
+  if (state.phase !== "title" || startTapped) return;
+  sfx.unlock();
+  sfx.music(MENU_MUSIC);
+}
+document.addEventListener("click", menuMusicOnGesture, true);
+document.addEventListener("keydown", menuMusicOnGesture, true);
 ui.start.addEventListener("click", () => {
   // iOS: the motion permission prompt must be requested directly inside the tap.
   const perm = mode === "tilt" ? tilt.requestPermission() : Promise.resolve(false);
   sfx.unlock();
-  sfx.music(ST.music);
+  startTapped = true;
+  sfx.music(ST.music, { restart: true });
   tryFullscreenPortrait();
   perm.then(async (ok) => {
     if (mode === "tilt") {
@@ -234,7 +247,7 @@ ui.start.addEventListener("click", () => {
 ui.again.addEventListener("click", () => {
   ui.result.classList.add("hide");
   sfx.unlock();
-  sfx.music(ST.music);
+  sfx.music(ST.music, { restart: true });
   track("play_again", { stage: ST.id });
   beginRace();
   layout();
@@ -533,6 +546,7 @@ function finish() {
     stage: ST.id, control: controlName(), result: s.caught ? "caught" : "escaped", time_s: Math.round(time * 10) / 10,
     items: s.acorns, bonks: s.bumps, attempt: s.attempt || 0, challenged: challenge && challenge.stage === ST.id ? 1 : 0,
   });
+  sfx.music(MENU_MUSIC);
   lb.showResult({ caught: s.caught, time, gap: s.caught ? undefined : s.escapeGap, acorns: s.acorns, bumps: s.bumps, control: controlName() });
   ui.result.classList.remove("hide");
   syncQrCard();
@@ -721,7 +735,6 @@ function idleState() {
 // ---------------- stages ----------------
 async function selectStage(id) {
   ST = STAGES[id] || STAGES.burrow;
-  sfx.music(null);
   Object.assign(T, T_BASE, ST.tune);
   state.phase = "loading";
   ui.loading.classList.remove("hide");
