@@ -43,6 +43,7 @@ const ui = {
   start: document.getElementById("startBtn"),
   modeTilt: document.getElementById("modeTilt"),
   modeTouch: document.getElementById("modeTouch"),
+  modeKeys: document.getElementById("modeKeys"),
   modeNote: document.getElementById("modeNote"),
   result: document.getElementById("result"),
   resultTitle: document.getElementById("resultTitle"),
@@ -71,19 +72,23 @@ let qualityCap = 2;   // lowered automatically if frames take too long
 
 function setMode(m) {
   mode = m;
-  ui.modeTilt.classList.toggle("on", m === "tilt");
-  ui.modeTouch.classList.toggle("on", m === "touch");
+  ui.modeTilt.classList.toggle("on", isTouchDevice && m === "tilt");
+  ui.modeTouch.classList.toggle("on", isTouchDevice && m === "touch");
   ui.modeNote.textContent = m === "tilt"
     ? "Hold your phone like a steering wheel and turn it."
-    : isTouchDevice ? "Drag sideways, or put two thumbs down and twist." : "← → or A / D to steer. Space to boost.";
+    : isTouchDevice ? "Drag sideways, or put two thumbs down and twist."
+    : "← → or A / D to steer. Space to boost.\n📱 Tilt and touch steering work on your phone.";
 }
 ui.modeTilt.onclick = () => setMode("tilt");
 ui.modeTouch.onclick = () => setMode("touch");
 if (!Tilt.supported()) ui.modeTilt.disabled = true;
 if (!isTouchDevice) {
-  // On a computer there is one way to play, so say so instead of offering phone controls.
-  ui.modeTilt.hidden = true;
-  ui.modeTouch.textContent = "⌨️ Keyboard";
+  // On a computer you play on the keyboard. Tilt and Touch stay visible but greyed out, as a hint
+  // that the game has phone controls (tilting is the whole point of the reel).
+  for (const b of [ui.modeTilt, ui.modeTouch]) { b.disabled = true; b.title = "Works on your phone"; }
+  ui.modeKeys.hidden = false;
+  ui.modeKeys.classList.add("on");
+  ui.modeKeys.parentElement.classList.add("desktop");
   ui.start.textContent = "Start · press Enter";
   ui.again.textContent = "Play again · Enter";
 }

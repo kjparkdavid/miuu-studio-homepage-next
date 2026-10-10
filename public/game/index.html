@@ -85,7 +85,9 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   }
   .modes button.on { background: var(--purple); color: #fff; }
   .modes button:disabled { opacity: .4; }
-  #modeNote { font-size: 13px; font-weight: 600; margin: 10px 2px 14px; min-height: 2.6em; }
+  #modeNote { font-size: 13px; font-weight: 600; margin: 10px 2px 14px; min-height: 2.6em; white-space: pre-line; }
+  .modes.desktop button { font-size: 14px; padding: 8px 2px; }
+  .modes.desktop button:disabled { opacity: .45; cursor: not-allowed; }
   .big {
     width: 100%; font: 800 22px Poppins, system-ui; color: #fff; background: var(--pink); border: 4px solid var(--ink);
     border-radius: 20px; padding: 12px; box-shadow: 0 5px 0 var(--ink); cursor: pointer;
@@ -177,6 +179,7 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
       <div class="modes">
         <button id="modeTilt" type="button">📱 Tilt</button>
         <button id="modeTouch" type="button">👆 Touch</button>
+        <button id="modeKeys" type="button" hidden>⌨️ Keyboard</button>
       </div>
       <div id="modeNote"></div>
       <button id="startBtn" class="big" type="button">Tap to start</button>
