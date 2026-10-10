@@ -815,7 +815,9 @@ function initStageSwitch() {
   for (const id of STAGE_ORDER) {
     const b = document.createElement("button");
     b.type = "button"; b.dataset.stage = id;
-    b.textContent = `${STAGES[id].emoji} Play ${STAGES[id].name}`;
+    const icon = document.createElement("b");
+    icon.textContent = STAGES[id].emoji;
+    b.append(icon, `Play ${STAGES[id].name}`);
     b.onclick = () => switchStage(id);
     ui.stageSwitch.append(b);
   }

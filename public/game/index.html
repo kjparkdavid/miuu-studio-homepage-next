@@ -148,8 +148,17 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   .modes.stages button.on { background: var(--pink); }
   #lbBox { margin: 0 0 12px; }
   .modes.mini button { font-size: 13px; padding: 5px 6px; border-radius: 12px; }
-  #stageSwitch { margin-top: 10px; }
-  #stageSwitch button { font-size: 15px; padding: 8px 6px; }
+  /* Play again, with a compact button per other map beside it so both show without scrolling */
+  #againRow { display: flex; gap: 8px; align-items: stretch; }
+  #againRow .big { flex: 1; min-width: 0; }
+  #stageSwitch { display: flex; gap: 8px; }
+  #stageSwitch:empty { display: none; }
+  #stageSwitch button {
+    width: 78px; padding: 4px 2px; font: 700 12px/1.15 Poppins, system-ui; color: var(--ink); background: #fff;
+    border: 4px solid var(--ink); border-radius: 20px; box-shadow: 0 5px 0 var(--ink); cursor: pointer;
+  }
+  #stageSwitch button:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+  #stageSwitch button b { display: block; font-size: 22px; line-height: 1.2; font-weight: 400; }
   #rBoardList { max-height: 172px; margin: 8px 0 0; }
   #lbForm { display: flex; gap: 8px; }
   #lbName {
@@ -234,8 +243,10 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
         <ol id="rBoardList" class="boardList"></ol>
       </div>
       <p id="tiltHelp" hidden></p>
-      <button id="againBtn" class="big" type="button">Play again</button>
-      <div id="stageSwitch" class="modes mini"></div>
+      <div id="againRow">
+        <button id="againBtn" class="big" type="button">Play again</button>
+        <div id="stageSwitch"></div>
+      </div>
       <button id="shareBtn" class="big alt" type="button">📣 Challenge a friend</button>
       <a id="appLink" class="appBanner" href="/" data-placement="result">
         <img src="img/app_icon.png" alt="" width="42" height="42">
