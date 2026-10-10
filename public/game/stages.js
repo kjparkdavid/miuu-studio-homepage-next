@@ -13,7 +13,9 @@ const burrow = {
   intro: "img/intro_burrow",
   titleBg: "img/bg_title.png",
   tag: "🐿️ A squirrel ran off with Miuu's diary!",
-  tune: {},
+  // Balanced with the human-like test player (bot 4): an average gamer catches the squirrel ~90% of the
+  // time, a first-timer ~1 in 4. Re-run the simulation before changing these.
+  tune: { squirrelPace: 1.17, squirrelTired: 0.6, squirrelRubber: 0.3 },
   wrap: BT.mod,
   curveAt: BT.curveAt,
   speedAt: BT.speedAt,
@@ -63,7 +65,8 @@ const ocean = {
   titleBg: "img/ocean/bg_title.png",
   tag: "🐟 A fish swam off with Miuu's diary!",
   // the sea's sweeps are much tighter than the burrow's, so each unit of curve pushes less
-  tune: { centrifugal: 185, squirrelPace: 1.22, squirrelTired: 0.8 },
+  // Thief: an average gamer catches the fish ~69% of the time (bot 4); the harder second stage.
+  tune: { centrifugal: 185, squirrelPace: 1.2, squirrelTired: 0.74, squirrelRubber: 0.26 },
   wrap: (i) => i,
   curveAt: OT.curveAt,
   speedAt: OT.speedAt,

@@ -1,5 +1,6 @@
 import { W, H, S, WW, loadImages, outlinedText, drawSprite } from "./renderer.js";
 import { STAGES, STAGE_ORDER } from "./stages.js";
+import { mulberry32 } from "./track.js";
 import { Tilt, TouchKeys } from "./input.js";
 import { sfx } from "./sfx.js";
 import * as lb from "./leaderboard.js";
@@ -16,6 +17,7 @@ const T_BASE = {
   bumpSlow: 0.45,
   squirrelPace: 1.2,      // squirrel speed vs. the player's clean cruising speed
   squirrelTired: 0.65,    // multiplier once the squirrel reaches the warp tunnel
+  squirrelRubber: 0.22,   // how much the thief eases off when it is far ahead (0 = never)
   squirrelStartGap: 9,
   catchGap: 2,
   levelHorizon: 0.5,      // tilt mode: how much the scene counter-rotates to stay level
@@ -139,7 +141,7 @@ function reset() {
     pitch: 0, lean: 0, yaw: 0, shake: 0, stun: 0,
     boostT: 0, boostE: 0, meter: 0, acorns: 0, bumps: 0,
     sqPos: T.squirrelStartGap, sqSpeed: 0, sqX: 0, sqRun: 0, caught: false, escaped: false,
-    pop: [], flyers: [], banner: null, zoneShown: "", finishT: 0, offroad: false,
+    pop: [], flyers: [], banner: null, zoneShown: "", finishT: 0, offroad: false, hb: null,
   });
   ST.onReset(state);
 }
@@ -211,7 +213,7 @@ function update(dt) {
   let target = 0;
   if (mode === "tilt") target = tilt.steer();
   else target = touch.touching() ? touch.touchSteer() : touch.keyboardSteer(dt);
-  if (BOT && s.phase === "play") target = botSteer();
+  if (BOT && s.phase === "play") target = BOT === 4 ? humanSteer(dt) : botSteer();
   const autopilot = s.caught || s.escaped || s.phase === "finish";
   if (autopilot) target = Math.max(-1, Math.min(1, -s.camX / 500 + (ST.curveAt(s.pos) * T.centrifugal) / T.steerRate));
   s.steer += (target - s.steer) * Math.min(1, dt * 14);
@@ -310,6 +312,53 @@ function botSteer() {
   return Math.max(-1, Math.min(1, (want - s.camX) / 400 + (ST.curveAt(s.pos) * T.centrifugal * sr) / T.steerRate));
 }
 
+// ---------------- human-like test player (bot 4, debug only) ----------------
+// Used to estimate how often real people would win. `window.__human` overrides these.
+//   delay      seconds between seeing something and the hands reacting
+//   gain       how hard they correct (world units of error for full lock; bigger = lazier)
+//   noise      steering wobble (fraction of full lock)
+//   look       how many segments ahead they plan for
+//   ff         how well they anticipate a curve's push (1 = perfectly)
+//   lapse      attention lapses per second (each freezes their plan for ~0.4-0.9s)
+//   dodge/pad/collect  chance they notice and go for an obstacle / boost pad / pickup line
+//   boostDelay mean seconds to react to "Double tap!"; boostNever = chance they never use it
+const HUMAN = { delay: 0.25, gain: 650, noise: 0.15, look: 14, ff: 0.85, lapse: 0.1, dodge: 0.8, pad: 0.8, collect: 0.85, boostDelay: 1.5, boostNever: 0 };
+let humanSeed = 1;
+function humanSteer(dt) {
+  const s = state, P = { ...HUMAN, ...(window.__human || {}) };
+  const hb = (s.hb ||= { rand: mulberry32(window.__humanSeed ?? humanSeed++), q: [], n: 0, lapseT: 0, want: 0, fullT: 0, boostAt: null, never: null, notice: new Map() });
+  const rand = hb.rand;
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+  if (hb.never === null) hb.never = rand() < P.boostNever;
+  // do they notice this thing at all? decided once per object
+  const notices = (key, p) => { if (!hb.notice.has(key)) hb.notice.set(key, rand() < p); return hb.notice.get(key); };
+  if (hb.lapseT > 0) hb.lapseT -= dt;
+  else {
+    if (rand() < P.lapse * dt) hb.lapseT = 0.4 + rand() * 0.5;
+    let want = 0;
+    for (let k = 1; k < P.look; k++) {
+      const seg = ST.wrap(Math.floor(s.pos) + k);
+      const pk = gp.pickups.get(seg), ob = gp.obstacles.get(seg);
+      const pad = ST.pads.find((p) => p.seg === seg);
+      if (pad && notices("p" + seg, P.pad)) { want = pad.x; break; }
+      if (pk && !pk[0].taken && notices("k" + Math.floor(seg / 15), P.collect)) { want = pk[0].x; break; }
+      if (ob && !ob[0].hit && Math.abs(ob[0].x - want) < 330 && notices("o" + seg, P.dodge)) { want = ob[0].x > 0 ? ob[0].x - 400 : ob[0].x + 400; break; }
+    }
+    hb.want = want;
+  }
+  hb.n += -hb.n * 2 * dt + P.noise * Math.sqrt(4 * dt) * gauss();   // slow wobble
+  const sr = s.speed / T.baseSpeed;
+  const ideal = Math.max(-1, Math.min(1, (hb.want - s.camX) / P.gain + (P.ff * ST.curveAt(s.pos) * T.centrifugal * sr) / T.steerRate + hb.n));
+  hb.q.push({ t: s.t, v: ideal });
+  while (hb.q.length > 1 && hb.q[1].t <= s.t - P.delay) hb.q.shift();
+  if (s.meter >= T.acornsPerBoost && !hb.never) {
+    if (hb.boostAt === null) { hb.boostAt = -Math.log(1 - rand()) * P.boostDelay; hb.fullT = 0; }
+    hb.fullT += dt;
+    if (hb.fullT >= hb.boostAt) { hb.boostAt = null; requestBoost(); }
+  }
+  return hb.q[0].t <= s.t - P.delay ? hb.q[0].v : 0;
+}
+
 function collide(seg) {
   const s = state;
   const pk = gp.pickups.get(seg);
@@ -351,7 +400,7 @@ function updateSquirrel(dt) {
   // smooth rubber band: the squirrel eases off when far ahead so it never leaves the screen
   const far = Math.max(0, Math.min(1, (gap - 35) / 45));
   const tired = ST.tired(s.sqPos) ? T.squirrelTired : 1;   // runs out of steam near the end
-  const k = T.squirrelPace * tired * (1 - 0.22 * far * far * (3 - 2 * far));
+  const k = T.squirrelPace * tired * (1 - T.squirrelRubber * far * far * (3 - 2 * far));
   const launch = Math.min(1, s.phaseT / 0.6);
   s.sqSpeed = T.baseSpeed * ST.speedAt(s.sqPos) * k * launch;
   s.sqPos += s.sqSpeed * dt;

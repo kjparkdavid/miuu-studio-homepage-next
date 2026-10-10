@@ -2,8 +2,8 @@
 
 // Per-stage limits. minTime sits a little under what the perfect-line test bot manages on that stage.
 const STAGES = {
-  burrow: { minTime: 21, maxItems: 110 },   // bot: ~23.7s; 110 acorns on the track
-  ocean: { minTime: 17.5, maxItems: 95 },   // bot: ~20.1s; 95 starfish on the track
+  burrow: { minTime: 15.5, maxItems: 110 },   // bot: ~17.9s; 110 acorns on the track
+  ocean: { minTime: 17, maxItems: 95 },       // bot: ~19.5s; 95 starfish on the track
 };
 
 const RULES = {
