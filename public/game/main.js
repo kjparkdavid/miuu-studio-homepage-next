@@ -4,6 +4,7 @@ import { mulberry32 } from "./track.js";
 import { Tilt, TouchKeys } from "./input.js";
 import { sfx } from "./sfx.js";
 import * as lb from "./leaderboard.js";
+import { track, trackPageView, storeLink, shareUrl, share, challengeTime } from "./analytics.js";
 
 // ---------------- tuning (a stage can override any of these in its `tune`) ----------------
 const T_BASE = {
@@ -28,6 +29,8 @@ const params = new URLSearchParams(location.search);
 // Every stage in STAGE_ORDER is offered on the start screen. (?stage=ocean still jumps straight to one.)
 const OCEAN_PUBLIC = true;
 let ST = STAGES[params.get("stage")] || STAGES.burrow;
+// A shared link carries the sender's catch time to beat (?b=24.3) for the stage it opens.
+const challenge = challengeTime() ? { time: challengeTime(), stage: ST.id } : null;
 const DEBUG = params.has("debug");
 let BOT = Number(params.get("bot") || 0);   // 1 = center line, 2 = racing line (debug only)
 
@@ -52,6 +55,8 @@ const ui = {
   loading: document.getElementById("loading"),
   stagePick: document.getElementById("stagePick"),
   mapRow: document.getElementById("mapRow"),
+  share: document.getElementById("shareBtn"),
+  appLink: document.getElementById("appLink"),
   tagline: document.getElementById("tagline"),
 };
 
@@ -141,9 +146,22 @@ function reset() {
     pitch: 0, lean: 0, yaw: 0, shake: 0, stun: 0,
     boostT: 0, boostE: 0, meter: 0, acorns: 0, bumps: 0,
     sqPos: T.squirrelStartGap, sqSpeed: 0, sqX: 0, sqRun: 0, caught: false, escaped: false,
-    pop: [], flyers: [], banner: null, zoneShown: "", finishT: 0, offroad: false, hb: null,
+    pop: [], flyers: [], banner: null, zoneShown: "", finishT: 0, offroad: false, hb: null, lastResult: null,
   });
   ST.onReset(state);
+}
+
+// How many races this device has started on the current stage (for "tries until the first win").
+function nextAttempt() {
+  let n = 1;
+  try { n = (Number(localStorage.getItem(`miuu-plays-${ST.id}`)) || 0) + 1; localStorage.setItem(`miuu-plays-${ST.id}`, String(n)); } catch {}
+  return n;
+}
+function beginRace() {
+  reset();
+  state.attempt = nextAttempt();
+  lb.onRaceStart();
+  track("game_start", { stage: ST.id, control: mode, attempt: state.attempt });
 }
 
 function requestBoost() {
@@ -172,22 +190,44 @@ ui.start.addEventListener("click", () => {
   tryFullscreenPortrait();
   perm.then(async (ok) => {
     if (mode === "tilt") {
-      if (ok) { tilt.start(); ok = await tilt.waitForData(); }
+      let result = ok ? "granted" : "denied";
+      if (ok) { tilt.start(); ok = await tilt.waitForData(); if (!ok) result = "no_data"; }
+      track("tilt_permission", { result });
       if (!ok) { setMode("touch"); toast("Motion sensor not available, so touch steering is on."); }
     }
     ui.title.classList.add("hide");
-    reset();
-    lb.onRaceStart();
+    beginRace();
     if (intro && !intro.played) { intro.played = true; state.phase = "intro"; }
     layout();
   });
 });
 ui.again.addEventListener("click", () => {
   ui.result.classList.add("hide");
-  reset();
-  lb.onRaceStart();
+  track("play_again", { stage: ST.id });
+  beginRace();
   layout();
 });
+ui.share.addEventListener("click", async () => {
+  const r = state.lastResult;
+  if (!r) return;
+  const tx = ST.text;
+  const text = r.caught
+    ? `I caught the ${tx.thief} in ${r.time.toFixed(1)}s in Miuu's Diary Chase ${tx.thiefEmoji} Can you beat me?`
+    : `The ${tx.thief} got away with Miuu's diary ${tx.thiefEmoji} Can you catch it?`;
+  const method = await share({ text, url: shareUrl(ST.id, r.caught ? r.time : null) });
+  if (method === "copy") toast("Link copied! Paste it to a friend.");
+  if (method) track("share", { stage: ST.id, method, result: r.caught ? "caught" : "escaped" });
+});
+{
+  // "Get the Miuu Note app" goes straight to this phone's store, credited to the game
+  const link = storeLink();
+  ui.appLink.href = link.href;
+  if (link.store) {
+    ui.appLink.target = "_blank";
+    ui.appLink.rel = "noopener";   // no noreferrer: App Store Connect credits miuunote.site as the web referrer
+    ui.appLink.addEventListener("click", () => track("store_click", { store: link.store, placement: "game" }));
+  }
+}
 canvas.addEventListener("pointerdown", () => {
   if (state.phase === "intro" && intro && state.phaseT < intro.dur) state.phaseT = intro.dur;   // tap to skip
 });
@@ -437,6 +477,17 @@ function finish() {
   ui.resultStats.innerHTML = s.caught
     ? `<b>${time.toFixed(1)}s</b> catch time${isBest ? " · new best!" : best ? ` · best ${best.time.toFixed(1)}s` : ""}<br>${tx.item} ${s.acorns} ${tx.items} · ${s.bumps} bonks`
     : `It was ${Math.max(1, Math.round(s.escapeGap * 2))} m ahead ${tx.where}<br>${tx.item} ${s.acorns} ${tx.items} · ${s.bumps} bonks`;
+  if (s.caught && challenge && challenge.stage === ST.id) {
+    ui.resultStats.innerHTML += time < challenge.time
+      ? `<br>🎉 You beat your friend's ${challenge.time.toFixed(1)}s!`
+      : `<br>Your friend's time to beat: ${challenge.time.toFixed(1)}s`;
+  }
+  s.lastResult = { caught: s.caught, time };
+  ui.share.textContent = s.caught ? "📣 Challenge a friend" : "📣 Dare a friend to catch it";
+  track("race_end", {
+    stage: ST.id, control: mode, result: s.caught ? "caught" : "escaped", time_s: Math.round(time * 10) / 10,
+    items: s.acorns, bonks: s.bumps, attempt: s.attempt || 0, challenged: challenge && challenge.stage === ST.id ? 1 : 0,
+  });
   lb.showResult({ caught: s.caught, time, acorns: s.acorns, bumps: s.bumps });
   ui.result.classList.remove("hide");
 }
@@ -631,7 +682,9 @@ async function selectStage(id) {
   loadIntro(ST);
   lb.setStage(ST.id);
   ui.title.style.backgroundImage = `url(${ST.titleBg})`;
-  ui.tagline.textContent = ST.tag;
+  ui.tagline.textContent = challenge && challenge.stage === ST.id
+    ? `🏁 A friend caught the ${ST.text.thief} in ${challenge.time.toFixed(1)}s. Can you beat it?`
+    : ST.tag;
   for (const b of ui.stagePick.querySelectorAll("button")) b.classList.toggle("on", b.dataset.stage === ST.id);
   ui.loading.classList.add("hide");
   idleState();
@@ -644,13 +697,14 @@ function initStagePicker() {
     const b = document.createElement("button");
     b.type = "button"; b.dataset.stage = id;
     b.textContent = `${STAGES[id].emoji} ${STAGES[id].name}`;
-    b.onclick = () => { if (ST.id !== id && state.phase === "title") selectStage(id); };
+    b.onclick = () => { if (ST.id !== id && state.phase === "title") { track("stage_select", { stage: id }); selectStage(id); } };
     ui.stagePick.append(b);
   }
 }
 
 (async function boot() {
   try { await document.fonts.load("800 30px Poppins"); } catch {}
+  trackPageView();
   lb.initUI();
   initStagePicker();
   await selectStage(ST.id);

@@ -1,6 +1,8 @@
 // Leaderboard client: talks to the `api` Cloud Function (see /game-backend). Only catches can be submitted.
 
 // Firebase project miuu-diary-chase, function `api` (see /game-backend).
+import { track } from "./analytics.js";
+
 const DEFAULT_API = "https://us-central1-miuu-diary-chase.cloudfunctions.net/api";
 const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 const API = (local && new URLSearchParams(location.search).get("api")) || DEFAULT_API;
@@ -97,6 +99,7 @@ async function submit() {
     if (!runId) throw Object.assign(new Error("network"), { code: "network" });
     const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, time: Math.round(last.time * 100) / 100, acorns: last.acorns, bumps: last.bumps });
     store.set("miuu-name", name.trim());
+    track("leaderboard_submit", { stage, rank_week: r.week.rank, rank_all: r.all.rank });   // ranks only, never the nickname
     $("lbForm").hidden = true;
     note.textContent = "";
     $("lbRank").textContent = `#${r.week.rank} this week · #${r.all.rank} all-time` + (r.all.improved ? "" : ` (your best is ${r.all.best.toFixed(2)}s)`);
@@ -109,6 +112,7 @@ async function submit() {
 }
 
 function openBoard(s) {
+  if ($("board").classList.contains("hide")) track("leaderboard_open", { stage });
   $("board").classList.remove("hide");
   showBoard("boardList", "tabWeek", "tabAll", s);
 }
