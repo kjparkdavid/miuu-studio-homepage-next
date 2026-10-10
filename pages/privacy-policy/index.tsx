@@ -56,6 +56,11 @@ const PrivacyPolicyPage = () => {
           <li>Sentry &mdash; error reporting</li>
           <li>Google AdMob &mdash; advertising in the free version</li>
           <li>
+            Meta &mdash; on iPhone and iPad only, measuring the installs and
+            purchases that come from our own ads on Facebook and Instagram (see
+            Advertising)
+          </li>
+          <li>
             RevenueCat &mdash; subscription and purchase status, and Apple
             Search Ads attribution on iOS
           </li>
@@ -167,6 +172,12 @@ const PrivacyPolicyPage = () => {
           us which ad campaign led to the install. It contains no advertising
           identifier and does not require tracking permission.
         </p>
+        <p>
+          On iOS, RevenueCat also reports trial starts, purchases and renewals
+          to Meta, so that we can see which of our own ads led to them. This
+          happens only when Meta&apos;s software has started on your device;
+          see &ldquo;Measuring our own ads&rdquo; under Advertising.
+        </p>
 
         <p>
           <strong>Advertising</strong>
@@ -184,15 +195,72 @@ const PrivacyPolicyPage = () => {
           <li>
             On iOS, the system &ldquo;Allow app to track&rdquo; prompt asks
             whether the app may use your device&apos;s advertising identifier.
-            If you decline, ads still appear but are non-personalised. Apple
-            Search Ads attribution (see Purchases and Subscriptions) does not
-            use this permission.
+            This identifier is used to show you relevant ads and to measure how
+            our own ads perform. If you decline, ads still appear but are
+            non-personalised, and Meta receives no advertising identifier.
+            Apple Search Ads attribution (see Purchases and Subscriptions) does
+            not use this permission.
           </li>
           <li>
             We never share your diary content, photos or voice notes with
             advertising partners. Ads are not targeted using anything you write.
           </li>
         </ul>
+        <p>
+          <strong>Measuring our own ads (iPhone and iPad)</strong>
+        </p>
+        <p>
+          We advertise Miuu Note on Facebook and Instagram. To see whether those
+          ads work, the iPhone and iPad app includes software from{" "}
+          <strong>Meta</strong> (the Meta SDK). The Android app does not include
+          it and sends Meta nothing.
+        </p>
+        <ul>
+          <li>
+            <strong>What Meta receives:</strong> that the app was installed and
+            opened, sent from your device; and trial starts, purchases and
+            renewals, sent by RevenueCat. These are matched using an anonymous
+            ID that Meta&apos;s software creates, your IP address and the
+            identifier Apple gives each app developer. Your device&apos;s
+            advertising identifier is included only if you chose
+            &ldquo;Allow&rdquo; on the tracking prompt.
+          </li>
+          <li>
+            <strong>What Meta never receives from us:</strong> anything you
+            write, your moods, stickers, photos or voice notes, your answers
+            during setup, or the app&apos;s own analytics.
+          </li>
+          <li>
+            In the European Economic Area and the UK, Meta&apos;s software
+            starts only if you agreed, in the consent form, to storing and
+            accessing information on your device. If you did not, it never
+            starts and nothing is sent to Meta.
+          </li>
+          <li>
+            Separately, Apple may tell Meta that an install came from one of our
+            ads. Apple sends this in a form that does not identify you or your
+            device.
+          </li>
+          <li>
+            <strong>Your choices:</strong> choose &ldquo;Ask App Not to
+            Track&rdquo; on the prompt, or turn tracking off for Miuu Note in
+            iOS Settings &rarr; Privacy &amp; Security &rarr; Tracking, and no
+            advertising identifier is sent. In the European Economic Area and
+            the UK you can also change your answer in the consent form; the
+            change applies the next time you open the app.
+          </li>
+        </ul>
+        <p>
+          Meta handles what it receives under{" "}
+          <a
+            href="https://www.facebook.com/privacy/policy/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Meta&apos;s Privacy Policy
+          </a>
+          .
+        </p>
 
         <p>
           <strong>Push Notifications</strong>
@@ -716,7 +784,7 @@ const PrivacyPolicyPage = () => {
         <p>
           <strong>Where your data is processed</strong>: we are based in Canada,
           and the providers listed above &mdash; Google Cloud, Firebase,
-          RevenueCat, Sentry and Anthropic &mdash; process data in the United
+          RevenueCat, Sentry, Meta and Anthropic &mdash; process data in the United
           States. Personal information handled by us in Canada is protected
           under Canadian federal privacy law; for transfers on to those
           providers we rely on the safeguards in our agreements with them, such
