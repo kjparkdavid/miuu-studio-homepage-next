@@ -124,6 +124,18 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
     transition: .25s; width: max-content; max-width: 86%; pointer-events: none; z-index: 6;
   }
   #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  /* "play on your phone" QR for computers: a card beside the game, or a compact row in the start panel */
+  #qrCard {
+    position: fixed; top: 50%; transform: translateY(-50%); width: 196px; padding: 16px 16px 14px; text-align: center;
+    background: var(--cream); color: var(--ink); border: 4px solid var(--ink); border-radius: 22px; box-shadow: 0 6px 0 var(--ink);
+    font-family: Poppins, system-ui, sans-serif;
+  }
+  #qrCard b { display: block; font-size: 16px; font-weight: 800; margin-bottom: 10px; }
+  #qrCard img { display: block; width: 150px; height: 150px; margin: 0 auto 10px; border: 3px solid var(--ink); border-radius: 12px; }
+  #qrCard span { display: block; font-size: 13px; font-weight: 600; line-height: 1.35; }
+  .qrInline { display: flex; align-items: center; gap: 10px; text-align: left; margin: -4px 2px 14px; font-size: 12.5px; font-weight: 600; line-height: 1.35; }
+  .qrInline img { width: 74px; height: 74px; flex: none; border: 3px solid var(--ink); border-radius: 10px; }
+  .qrInline b { display: block; font-size: 14px; font-weight: 800; }
   #loading { background: #f6e6ee; justify-content: center; font-weight: 800; font-size: 20px; }
   #stage { container-type: inline-size; }
   .small {
@@ -182,6 +194,10 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
         <button id="modeKeys" type="button" hidden>⌨️ Keyboard</button>
       </div>
       <div id="modeNote"></div>
+      <div id="qrInline" class="qrInline" hidden>
+        <img src="img/qr_game.svg" alt="QR code for miuunote.site/game" width="74" height="74">
+        <span><b>📱 Play on your phone</b>Scan to steer by tilting it like a wheel.</span>
+      </div>
       <button id="startBtn" class="big" type="button">Tap to start</button>
       <button id="boardBtn" class="small" type="button" hidden>🏆 Leaderboard</button>
       <a id="appLinkTitle" class="appBanner" href="/" data-placement="title">
@@ -236,6 +252,11 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   <button id="muteBtn" type="button" aria-label="Toggle sound">🔊</button>
   <div id="toast"></div>
 </div>
+<aside id="qrCard" hidden>
+  <b>📱 Play on your phone</b>
+  <img src="img/qr_game.svg" alt="QR code for miuunote.site/game" width="150" height="150">
+  <span>Scan to steer by tilting your phone like a wheel.</span>
+</aside>
 <script type="module" src="main.js"></script>
 </body>
 </html>

@@ -117,6 +117,14 @@ function layout() {
   stage.style.width = cw + "px";
   stage.style.height = ch + "px";
   stage.style.transform = `translate(-50%, -50%) rotate(${-ang}deg)`;
+  // computers: offer the phone version by QR, beside the game when there is room, else inside the start panel
+  if (!isTouchDevice) {
+    const side = (vw - cw) / 2, card = document.getElementById("qrCard");
+    const roomy = side >= 250 && vh >= 420;
+    card.hidden = !roomy;
+    if (roomy) card.style.left = `${Math.round((vw + cw) / 2 + Math.min(40, side - 196 - 24))}px`;
+    document.getElementById("qrInline").hidden = roomy || vh < 680;   // too short: the panel would not fit
+  }
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   renderScale = Math.min(qualityCap, (cw * dpr) / W);
   const bw = Math.round(W * renderScale), bh = Math.round(H * renderScale);
