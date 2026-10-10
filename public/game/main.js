@@ -101,6 +101,12 @@ function toast(msg, ms = 2600) {
   toast.t = setTimeout(() => ui.toast.classList.remove("show"), ms);
 }
 
+// The QR card beside the game shows on the start and result screens only, never during a race.
+let qrRoomy = false;
+function syncQrCard() {
+  document.getElementById("qrCard").hidden = !(qrRoomy && (state.phase === "title" || state.phase === "done"));
+}
+
 // Fit a 9:16 stage into the viewport. If the OS auto-rotates mid-race, counter-rotate so the
 // game stays glued to the phone (the phone *is* the wheel).
 function layout() {
@@ -120,9 +126,9 @@ function layout() {
   // computers: offer the phone version by QR, beside the game when there is room, else inside the start panel
   if (!isTouchDevice) {
     const side = (vw - cw) / 2, card = document.getElementById("qrCard");
-    const roomy = side >= 250 && vh >= 420;
-    card.hidden = !roomy;
+    const roomy = (qrRoomy = side >= 250 && vh >= 420);
     if (roomy) card.style.left = `${Math.round((vw + cw) / 2 + Math.min(40, side - 196 - 24))}px`;
+    syncQrCard();
     document.getElementById("qrInline").hidden = roomy || vh < 680;   // too short: the panel would not fit
   }
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -526,6 +532,7 @@ function finish() {
   });
   lb.showResult({ caught: s.caught, time, acorns: s.acorns, bumps: s.bumps });
   ui.result.classList.remove("hide");
+  syncQrCard();
 }
 
 // ---------------- draw ----------------
