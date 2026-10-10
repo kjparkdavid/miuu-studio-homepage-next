@@ -45,6 +45,9 @@ async function call(method, path, body) {
   return data;
 }
 
+let stage = "burrow";   // which stage's board we read and write
+export function setStage(id) { stage = id; }
+
 let run = null; // Promise<runId | null> for the race in progress
 export function onRaceStart() {
   if (!enabled) return;
@@ -92,7 +95,7 @@ async function submit() {
   try {
     const runId = await run;
     if (!runId) throw Object.assign(new Error("network"), { code: "network" });
-    const r = await call("POST", "/submit", { runId, deviceId: deviceId(), name, time: Math.round(last.time * 100) / 100, acorns: last.acorns, bumps: last.bumps });
+    const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, time: Math.round(last.time * 100) / 100, acorns: last.acorns, bumps: last.bumps });
     store.set("miuu-name", name.trim());
     $("lbForm").hidden = true;
     note.textContent = "";
@@ -115,9 +118,10 @@ async function showBoard(listId, weekTab, allTab, s) {
   $(weekTab).classList.toggle("on", s === "week");
   $(allTab).classList.toggle("on", s === "all");
   const list = $(listId);
-  if (!list.children.length) list.replaceChildren(row("…", "Loading", "", ""));
+  if (!list.children.length || list.dataset.stage !== stage) list.replaceChildren(row("…", "Loading", "", ""));
+  list.dataset.stage = stage;
   try {
-    const d = await call("GET", `/board?scope=${s}&deviceId=${encodeURIComponent(deviceId())}`);
+    const d = await call("GET", `/board?scope=${s}&stage=${stage}&deviceId=${encodeURIComponent(deviceId())}`);
     if (views[listId] !== s) return;
     if (!d.entries.length) {
       list.replaceChildren(empty(s === "week" ? "No catches yet this week. Be the first!" : "No catches yet. Be the first!"));

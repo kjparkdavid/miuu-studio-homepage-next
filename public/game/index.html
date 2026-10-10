@@ -93,6 +93,9 @@
     border-radius: 14px; padding: 7px 14px; cursor: pointer;
   }
   #boardBtn { display: block; margin: 12px auto 0; }
+  .modes.stages { margin-bottom: 10px; }
+  .label { text-align: left; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .7; margin: 0 4px 5px; }
+  .modes.stages button.on { background: var(--pink); }
   #lbBox { margin: 0 0 12px; }
   .modes.mini button { font-size: 13px; padding: 5px 6px; border-radius: 12px; }
   #rBoardList { max-height: 172px; margin: 8px 0 0; }
@@ -127,9 +130,14 @@
   <div id="title" class="overlay">
     <div>
       <div class="logo">Miuu's<br>Diary Chase</div>
-      <div class="tag">🐿️ A squirrel ran off with Miuu's diary!</div>
+      <div class="tag" id="tagline">🐿️ A squirrel ran off with Miuu's diary!</div>
     </div>
     <div class="panel">
+      <div id="mapRow" hidden>
+        <div class="label">Map</div>
+        <div id="stagePick" class="modes stages"></div>
+      </div>
+      <div class="label">Control</div>
       <div class="modes">
         <button id="modeTilt" type="button">📱 Tilt</button>
         <button id="modeTouch" type="button">👆 Touch</button>

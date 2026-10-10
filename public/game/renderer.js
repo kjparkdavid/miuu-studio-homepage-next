@@ -29,9 +29,9 @@ export const FILES = {
   pickup: "acorn_big", mush_ob: "mushrooms", crystal_ob: "crystals", wheel: "steering_wheel", miuu: "miuu_back",
 };
 
-const mix = (a, b, t) =>
+export const mix = (a, b, t) =>
   `rgb(${(a[0] + (b[0] - a[0]) * t) | 0},${(a[1] + (b[1] - a[1]) * t) | 0},${(a[2] + (b[2] - a[2]) * t) | 0})`;
-const hash01 = (i, k = 0) => { const v = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); };
+export const hash01 = (i, k = 0) => { const v = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); };
 
 const ARC_STEPS = 18;
 const UNIT = [[-1, 0], [-1, 0.35]];
@@ -45,16 +45,26 @@ const ceilY = (R, x) => (Math.abs(x) >= R ? 0.35 * R : 0.35 * R + Math.sqrt(R * 
 // ---------------- images + mipmaps ----------------
 export const IMG = {};
 const MIPS = {};
-export async function loadImages(base = "img/") {
-  const names = [...new Set(Object.values(FILES))];
-  const loaded = {};
+const loaded = {};   // file name -> HTMLImageElement
+export const BURROW_KEYS = Object.keys(FILES);
+
+// Other stages add their own sprite kinds (key -> file under img/, key -> world width).
+export function registerSprites(files, ww) {
+  Object.assign(FILES, files);
+  Object.assign(WW, ww);
+}
+
+// Loads the images behind the given sprite kinds (each file once).
+export async function loadImages(base = "img/", keys = BURROW_KEYS) {
+  const names = [...new Set(keys.map((k) => FILES[k]))].filter((n) => !loaded[n]);
   await Promise.all(names.map((n) => new Promise((res, rej) => {
     const im = new Image();
     im.onload = () => { loaded[n] = im; res(); };
     im.onerror = () => rej(new Error("missing image " + n));
     im.src = base + n + ".png";
   })));
-  for (const [k, n] of Object.entries(FILES)) {
+  for (const k of keys) {
+    const n = FILES[k];
     IMG[k] = loaded[n];
     if (!MIPS[n]) MIPS[n] = buildMips(loaded[n]);
     MIPS[k] = MIPS[n];
@@ -452,13 +462,24 @@ function shadow(ctx, x, y, rx, road, G, fog) {
   ctx.beginPath(); ctx.ellipse(x, y, rx, rx * 0.16, 0, 0, Math.PI * 2); ctx.fill();
 }
 
-export function drawSprite(ctx, kind, x, yBottom, scale, squashX = 1) {
+// opts: alpha (fade into fog), flip (mirror horizontally), maxW (skip when wider than this on screen)
+export function drawSprite(ctx, kind, x, yBottom, scale, squashX = 1, opts) {
   const img = IMG[kind];
   const tw = WW[kind] * scale * S;
-  if (tw < 1.5 || tw > W * 2.2) return;
+  if (tw < 1.5 || tw > ((opts && opts.maxW) || W * 2.2)) return;
   const th = (tw * img.naturalHeight) / img.naturalWidth;
   const src = pickMip(kind, th);
-  ctx.drawImage(src, x - (tw * squashX) / 2, yBottom - th, tw * squashX, th);
+  if (!opts) { ctx.drawImage(src, x - (tw * squashX) / 2, yBottom - th, tw * squashX, th); return; }
+  const a = opts.alpha ?? 1;
+  if (a <= 0.02) return;
+  const prev = ctx.globalAlpha;
+  ctx.globalAlpha = prev * a;
+  if (opts.flip) {
+    ctx.save(); ctx.translate(x, 0); ctx.scale(-1, 1);
+    ctx.drawImage(src, -(tw * squashX) / 2, yBottom - th, tw * squashX, th);
+    ctx.restore();
+  } else ctx.drawImage(src, x - (tw * squashX) / 2, yBottom - th, tw * squashX, th);
+  ctx.globalAlpha = prev;
 }
 
 // ---------------- cockpit + text helpers ----------------

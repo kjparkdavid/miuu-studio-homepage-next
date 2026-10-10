@@ -1,11 +1,11 @@
-import { N, EXIT, P_STOP, ROAD_W, SEG_LEN, edgeR, inside, curveAt, speedAt, floorY, zoneOf, ZONE_TITLES, PADS, PAD_LEN, buildGameplay, mod } from "./track.js";
-import { W, H, render, loadImages, drawWheel, outlinedText, drawSprite, IMG } from "./renderer.js";
+import { W, H, S, WW, loadImages, outlinedText, drawSprite } from "./renderer.js";
+import { STAGES, STAGE_ORDER } from "./stages.js";
 import { Tilt, TouchKeys } from "./input.js";
 import { sfx } from "./sfx.js";
 import * as lb from "./leaderboard.js";
 
-// ---------------- tuning ----------------
-const T = {
+// ---------------- tuning (a stage can override any of these in its `tune`) ----------------
+const T_BASE = {
   baseSpeed: 38,          // segments / second at speed profile 1.0
   steerRate: 2300,        // world units / second at full lock
   centrifugal: 300,       // world units / second per unit of curve
@@ -20,8 +20,12 @@ const T = {
   catchGap: 2,
   levelHorizon: 0.5,      // tilt mode: how much the scene counter-rotates to stay level
 };
+const T = { ...T_BASE };
 
 const params = new URLSearchParams(location.search);
+// The ocean stage still has stand-in art, so it only opens with ?stage=ocean until this is flipped.
+const OCEAN_PUBLIC = false;
+let ST = STAGES[params.get("stage")] || STAGES.burrow;
 const DEBUG = params.has("debug");
 let BOT = Number(params.get("bot") || 0);   // 1 = center line, 2 = racing line (debug only)
 
@@ -44,6 +48,9 @@ const ui = {
   mute: document.getElementById("muteBtn"),
   toast: document.getElementById("toast"),
   loading: document.getElementById("loading"),
+  stagePick: document.getElementById("stagePick"),
+  mapRow: document.getElementById("mapRow"),
+  tagline: document.getElementById("tagline"),
 };
 
 const tilt = new Tilt();
@@ -98,32 +105,43 @@ window.addEventListener("resize", layout);
 window.addEventListener("orientationchange", () => setTimeout(layout, 120));
 
 // ---------------- intro clip (packed frames; iPhone can't play transparent WebM) ----------------
-let intro = null, introPlayed = false;
-function loadIntro() {
+const intros = {};            // stage id -> { img, frames, order, fps, dur, played }
+let intro = null;             // the current stage's intro, once loaded
+function loadIntro(st) {
+  if (intros[st.id]) { intro = intros[st.id].img ? intros[st.id] : null; return; }
+  const entry = (intros[st.id] = { played: false });
+  intro = null;
   const img = new Image();
-  const data = fetch("img/intro_burrow.json").then((r) => r.json());
-  const pic = new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = "img/intro_burrow.webp"; });
-  Promise.all([data, pic]).then(([d]) => { intro = { img, ...d, dur: d.order.length / d.fps }; }).catch(() => {});
+  const data = fetch(st.intro + ".json").then((r) => r.json());
+  const pic = new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = st.intro + ".webp"; });
+  Promise.all([data, pic]).then(([d]) => {
+    Object.assign(entry, { img, ...d, dur: d.order.length / d.fps });
+    if (ST === st) intro = entry;
+  }).catch(() => {});
 }
 const WHEEL_SLIDE = 0.45;
 
 // ---------------- game state ----------------
 const state = { phase: "loading" };
-let gp = buildGameplay();
+let gp = ST.buildGameplay();
 let best = null;
-try { best = JSON.parse(localStorage.getItem("miuu-burrow-best") || "null"); } catch {}
+function loadBest() {
+  best = null;
+  try { best = JSON.parse(localStorage.getItem(`miuu-${ST.id}-best`) || "null"); } catch {}
+}
 
 function reset() {
-  gp = buildGameplay();
-  for (const p of PADS) p.used = false;
+  gp = ST.buildGameplay();
+  for (const p of ST.pads) p.used = false;
   Object.assign(state, {
     phase: "countdown", t: 0, phaseT: 0, raceT: 0,
     pos: 0, speed: 0, camX: 0, steer: 0, wheelDeg: 0,
     pitch: 0, lean: 0, yaw: 0, shake: 0, stun: 0,
     boostT: 0, boostE: 0, meter: 0, acorns: 0, bumps: 0,
     sqPos: T.squirrelStartGap, sqSpeed: 0, sqX: 0, sqRun: 0, caught: false, escaped: false,
-    pop: [], banner: null, zoneShown: "out", finishT: 0, endT: 0, offroad: false,
+    pop: [], flyers: [], banner: null, zoneShown: "", finishT: 0, offroad: false,
   });
+  ST.onReset(state);
 }
 
 function requestBoost() {
@@ -158,7 +176,7 @@ ui.start.addEventListener("click", () => {
     ui.title.classList.add("hide");
     reset();
     lb.onRaceStart();
-    if (intro && !introPlayed) { introPlayed = true; state.phase = "intro"; }
+    if (intro && !intro.played) { intro.played = true; state.phase = "intro"; }
     layout();
   });
 });
@@ -195,7 +213,7 @@ function update(dt) {
   else target = touch.touching() ? touch.touchSteer() : touch.keyboardSteer(dt);
   if (BOT && s.phase === "play") target = botSteer();
   const autopilot = s.caught || s.escaped || s.phase === "finish";
-  if (autopilot) target = Math.max(-1, Math.min(1, -s.camX / 500 + (curveAt(s.pos) * T.centrifugal) / T.steerRate));
+  if (autopilot) target = Math.max(-1, Math.min(1, -s.camX / 500 + (ST.curveAt(s.pos) * T.centrifugal) / T.steerRate));
   s.steer += (target - s.steer) * Math.min(1, dt * 14);
 
   if (s.phase === "intro" && s.phaseT >= intro.dur + WHEEL_SLIDE) { s.phase = "countdown"; s.phaseT = 0; }
@@ -211,70 +229,67 @@ function update(dt) {
   const racing = s.phase === "play" || s.phase === "finish" || s.phase === "done";
   if (racing) {
     // speed
-    const profile = speedAt(s.pos);
+    const profile = ST.speedAt(s.pos);
     s.boostT = Math.max(0, s.boostT - dt);
     const be = s.boostT > 0 ? Math.min(1, (T.boostTime - s.boostT) / 0.15) * Math.min(1, s.boostT / 0.45) : 0;
     s.boostE = be;
-    const R = inside(s.pos) ? edgeR(Math.floor(s.pos)) : 2200;
-    const limit = Math.min(R * 0.82, 2000);
-    s.offroad = Math.abs(s.camX) > ROAD_W * 1.14;
+    const lat = ST.lateral(s.pos);
+    s.offroad = Math.abs(s.camX) > ST.roadHalf;
     let tgt = T.baseSpeed * profile * (1 + T.boostAdd * be) * (s.offroad ? T.offroadMult : 1);
-    if (s.pos > EXIT) tgt = T.baseSpeed * Math.sqrt(Math.max(0, (P_STOP - s.pos) / (P_STOP - EXIT)));
+    if (s.pos > ST.brakeFrom) tgt = T.baseSpeed * Math.sqrt(Math.max(0, (ST.stop - s.pos) / (ST.stop - ST.brakeFrom)));
     s.stun = Math.max(0, s.stun - dt);
     if (s.stun > 0) tgt *= 0.5;
     const launch = s.phase === "play" ? Math.min(1, s.phaseT / 1.2) : 1;
     const accel = tgt > s.speed ? 1.6 * (0.4 + launch) : 3.0;
     s.speed += (tgt - s.speed) * Math.min(1, dt * accel);
-    if (s.pos > EXIT) s.speed = Math.min(s.speed, Math.max(0.3, tgt));
+    if (s.pos > ST.brakeFrom) s.speed = Math.min(s.speed, Math.max(0.3, tgt));
 
     const prevPos = s.pos;
-    s.pos = Math.min(P_STOP, s.pos + s.speed * dt);
+    s.pos = Math.min(ST.stop, s.pos + s.speed * dt);
     const sr = s.speed / T.baseSpeed;
 
     // lateral: steering vs. the curve pushing you wide
     s.camX += s.steer * T.steerRate * Math.min(1, sr + 0.2) * dt;
-    s.camX -= curveAt(s.pos) * sr * T.centrifugal * dt;
-    if (Math.abs(s.camX) > limit) {
-      s.camX = Math.sign(s.camX) * limit;
-      if (s.speed > T.baseSpeed * 0.5 && inside(s.pos)) { s.speed *= 1 - 1.5 * dt; s.shake = Math.max(s.shake, 0.4); }
+    s.camX -= ST.curveAt(s.pos) * sr * T.centrifugal * dt;
+    if (Math.abs(s.camX) > lat.limit) {
+      s.camX = Math.sign(s.camX) * lat.limit;
+      if (s.speed > T.baseSpeed * 0.5 && lat.wall) { s.speed *= 1 - 1.5 * dt; s.shake = Math.max(s.shake, 0.4); }
     }
     if (s.offroad) s.shake = Math.max(s.shake, 0.25);
 
     // collisions with things on segments we just passed
-    for (let seg = Math.floor(prevPos) + 1; seg <= Math.floor(s.pos); seg++) collide(mod(seg));
+    for (let seg = Math.floor(prevPos) + 1; seg <= Math.floor(s.pos); seg++) collide(ST.wrap(seg));
     // boost pads
-    for (const pd of PADS) {
-      if (s.pos >= pd.seg && s.pos < pd.seg + PAD_LEN && Math.abs(s.camX - pd.x) < 300 && !pd.used) {
+    for (const pd of ST.pads) {
+      if (s.pos >= pd.seg && s.pos < pd.seg + ST.padLen && Math.abs(s.camX - pd.x) < 300 && !pd.used) {
         pd.used = true;
         startBoost("Boost!");
       }
     }
     // zone title
-    const z = zoneOf(s.pos);
-    if (z !== s.zoneShown && ZONE_TITLES[z]) { s.zoneShown = z; }
+    const z = ST.zoneOf(s.pos);
+    if (z !== s.zoneShown && ST.zoneTitles[z]) { s.zoneShown = z; }
+    ST.onUpdate(s, prevPos, dt);
 
     updateSquirrel(dt);
     if (s.phase === "play" && !s.caught) s.raceT += dt;
-    if (s.caught || s.escaped) {
-      s.endT += dt;
-      if (s.endT > (s.caught ? 1.3 : 1.8) && s.phase !== "done") finish();
-    }
-    if (s.pos >= P_STOP - 0.05 && s.speed < 1.5) {
+    // the result card (and leaderboard) waits until the car has rolled to a stop
+    if (s.pos >= ST.stop - 0.05 && s.speed < 1.5) {
       s.finishT += dt;
       if (s.finishT > 0.6 && s.phase !== "done") finish();
     }
   }
 
   // camera feel (same recipe as the reel: look into curves, lean, pitch with the hill)
-  const look = curveAt(s.pos + 7) * 11;
+  const look = ST.curveAt(s.pos + 7) * ST.cam.look;
   s.lean += (look - s.lean) * Math.min(1, dt * 3);
-  s.yaw = -s.lean * 3.8 * 0.5;
-  const slope = (floorY(Math.floor(s.pos) + 3) - floorY(Math.floor(s.pos))) / (3 * SEG_LEN);
-  s.pitch += (Math.atan(-slope) * 0.9 - s.pitch) * Math.min(1, dt * 9);
+  s.yaw = -s.lean * ST.cam.yawK;
+  s.pitch += (ST.pitchTarget(s.pos) - s.pitch) * Math.min(1, dt * 9);
   s.shake = Math.max(0, s.shake - dt * 1.5);
   s.wheelDeg = s.steer * 60;
   if (s.banner) { s.banner.t += dt; if (s.banner.t > s.banner.dur) s.banner = null; }
   s.pop = s.pop.filter((p) => (p.t += dt) < p.dur);
+  s.flyers = s.flyers.filter((f) => (f.t += dt) < 0.65);
 }
 
 function botSteer() {
@@ -282,9 +297,9 @@ function botSteer() {
   let want = 0;
   if (BOT >= 2) {
     for (let k = BOT === 3 ? 4 : 1; k < (BOT === 3 ? 14 : 30); k++) {
-      const seg = mod(Math.floor(s.pos) + k);
+      const seg = ST.wrap(Math.floor(s.pos) + k);
       const pk = gp.pickups.get(seg), ob = gp.obstacles.get(seg);
-      const pad = PADS.find((p) => p.seg === seg);
+      const pad = ST.pads.find((p) => p.seg === seg);
       if (pad) { want = pad.x; break; }
       if (pk && !pk[0].taken) { want = pk[0].x; break; }
       if (ob && Math.abs(ob[0].x - want) < 330) { want = ob[0].x > 0 ? ob[0].x - 400 : ob[0].x + 400; break; }
@@ -292,7 +307,7 @@ function botSteer() {
   }
   if (s.meter >= T.acornsPerBoost && (BOT !== 3 || Math.random() < 0.01)) requestBoost();
   const sr = s.speed / T.baseSpeed;
-  return Math.max(-1, Math.min(1, (want - s.camX) / 400 + (curveAt(s.pos) * T.centrifugal * sr) / T.steerRate));
+  return Math.max(-1, Math.min(1, (want - s.camX) / 400 + (ST.curveAt(s.pos) * T.centrifugal * sr) / T.steerRate));
 }
 
 function collide(seg) {
@@ -316,6 +331,7 @@ function collide(seg) {
       s.boostT = 0;
       sfx.bump(); vibrate([40, 30, 40]);
       banner("Bonk!", 0.7, 56);
+      ST.onBonk(s, o);
     }
   }
 }
@@ -334,12 +350,12 @@ function updateSquirrel(dt) {
   const gap = s.sqPos - s.pos;
   // smooth rubber band: the squirrel eases off when far ahead so it never leaves the screen
   const far = Math.max(0, Math.min(1, (gap - 35) / 45));
-  const tired = zoneOf(s.sqPos) === "warp" ? T.squirrelTired : 1;   // runs out of steam in the last tunnel
+  const tired = ST.tired(s.sqPos) ? T.squirrelTired : 1;   // runs out of steam near the end
   const k = T.squirrelPace * tired * (1 - 0.22 * far * far * (3 - 2 * far));
   const launch = Math.min(1, s.phaseT / 0.6);
-  s.sqSpeed = T.baseSpeed * speedAt(s.sqPos) * k * launch;
+  s.sqSpeed = T.baseSpeed * ST.speedAt(s.sqPos) * k * launch;
   s.sqPos += s.sqSpeed * dt;
-  s.sqX = 220 * Math.sin(hopT / 0.77);
+  s.sqX = ST.thief.motion(hopT, s.sqPos).x;
 
   if (s.sqPos - s.pos < T.catchGap) {
     s.caught = true; s.sqRun = 0;
@@ -347,7 +363,7 @@ function updateSquirrel(dt) {
     sfx.win(); vibrate([60, 40, 120]);
     banner("Got it!", 1.6, 84);
     s.pop.push({ t: 0, dur: 1.4, big: true });
-  } else if (s.sqPos >= EXIT + 6) {
+  } else if (s.sqPos >= ST.escapeAt) {
     s.escaped = true; s.sqRun = 0; s.escapeGap = s.sqPos - s.pos;
     s.phase = "finish";
     sfx.lose();
@@ -363,14 +379,15 @@ function finish() {
   if (s.caught && (!best || time < best.time)) {
     best = { time, acorns: s.acorns };
     isBest = true;
-    try { localStorage.setItem("miuu-burrow-best", JSON.stringify(best)); } catch {}
+    try { localStorage.setItem(`miuu-${ST.id}-best`, JSON.stringify(best)); } catch {}
   }
   ui.resultTitle.textContent = s.caught ? "yay!" : s.escapeGap < 12 ? "So close!" : "It got away!";
-  ui.resultSub.textContent = s.caught ? "You caught the squirrel. Miuu got his diary back 💜" : "The squirrel got away with Miuu's diary. Try again?";
-  ui.resultImg.src = s.caught ? "img/miuu_diary.png" : "img/squirrel_waving.png";
+  const tx = ST.text;
+  ui.resultSub.textContent = s.caught ? tx.win : tx.lose;
+  ui.resultImg.src = s.caught ? "img/miuu_diary.png" : ST.loseImg;
   ui.resultStats.innerHTML = s.caught
-    ? `<b>${time.toFixed(1)}s</b> catch time${isBest ? " · new best!" : best ? ` · best ${best.time.toFixed(1)}s` : ""}<br>🌰 ${s.acorns} acorns · ${s.bumps} bonks`
-    : `It was ${Math.max(1, Math.round(s.escapeGap * 2))} m ahead at the exit<br>🌰 ${s.acorns} acorns · ${s.bumps} bonks`;
+    ? `<b>${time.toFixed(1)}s</b> catch time${isBest ? " · new best!" : best ? ` · best ${best.time.toFixed(1)}s` : ""}<br>${tx.item} ${s.acorns} ${tx.items} · ${s.bumps} bonks`
+    : `It was ${Math.max(1, Math.round(s.escapeGap * 2))} m ahead ${tx.where}<br>${tx.item} ${s.acorns} ${tx.items} · ${s.bumps} bonks`;
   lb.showResult({ caught: s.caught, time, acorns: s.acorns, bumps: s.bumps });
   ui.result.classList.remove("hide");
 }
@@ -380,16 +397,19 @@ function draw() {
   const s = state;
   ctx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
   const jitter = Math.sin(s.t * 26) * (0.3 + 0.6 * (s.speed / T.baseSpeed) + s.boostE * 1.5 + s.shake * 6);
-  const leanRot = (-Math.max(-12, Math.min(12, s.lean * 0.17)) * Math.PI) / 180;
+  const leanRot = (-Math.max(-ST.cam.leanMax, Math.min(ST.cam.leanMax, s.lean * ST.cam.leanK)) * Math.PI) / 180;
   const tiltRot = mode === "tilt" && s.phase !== "title" ? (-tilt.angle() * T.levelHorizon * Math.PI) / 180 : 0;
-  const sqHop = Math.abs(Math.sin(s.t * Math.PI * 4.2)) * 90;
   const entities = [];
-  if (s.phase !== "intro" && (!(s.caught || s.escaped) || s.sqRun < 1.2)) entities.push({ kind: s.caught ? "sq_empty" : "sq_diary", pos: s.sqPos, x: s.sqX, y: sqHop });
-  render(ctx, {
+  if (s.phase !== "intro" && (!(s.caught || s.escaped) || s.sqRun < 1.2)) {
+    entities.push({ kind: s.caught ? ST.thief.empty : ST.thief.carry, pos: s.sqPos, x: s.sqX, y: ST.thief.motion(s.t, s.sqPos).y });
+  }
+  const fx = {};
+  if (s.fxT) for (const k in s.fxT) fx[k] = s.t - s.fxT[k];
+  ST.render(ctx, {
     pos: s.pos, camX: s.camX, pitch: s.pitch, yaw: s.yaw, jitter, t: s.t,
     rot: leanRot + tiltRot + Math.sin(s.t * 40) * s.shake * 0.01,
     speedNorm: s.phase === "countdown" || s.phase === "intro" ? 0 : Math.min(1.6, s.speed / T.baseSpeed), boostE: s.boostE,
-    pickups: gp.pickups, obstacles: gp.obstacles, entities,
+    pickups: gp.pickups, obstacles: gp.obstacles, entities, fx, flyers: s.flyers,
   });
   if (s.phase === "intro") {
     const e = s.phaseT - intro.dur;
@@ -399,9 +419,9 @@ function draw() {
       if (f) ctx.drawImage(intro.img, f.sx, f.sy, f.sw, f.sh, f.x, f.y, f.w, f.h);
     } else {
       const k = Math.min(1, e / WHEEL_SLIDE);
-      drawWheel(ctx, 0, 520 * (1 - k) * (1 - k), true);
+      ST.drawCockpit(ctx, 0, 520 * (1 - k) * (1 - k), true);
     }
-  } else drawWheel(ctx, s.wheelDeg);
+  } else ST.drawCockpit(ctx, s.wheelDeg);
   drawHud();
 }
 
@@ -436,7 +456,7 @@ function drawHud() {
   ctx.save();
   ctx.fillStyle = "rgba(75,58,110,0.55)";
   roundRect(ctx, 14, 14, W - 28, 54, 27); ctx.fill();
-  drawSprite(ctx, "pickup", 46, 60, 0.00052);
+  drawSprite(ctx, ST.pickupKind, 46, 59, 34 / (WW[ST.pickupKind] * S));
   ctx.font = "800 24px Poppins, system-ui, sans-serif"; ctx.fillStyle = "#fff"; ctx.textBaseline = "middle";
   ctx.textAlign = "left"; ctx.fillText(String(s.acorns), 70, 42);
   ctx.textAlign = "right"; ctx.fillText(s.raceT.toFixed(1) + "s", W - 34, 42);
@@ -450,7 +470,7 @@ function drawHud() {
   ctx.strokeStyle = "#4b3a6e"; ctx.lineWidth = 3; ctx.stroke();
   if (!s.caught && !s.escaped) {
     const sx = mx0 + 18 + frac * (mx1 - mx0 - 18);
-    ctx.font = "22px system-ui"; ctx.textAlign = "center"; ctx.fillText("🐿️", sx, my + 1);
+    ctx.font = "22px system-ui"; ctx.textAlign = "center"; ctx.fillText(ST.text.thiefEmoji, sx, my + 1);
     ctx.font = "700 13px Poppins, system-ui"; ctx.fillStyle = "#fff";
     ctx.fillText(Math.round(gap * 2) + " m", (mx0 + sx) / 2, my + 19);
   }
@@ -469,9 +489,9 @@ function drawHud() {
     outlinedText(ctx, mode === "touch" && !isTouchDevice ? "Press space!" : "Double tap!", W / 2, 150, 34 * pulse, { fill: "#fff" });
   }
   // zone title card
-  if (ZONE_TITLES[s.zoneShown]) {
+  if (ST.zoneTitles[s.zoneShown]) {
     const zt = zoneTitleTimer(s);
-    if (zt > 0) outlinedText(ctx, ZONE_TITLES[s.zoneShown], W / 2, 215, 30, { alpha: Math.min(1, zt) });
+    if (zt > 0) outlinedText(ctx, ST.zoneTitles[s.zoneShown], W / 2, 215, 30, { alpha: Math.min(1, zt) });
   }
   // banner
   if (s.banner) {
@@ -503,7 +523,7 @@ function zoneTitleTimer(s) {
 function drawDebug() {
   const g = tilt.g || { x: 0, y: 0, z: 0 };
   const lines = [
-    `mode ${mode}  events ${tilt.events}  conv ${tilt.conv}`,
+    `stage ${ST.id}  mode ${mode}  events ${tilt.events}  conv ${tilt.conv}`,
     `g ${g.x.toFixed(2)} ${g.y.toFixed(2)} ${g.z.toFixed(2)}`,
     `angle ${tilt.angle().toFixed(1)}°  steer ${state.steer.toFixed(2)}`,
     `orient ${screen.orientation ? screen.orientation.angle : window.orientation}  pos ${state.pos.toFixed(1)}  v ${state.speed.toFixed(1)}`,
@@ -532,7 +552,7 @@ function frame(now) {
   last = now;
   if (state.phase !== "loading") {
     const t0 = performance.now();
-    if (state.phase !== "title") update(dt);
+    if (state.phase !== "title" && !(DEBUG && window.__freeze)) update(dt);
     draw();
     perf.work += (performance.now() - t0 - perf.work) * 0.05;
     // adaptive resolution: step down if we can't hold ~60fps
@@ -551,15 +571,41 @@ function idleState() {
   state.phase = "title";
 }
 
-(async function boot() {
-  try { await document.fonts.load("800 30px Poppins"); } catch {}
-  await loadImages("img/");
+// ---------------- stages ----------------
+async function selectStage(id) {
+  ST = STAGES[id] || STAGES.burrow;
+  Object.assign(T, T_BASE, ST.tune);
+  state.phase = "loading";
+  ui.loading.classList.remove("hide");
+  await loadImages("img/", ST.imageKeys);
+  loadBest();
+  loadIntro(ST);
+  lb.setStage(ST.id);
+  ui.title.style.backgroundImage = `url(${ST.titleBg})`;
+  ui.tagline.textContent = ST.tag;
+  for (const b of ui.stagePick.querySelectorAll("button")) b.classList.toggle("on", b.dataset.stage === ST.id);
   ui.loading.classList.add("hide");
-  lb.initUI();
-  loadIntro();
   idleState();
   layout();
+}
+function initStagePicker() {
+  if (!OCEAN_PUBLIC && !params.has("stage")) return;   // one stage: nothing to pick
+  ui.mapRow.hidden = false;
+  for (const id of STAGE_ORDER) {
+    const b = document.createElement("button");
+    b.type = "button"; b.dataset.stage = id;
+    b.textContent = `${STAGES[id].emoji} ${STAGES[id].name}`;
+    b.onclick = () => { if (ST.id !== id && state.phase === "title") selectStage(id); };
+    ui.stagePick.append(b);
+  }
+}
+
+(async function boot() {
+  try { await document.fonts.load("800 30px Poppins"); } catch {}
+  lb.initUI();
+  initStagePicker();
+  await selectStage(ST.id);
   requestAnimationFrame(frame);
 })();
 
-if (DEBUG) window.__game = { state, T, tilt, update, reset, setBot: (b) => (BOT = b) };
+if (DEBUG) window.__game = { state, T, tilt, update, reset, selectStage, stage: () => ST, setBot: (b) => (BOT = b) };
