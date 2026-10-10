@@ -70,7 +70,7 @@ let mode = isTouchDevice && Tilt.supported() ? "tilt" : "touch";
 // What we call the steering in analytics: a computer has no tilt or touch, it plays on the keyboard.
 const controlName = () => (isTouchDevice ? mode : "keyboard");
 let renderScale = 1;
-let qualityCap = 2;   // lowered automatically if frames take too long
+let qualityCap = (DEBUG && Number(params.get("q"))) || 2;   // lowered automatically if frames take too long (?debug&q=1 starts lower)
 
 function setMode(m) {
   mode = m;
@@ -722,6 +722,7 @@ function drawDebug() {
     `orient ${screen.orientation ? screen.orientation.angle : window.orientation}  pos ${state.pos.toFixed(1)}  v ${state.speed.toFixed(1)}`,
     `camX ${state.camX.toFixed(0)}  sq ${(state.sqPos - state.pos).toFixed(1)}`,
     `fps ${(1000 / perf.interval).toFixed(0)}  work ${perf.work.toFixed(1)}ms  scale ${renderScale.toFixed(2)}`,
+    ...Object.entries(syncPerf || {}).map(([zone, [n, total, worst]]) => `${zone}: avg ${(total / n).toFixed(1)}ms  worst ${worst.toFixed(0)}ms`),
   ];
   ctx.save();
   ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(8, 110, 360, lines.length * 18 + 10);
@@ -741,6 +742,9 @@ let last = performance.now();
 // win*: frames and time in the current judging window; slowRuns: slow windows in a row; probe: the
 // drop being tested; settled: no more changes this visit
 const perf = { work: 0, interval: 16.7, winN: 0, winT: 0, slowRuns: 0, probe: null, settled: false };
+// ?debug&sync: the true cost of each frame per stretch of track (zone -> [frames, total ms, worst ms]).
+// Reading a pixel back forces the drawing to finish, which a browser otherwise does later, off our clock.
+const syncPerf = DEBUG && params.has("sync") ? {} : null;
 const QUALITY_WINDOW = 1500;   // ms of racing judged at a time
 const QUALITY_FLOOR = 0.85;
 // Adaptive resolution: if the phone can't keep a steady frame rate, draw fewer pixels. Judged by the
@@ -779,6 +783,11 @@ function frame(now) {
     if (state.phase !== "title" && !(DEBUG && window.__freeze)) update(dt);
     draw();
     perf.work += (performance.now() - t0 - perf.work) * 0.05;
+    if (syncPerf && state.phase === "play") {
+      ctx.getImageData(0, 0, 1, 1);   // makes the browser finish drawing now, so the time includes it
+      const ms = performance.now() - t0, e = (syncPerf[ST.zoneOf(Math.floor(state.pos))] ||= [0, 0, 0]);
+      e[0]++; e[1] += ms; e[2] = Math.max(e[2], ms);
+    }
     judgeQuality(dt * 1000);
   }
   requestAnimationFrame(frame);

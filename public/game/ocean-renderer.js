@@ -8,7 +8,8 @@ import {
 } from "./ocean-track.js";
 
 const DD = 150;
-const BIG = 40000;
+const FAR_N = 30;   // from this many segments ahead, a band's three segments are painted as one piece
+const SPECK_N = 25;  // segments per stretch whose specks are painted together
 const DARK = [34, 28, 60];
 const SEA = [[126, 206, 228], [116, 196, 222]];
 const SEA_FAR = [196, 230, 240];
@@ -157,13 +158,27 @@ export function renderOcean(ctx, view) {
     for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]);
     ctx.closePath(); ctx.fill();
   };
-  // quad between edge n (height Y1) and n+1 (height Y2), from xa to xb
-  const quad = (n, xa, xb, Y1, Y2, fill) => {
+  // quad between edge n (height Y1) and edge m (height Y2, the next edge unless given), from xa to xb
+  const quad = (n, xa, xb, Y1, Y2, fill, m = n + 1) => {
     const p = [];
     proj(n, xa, Y1); p.push(PX, PY); proj(n, xb, Y1); p.push(PX, PY);
-    proj(n + 1, xb, Y2); p.push(PX, PY); proj(n + 1, xa, Y2); p.push(PX, PY);
+    proj(m, xb, Y2); p.push(PX, PY); proj(m, xa, Y2); p.push(PX, PY);
     poly(p, fill);
   };
+  // What a frame costs on a phone is mostly how many separate shapes it paints, far more than how many
+  // pixels. So: beyond FAR_N the three segments of a colour band (slivers at that distance) are painted
+  // as one piece, and small things that share a colour are gathered into one path and painted together.
+  // A level plane that runs off both sides of the view (sea surface, sea bed) between edge n at height Y1
+  // and edge m at height Y2. Its edges are level lines on screen, so it is a plain rectangle a little wider
+  // than the view. (It used to be a polygon stretching tens of thousands of pixels off-screen, which
+  // phones are very slow to paint.)
+  const plane = (n, m, Y1, Y2, fill) => {
+    proj(n, 0, Y1); const ya = PY;
+    proj(m, 0, Y2);
+    ctx.fillStyle = fill; ctx.fillRect(-W, Math.min(ya, PY), W * 3, Math.abs(ya - PY));
+  };
+  const lastEdge = Math.min(DD, N - 1 - base);   // furthest edge that exists
+  const bandEnd = (n) => Math.min(lastEdge, n + 3 - ((base + n) % 3));   // far edge of segment n's band
   const fogOf = (n) => 1 - Math.exp(-((n / DD) ** 2) * (above ? 1.4 : 3.0));
   const sprite = (kind, n, wx, Y, fog, opts = {}) => {
     proj(n, wx, Y);
@@ -179,26 +194,44 @@ export function renderOcean(ctx, view) {
     if (segi >= N - 1) continue;
     const band = Math.floor(segi / 3) % 2;
     const fog = fogOf(n);
+    // the plane's piece here: this segment, or from FAR_N on its whole band, painted at the band's nearest segment
+    const whole = n >= FAR_N;
+    const m = whole ? bandEnd(n) : n + 1;
+    const paint = !whole || segi % 3 === 0 || n === FAR_N;
     if (above) {
-      quad(n, -BIG, BIG, 0, 0, mix(SEA[band], FOG, fog));
+      if (paint) plane(n, m, 0, 0, mix(SEA[band], FOG, fog));
       if (band === 0) {
         ctx.fillStyle = mix([240, 252, 255], FOG, fog);
         const r = scaleAt(n, 0) * 90 * S;
+        ctx.beginPath();
         for (let k = 0; k < 3; k++) {
           proj(n, (hash01(segi, k) * 2 - 1) * 7000, 0);
-          ctx.beginPath(); ctx.ellipse(PX, PY, r, r * 0.18, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.moveTo(PX + r, PY); ctx.ellipse(PX, PY, r, r * 0.18, 0, 0, Math.PI * 2);
         }
+        ctx.fill();
       }
-    } else {
-      if (cvis > 0.02) quad(n, -BIG, BIG, 0, 0, mix(band ? [162, 220, 234] : [176, 230, 240], FOG, 1 - (1 - fog) * cvis * 0.9));
+    } else if (paint) {
+      if (cvis > 0.02) plane(n, m, 0, 0, mix(band ? [162, 220, 234] : [176, 230, 240], FOG, 1 - (1 - fog) * cvis * 0.9));
       const deep = smooth((segi - WRECK_END) / 60) * (1 - smooth((segi - ABYSS_END - 60) / 140));
       const sand = band ? [234, 218, 188] : [242, 228, 198], dark = band ? [64, 64, 112] : [70, 70, 120];
       const fcol = [sand[0] + (dark[0] - sand[0]) * deep, sand[1] + (dark[1] - sand[1]) * deep, sand[2] + (dark[2] - sand[2]) * deep];
-      quad(n, -BIG, BIG, FLOOR_Y[segi], FLOOR_Y[segi + 1], mix(fcol, FOG, fog));
+      plane(n, m, FLOOR_Y[segi], FLOOR_Y[base + m], mix(fcol, FOG, fog));
     }
   }
 
   // ---- pass 2: everything standing in the water, far to near ----
+  // Specks (marine snow, plankton, bubbles, glints on the rock) are gathered per stretch of SPECK_N
+  // segments and painted in one go when the stretch is done: a few paints instead of several per segment.
+  let specks = null;
+  const dot = (path, r) => { path.used = true; path.moveTo(PX + r, PY); path.arc(PX, PY, r, 0, Math.PI * 2); };
+  const paintSpecks = () => {
+    if (!specks) return;
+    if (specks.snow.used) { ctx.fillStyle = specks.snowCol; ctx.fill(specks.snow); }
+    if (specks.cyan.used) { ctx.fillStyle = "rgb(150,250,250)"; ctx.fill(specks.cyan); }
+    if (specks.pink.used) { ctx.fillStyle = "rgb(255,190,236)"; ctx.fill(specks.pink); }
+    specks = null;
+  };
+  let currentBand = -1;   // the band of the glowing current painted last
   for (let n = DD - 1; n >= 0; n--) {
     if (EZ[n] <= 60) continue;
     const segi = base + n;
@@ -207,6 +240,11 @@ export function renderOcean(ctx, view) {
     const band = Math.floor(segi / 3) % 2;
     const fog = fogOf(n);
     const py1 = EY[n], py2 = EY[n + 1];
+    const stretch = Math.floor(n / SPECK_N);
+    if (!specks || specks.stretch !== stretch) {
+      paintSpecks();
+      specks = { stretch, snow: new Path2D(), cyan: new Path2D(), pink: new Path2D(), snowCol: mix([255, 255, 255], FOG, fogOf(stretch * SPECK_N + SPECK_N / 2) * 0.6) };
+    }
 
     // dock posts + boards
     if (above && segi <= DOCK_END && segi % 6 === 0) {
@@ -229,10 +267,19 @@ export function renderOcean(ctx, view) {
         poly(p, mix([150, 104, 78], FOG, fog));
       }
     } else if (!above && py1 < -10 && segi >= DIVE_END - 30) {
-      // the glowing current you ride
+      // the glowing current you ride. Far off it is painted a band at a time, when the band's furthest
+      // segment comes up, so that everything standing in that band still lands on top of it.
       const gl = fog * 0.55;
-      quad(n, -760, 760, py1, py2, mix(band ? [140, 236, 240] : [176, 252, 244], FOG, gl));
-      quad(n, -620, 620, py1, py2, mix(band ? [110, 204, 224] : [120, 214, 230], FOG, gl));
+      if (n < FAR_N) {
+        quad(n, -760, 760, py1, py2, mix(band ? [140, 236, 240] : [176, 252, 244], FOG, gl));
+        quad(n, -620, 620, py1, py2, mix(band ? [110, 204, 224] : [120, 214, 230], FOG, gl));
+      } else if (Math.floor(segi / 3) !== currentBand) {
+        currentBand = Math.floor(segi / 3);
+        let near = n;   // nearest segment of the band that also carries the current
+        while (near > FAR_N && (base + near) % 3 !== 0 && EY[near - 1] < -10 && base + near - 1 >= DIVE_END - 30) near--;
+        quad(near, -760, 760, EY[near], py2, mix(band ? [140, 236, 240] : [176, 252, 244], FOG, gl), n + 1);
+        quad(near, -620, 620, EY[near], py2, mix(band ? [110, 204, 224] : [120, 214, 230], FOG, gl), n + 1);
+      }
       if (segi % 6 === 0) {
         const p = [];
         proj(n, -230, py1); p.push(PX, PY); proj(n + 1, 0, py2); p.push(PX, PY); proj(n, 230, py1); p.push(PX, PY);
@@ -267,17 +314,16 @@ export function renderOcean(ctx, view) {
         poly(p, mix(Math.floor(segi / 2) % 2 ? [56, 50, 100] : [64, 58, 112], FOG, fog));
         if (camY > TOPW + 50) {
           const q = [];
-          proj(n, wx1, TOPW); q.push(PX, PY); proj(n, sg * BIG, TOPW); q.push(PX, PY);
-          proj(n + 1, sg * BIG, TOPW); q.push(PX, PY); proj(n + 1, wx2, TOPW); q.push(PX, PY);
+          const off = sg < 0 ? -W : W * 2;   // just past the edge of the view, not thousands of pixels out
+          proj(n, wx1, TOPW); q.push(PX, PY, off, PY);
+          proj(n + 1, wx2, TOPW); q.push(off, PY, PX, PY);
           poly(q, mix(band ? [78, 86, 132] : [84, 92, 140], FOG, fog));
         }
         for (let k = 0; k < 3; k++) {   // glowing specks on the rock
           if (hash01(segi, k + 90 + (sg > 0) * 5) < 0.5) continue;
           const Yd = fyA + (TOPW - fyA) * hash01(segi, k + 95 + (sg > 0) * 5);
           proj(n, wx1, Yd);
-          const r = Math.min(8, Math.max(0.6, PS * 40 * S));
-          ctx.fillStyle = k % 2 ? "rgb(150,250,250)" : "rgb(255,190,236)";
-          ctx.beginPath(); ctx.arc(PX, PY, r, 0, Math.PI * 2); ctx.fill();
+          dot(k % 2 ? specks.cyan : specks.pink, Math.min(8, Math.max(0.6, PS * 40 * S)));
         }
       }
     }
@@ -285,25 +331,29 @@ export function renderOcean(ctx, view) {
     // wreck hull planks + ribs
     if (!above && segi >= KELP_END + 30 && segi < WRECK_END - 10) {
       const fyA = FLOOR_Y[segi], fyB = FLOOR_Y[segi + 1];
-      for (const k of [0, 1, 2, 3, 5, 15, 16, 17, 18, 20]) {
-        if (hash01(Math.floor(segi / 7), k) < 0.22) continue;
-        const [ux0, uy0] = UNIT[k], [ux1, uy1] = UNIT[k + 1], p = [];
-        proj(n, ux0 * RIB_R, fyA + uy0 * RIB_R); p.push(PX, PY); proj(n, ux1 * RIB_R, fyA + uy1 * RIB_R); p.push(PX, PY);
-        proj(n + 1, ux1 * RIB_R, fyB + uy1 * RIB_R); p.push(PX, PY); proj(n + 1, ux0 * RIB_R, fyB + uy0 * RIB_R); p.push(PX, PY);
-        poly(p, mix((k + Math.floor(segi / 2)) % 2 ? [160, 108, 80] : [176, 120, 88], FOG, fog));
+      for (const shade of [0, 1]) {   // the planks come in two shades: each shade is one paint
+        ctx.beginPath();
+        for (const k of [0, 1, 2, 3, 5, 15, 16, 17, 18, 20]) {
+          if ((k + Math.floor(segi / 2)) % 2 !== shade || hash01(Math.floor(segi / 7), k) < 0.22) continue;
+          const [ux0, uy0] = UNIT[k], [ux1, uy1] = UNIT[k + 1];
+          proj(n, ux0 * RIB_R, fyA + uy0 * RIB_R); ctx.moveTo(PX, PY); proj(n, ux1 * RIB_R, fyA + uy1 * RIB_R); ctx.lineTo(PX, PY);
+          proj(n + 1, ux1 * RIB_R, fyB + uy1 * RIB_R); ctx.lineTo(PX, PY); proj(n + 1, ux0 * RIB_R, fyB + uy0 * RIB_R); ctx.lineTo(PX, PY);
+          ctx.closePath();
+        }
+        ctx.fillStyle = mix(shade ? [160, 108, 80] : [176, 120, 88], FOG, fog); ctx.fill();
       }
       if (RIB_SEGS.has(segi)) {
         const brk = Math.floor(hash01(segi, 3) * 14) + 4, gap = hash01(segi, 5) < 0.6;
-        const col = mix([124, 84, 64], FOG, fog);
+        ctx.beginPath();
         for (let k = 0; k < UNIT.length - 1; k++) {
           if (gap && k >= brk && k < brk + 4) continue;
-          const p = [];
-          proj(n, UNIT[k][0] * RIB_R, fyA + UNIT[k][1] * RIB_R); p.push(PX, PY);
-          proj(n, UNIT[k + 1][0] * RIB_R, fyA + UNIT[k + 1][1] * RIB_R); p.push(PX, PY);
-          proj(n, UNIT[k + 1][0] * RIB_R * 0.92, fyA + UNIT[k + 1][1] * RIB_R * 0.92); p.push(PX, PY);
-          proj(n, UNIT[k][0] * RIB_R * 0.92, fyA + UNIT[k][1] * RIB_R * 0.92); p.push(PX, PY);
-          poly(p, col);
+          proj(n, UNIT[k][0] * RIB_R, fyA + UNIT[k][1] * RIB_R); ctx.moveTo(PX, PY);
+          proj(n, UNIT[k + 1][0] * RIB_R, fyA + UNIT[k + 1][1] * RIB_R); ctx.lineTo(PX, PY);
+          proj(n, UNIT[k + 1][0] * RIB_R * 0.92, fyA + UNIT[k + 1][1] * RIB_R * 0.92); ctx.lineTo(PX, PY);
+          proj(n, UNIT[k][0] * RIB_R * 0.92, fyA + UNIT[k][1] * RIB_R * 0.92); ctx.lineTo(PX, PY);
+          ctx.closePath();
         }
+        ctx.fillStyle = mix([124, 84, 64], FOG, fog); ctx.fill();
       }
     }
 
@@ -334,10 +384,12 @@ export function renderOcean(ctx, view) {
         const r = sc * 105 * S;
         if (r > 1.5) {
           ctx.fillStyle = mix([150, 220, 160], FOG, fog);
+          ctx.beginPath();   // all eleven leaves in one paint
           for (let j = 1; j < 12; j++) {
-            const off = r * 0.8 * (j % 2 ? 1 : -1);
-            ctx.beginPath(); ctx.ellipse(pts[j * 2] + off, pts[j * 2 + 1], r, r * 0.45, 0, 0, Math.PI * 2); ctx.fill();
+            const x = pts[j * 2] + r * 0.8 * (j % 2 ? 1 : -1), y = pts[j * 2 + 1];
+            ctx.moveTo(x + r, y); ctx.ellipse(x, y, r, r * 0.45, 0, 0, Math.PI * 2);
           }
+          ctx.fill();
         }
       }
     }
@@ -349,24 +401,18 @@ export function renderOcean(ctx, view) {
         const Y = py1 - 500 + hash01(segi, k + 61) * 2200;
         if (Y > -40) continue;
         proj(n, (hash01(segi, k + 60) * 2 - 1) * 2600, Y);
-        if (glowy) {
-          const r = Math.min(7, Math.max(0.6, PS * 26 * S));
-          ctx.fillStyle = k % 2 ? "rgb(150,250,250)" : "rgb(255,190,236)";
-          ctx.beginPath(); ctx.arc(PX, PY, r, 0, Math.PI * 2); ctx.fill();
-        } else {
-          const r = Math.min(5, Math.max(0.5, PS * 14 * S));
-          ctx.fillStyle = mix([255, 255, 255], FOG, fog * 0.6);
-          ctx.beginPath(); ctx.arc(PX, PY, r, 0, Math.PI * 2); ctx.fill();
-        }
+        if (glowy) dot(k % 2 ? specks.cyan : specks.pink, Math.min(7, Math.max(0.6, PS * 26 * S)));
+        else dot(specks.snow, Math.min(5, Math.max(0.5, PS * 14 * S)));
       }
       if (hash01(segi, 70) < 0.5) {
         const Y = py1 - 600 + ((t * 260 + hash01(segi, 72) * 2600) % 2600);
         if (Y < -40) {
           proj(n, (hash01(segi, 71) * 2 - 1) * 2200, Y);
           const r = Math.max(0.75, PS * 40 * S);
-          if (r < 60) {
-            ctx.strokeStyle = mix([255, 255, 255], FOG, fog * 0.6); ctx.lineWidth = Math.max(0.5, r * 0.22);
-            ctx.beginPath(); ctx.arc(PX, PY, r, 0, Math.PI * 2); ctx.stroke();
+          if (r < 60) {   // a rising bubble: a ring, as a disc with a hole so it can join the snow's paint
+            const w = Math.max(0.5, r * 0.22) / 2;
+            dot(specks.snow, r + w);
+            specks.snow.moveTo(PX + Math.max(0, r - w), PY); specks.snow.arc(PX, PY, Math.max(0, r - w), 0, Math.PI * 2, true);
           }
         }
       }
@@ -440,41 +486,42 @@ export function renderOcean(ctx, view) {
       sprite("whale", n, xw, py1 + 950 + Math.sin(t * 1.2) * 60, fog * 0.8, { maxW: 2000 });
     }
   }
+  paintSpecks();
   ctx.restore();
 
   // ---- screen-space effects ----
   // light shafts near the surface
   let sh = above ? 0 : Math.max(0, Math.min(1, 1 - depth / 1900)) * (1 - 0.75 * Math.max(0, Math.min(1, -pitch)));
   if (sh > 0.02) {
+    // one path, one fill: big see-through shapes are the slowest thing for a phone to paint
     ctx.fillStyle = `rgba(255,255,236,${0.1 * sh})`;
+    ctx.beginPath();
     for (let k = 0; k < 6; k++) {
       const xt = W * (0.05 + 0.18 * k) + Math.sin(t * 0.4 + k * 1.7) * 35 + yaw * 0.6;
       const wt = 25 + 20 * hash01(k, 1);
-      ctx.beginPath(); ctx.moveTo(xt - wt, -20); ctx.lineTo(xt + wt, -20); ctx.lineTo(xt + wt * 3.4 + 160, H + 20); ctx.lineTo(xt - wt * 3.4 + 160, H + 20); ctx.fill();
+      ctx.moveTo(xt - wt, -20); ctx.lineTo(xt + wt, -20); ctx.lineTo(xt + wt * 3.4 + 160, H + 20); ctx.lineTo(xt - wt * 3.4 + 160, H + 20); ctx.closePath();
     }
+    ctx.fill();
   }
   // the sub's headlight in the dark
   const hl = above ? 0 : Math.max(0, Math.min(1, (depth - 2300) / 700));
-  if (hl > 0) {
-    const g = ctx.createRadialGradient(W / 2, 410, 0, W / 2, 410, 300);
-    g.addColorStop(0, `rgba(120,190,235,${0.4 * hl})`); g.addColorStop(1, "rgba(120,190,235,0)");
-    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
-  }
+  if (hl > 0) glow(ctx, "120,190,235", W / 2, 410, 300, 0.4 * hl);
   // daylight flooding in as you climb out
   if (!above && pos > ABYSS_END - 9) {
     const k = Math.max(0, Math.min(1, (pos - (ABYSS_END - 9)) / (RISE_END - (ABYSS_END - 9))));
     const li = (0.4 + 0.5 * k) * (1 - 0.85 * smooth((k - 0.55) / 0.4));
     const z2u = -Math.sin(pitch), y2u = Math.cos(pitch);
     const cyu = Math.max(-100, Math.min(450, vp - (CAM_DEPTH / Math.max(0.2, z2u)) * y2u * S));
-    const g = ctx.createRadialGradient(cx0, cyu, 0, cx0, cyu, 300 + 280 * k);
-    g.addColorStop(0, `rgba(150,230,240,${0.75 * li})`); g.addColorStop(1, "rgba(150,230,240,0)");
-    ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    glow(ctx, "150,230,240", cx0, cyu, 300 + 280 * k, 0.75 * li);
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
     ctx.fillStyle = `rgba(235,255,255,${0.1 * li})`;
+    ctx.beginPath();   // the fourteen rays in one paint
     for (let j = 0; j < 14; j++) {
       const a0 = (j * 2 * Math.PI) / 14 + t * 0.3, wa = 0.05 + 0.03 * hash01(j, 5);
-      ctx.beginPath(); ctx.moveTo(cx0, cyu); ctx.lineTo(cx0 + Math.cos(a0 - wa) * 1100, cyu + Math.sin(a0 - wa) * 1100);
-      ctx.lineTo(cx0 + Math.cos(a0 + wa) * 1100, cyu + Math.sin(a0 + wa) * 1100); ctx.fill();
+      ctx.moveTo(cx0, cyu); ctx.lineTo(cx0 + Math.cos(a0 - wa) * 1100, cyu + Math.sin(a0 - wa) * 1100);
+      ctx.lineTo(cx0 + Math.cos(a0 + wa) * 1100, cyu + Math.sin(a0 + wa) * 1100); ctx.closePath();
     }
+    ctx.fill();
     ctx.restore();
   }
   // speed lines
@@ -525,18 +572,43 @@ export function renderOcean(ctx, view) {
   }
 }
 
+// A soft round light added onto the scene: colour "r,g,b", centre, radius, strength at the centre. The
+// falloff is drawn once into a small picture and stretched, and only the square it covers is painted.
+// (It used to be a fresh gradient blended over the whole screen every frame: the abyss's slowest paint.)
+const GLOWS = new Map();
+function glow(ctx, colour, x, y, radius, strength) {
+  let img = GLOWS.get(colour);
+  if (!img) {
+    img = document.createElement("canvas"); img.width = img.height = 128;
+    const c = img.getContext("2d"), g = c.createRadialGradient(64, 64, 0, 64, 64, 64);
+    g.addColorStop(0, `rgba(${colour},1)`); g.addColorStop(1, `rgba(${colour},0)`);
+    c.fillStyle = g; c.fillRect(0, 0, 128, 128);
+    GLOWS.set(colour, img);
+  }
+  ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = strength;
+  ctx.drawImage(img, x - radius, y - radius, radius * 2, radius * 2);
+  ctx.restore();
+}
+
 // ---------------- splashes and bubble bursts (fx values are seconds since each event) ----------------
+// A burst is painted in three goes (all the bodies, all the rims, all the glints) rather than three per
+// bubble: a hundred bubbles used to be over three hundred separate paints in one frame.
 function bubbles(ctx, seed, count, place, alpha) {
   let s = seed * 9301 + 49297;
   const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+  const list = [];
   for (let i = 0; i < count; i++) {
     const b = place(r);
-    if (!b) continue;
-    ctx.fillStyle = `rgba(255,255,255,${0.2 * alpha})`; ctx.strokeStyle = `rgba(255,255,255,${0.8 * alpha})`; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = `rgba(255,255,255,${0.9 * alpha})`;
-    ctx.beginPath(); ctx.ellipse(b.x - b.r * 0.33, b.y - b.r * 0.42, b.r * 0.18, b.r * 0.18, 0, 0, Math.PI * 2); ctx.fill();
+    if (b && b.y > -b.r && b.y < H + b.r) list.push(b);   // off-screen ones cost nothing now
   }
+  if (!list.length) return;
+  ctx.beginPath();
+  for (const b of list) { ctx.moveTo(b.x + b.r, b.y); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); }
+  ctx.fillStyle = `rgba(255,255,255,${0.2 * alpha})`; ctx.fill();
+  ctx.strokeStyle = `rgba(255,255,255,${0.8 * alpha})`; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.beginPath();
+  for (const b of list) { const g = b.r * 0.18, gx = b.x - b.r * 0.33, gy = b.y - b.r * 0.42; ctx.moveTo(gx + g, gy); ctx.arc(gx, gy, g, 0, Math.PI * 2); }
+  ctx.fillStyle = `rgba(255,255,255,${0.9 * alpha})`; ctx.fill();
 }
 function drawFx(ctx, fx) {
   for (const [key, dirn, seed] of [["plunge", -1, 7], ["up", 1, 8]]) {
@@ -552,10 +624,12 @@ function drawFx(ctx, fx) {
     if (k < 12) {
       ctx.fillStyle = `rgba(255,255,255,${0.67 * (1 - k / 12)})`;
       let s = 1 * 9301 + 49297; const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+      ctx.beginPath();   // the foam is one shape: sixteen big overlapping see-through discs were the dive's stutter
       for (let i = 0; i < 16; i++) {
         const x = r() * W, y = H * (0.35 + r() * 0.8) - k * 15, rr = (35 + r() * 80) * (1 + k * 0.08);
-        ctx.beginPath(); ctx.arc(x, y, rr, 0, Math.PI * 2); ctx.fill();
+        ctx.moveTo(x + rr, y); ctx.arc(x, y, rr, 0, Math.PI * 2);
       }
+      ctx.fill();
     }
     bubbles(ctx, 2, 110, (r) => { const x = r() * W, y0 = H * (0.4 + r() * 0.9), rr = 3 + r() * 17, vy = 15 + r() * 25; return { x, y: y0 - k * vy * (1 + k * 0.03), r: rr }; }, a);
   }
@@ -564,10 +638,13 @@ function drawFx(ctx, fx) {
     if (k < 14) {
       ctx.fillStyle = `rgba(255,255,255,${0.63 * (1 - k / 14)})`;
       let s = 3 * 9301 + 49297; const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+      ctx.beginPath();
       for (let i = 0; i < 14; i++) {
         const ang = r() * Math.PI * 2, dist = (0.3 + r() * 0.7) * 350 * (1 + k * 0.12), rr = 30 + r() * 80;
-        ctx.beginPath(); ctx.arc(W / 2 + Math.cos(ang) * dist, H * 0.45 + Math.sin(ang) * dist * 0.9, rr, 0, Math.PI * 2); ctx.fill();
+        const x = W / 2 + Math.cos(ang) * dist, y = H * 0.45 + Math.sin(ang) * dist * 0.9;
+        ctx.moveTo(x + rr, y); ctx.arc(x, y, rr, 0, Math.PI * 2);
       }
+      ctx.fill();
     }
     const a = 1 - k / 75;   // drops running down the glass
     let s = 4 * 9301 + 49297; const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
