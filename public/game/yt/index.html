@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Short link for YouTube posts: forwards to the game tagged utm_source=yt, so the tag never
+     shows in the link people see. One folder per channel (ig, tt, yt); keep them identical apart
+     from the source. Link previews don't follow redirects, hence the game's own preview tags. -->
+<title>Miuu's Diary Chase</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://miuunote.site/game/">
+<meta property="og:title" content="Miuu's Diary Chase">
+<meta property="og:description" content="Turn your phone like a steering wheel and help Miuu get his diary back.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://miuunote.site/game/">
+<meta property="og:image" content="https://miuunote.site/game/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Miuu's Diary Chase">
+<meta name="twitter:description" content="Turn your phone like a steering wheel and help Miuu get his diary back.">
+<meta name="twitter:image" content="https://miuunote.site/game/img/og.png">
+<script>
+// keeps anything else on the link (e.g. ?stage=ocean); the channel tag always wins
+var q = new URLSearchParams(location.search);
+q.set("utm_source", "yt"); q.set("utm_medium", "social");
+location.replace("/game/?" + q);
+</script>
+<meta http-equiv="refresh" content="0; url=/game/?utm_source=yt&amp;utm_medium=social">
+</head>
+<body>
+<p><a href="/game/?utm_source=yt&amp;utm_medium=social">Play Miuu's Diary Chase</a></p>
+</body>
+</html>
