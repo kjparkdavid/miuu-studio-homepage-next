@@ -107,8 +107,9 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   }
   .appBanner img { width: 42px; height: 42px; border-radius: 11px; border: 2px solid var(--ink); flex: none; }
   .appBanner .ab-text { flex: 1; min-width: 0; line-height: 1.25; }
-  .appBanner b { display: block; font-size: 15px; font-weight: 800; }
-  .appBanner small { display: block; font-size: 11.5px; font-weight: 600; opacity: .8; }
+  /* the text sets its own colour: user styles that recolour visited links can't turn it red */
+  .appBanner b { display: block; font-size: 15px; font-weight: 800; color: var(--ink); }
+  .appBanner small { display: block; font-size: 11.5px; font-weight: 600; opacity: .8; color: var(--ink); }
   .appBanner .ab-get { flex: none; font-weight: 800; font-size: 14px; color: #fff; background: var(--purple-d); border: 2px solid var(--ink); border-radius: 999px; padding: 5px 14px; }
 
   #muteBtn {
