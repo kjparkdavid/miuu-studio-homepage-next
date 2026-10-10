@@ -530,7 +530,7 @@ function finish() {
     stage: ST.id, control: controlName(), result: s.caught ? "caught" : "escaped", time_s: Math.round(time * 10) / 10,
     items: s.acorns, bonks: s.bumps, attempt: s.attempt || 0, challenged: challenge && challenge.stage === ST.id ? 1 : 0,
   });
-  lb.showResult({ caught: s.caught, time, acorns: s.acorns, bumps: s.bumps });
+  lb.showResult({ caught: s.caught, time, acorns: s.acorns, bumps: s.bumps, control: controlName() });
   ui.result.classList.remove("hide");
   syncQrCard();
 }
@@ -724,7 +724,7 @@ async function selectStage(id) {
   await loadImages("img/", ST.imageKeys);
   loadBest();
   loadIntro(ST);
-  lb.setStage(ST.id);
+  lb.setStage(ST.id, ST.text.item);
   ui.title.style.backgroundImage = `url(${ST.titleBg})`;
   ui.tagline.textContent = challenge && challenge.stage === ST.id
     ? `🏁 A friend caught the ${ST.text.thief} in ${challenge.time.toFixed(1)}s. Can you beat it?`

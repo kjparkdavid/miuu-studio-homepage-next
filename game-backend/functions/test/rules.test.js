@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert");
-const { weekId, scopeIds, checkScore, cleanName, RULES } = require("../lib/rules");
+const { weekId, scopeIds, checkScore, cleanName, cleanControl, RULES } = require("../lib/rules");
 
 test("weekId follows ISO weeks in UTC", () => {
   assert.equal(weekId(Date.UTC(2026, 9, 9, 12)), "2026-W41");      // Fri Oct 9 2026
@@ -57,4 +57,9 @@ test("cleanName blocks abuse, impersonation and junk", () => {
   assert.equal(cleanName("<script>").reason, "name_chars");
   assert.equal(cleanName("a‮b‮c").name, "abc");
   assert.equal(cleanName(42).reason, "name_missing");
+});
+
+test("cleanControl keeps the three known controls and drops everything else", () => {
+  assert.deepEqual(["tilt", "touch", "keyboard"].map(cleanControl), ["tilt", "touch", "keyboard"]);
+  for (const bad of [undefined, null, "", "Tilt", "gamepad", "__proto__", 1, ["tilt"], { control: "tilt" }]) assert.equal(cleanControl(bad), null);
 });

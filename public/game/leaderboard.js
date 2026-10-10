@@ -48,7 +48,8 @@ async function call(method, path, body) {
 }
 
 let stage = "burrow";   // which stage's board we read and write
-export function setStage(id) { stage = id; }
+let item = "🌰";        // what that stage's pickups look like
+export function setStage(id, itemEmoji = "🌰") { stage = id; item = itemEmoji; }
 
 let run = null; // Promise<runId | null> for the race in progress
 export function onRaceStart() {
@@ -58,7 +59,7 @@ export function onRaceStart() {
 
 // ---------------- UI ----------------
 const $ = (id) => document.getElementById(id);
-let last = null;    // { caught, time, acorns, bumps }
+let last = null;    // { caught, time, acorns, bumps, control }
 const views = {};   // list element id -> scope currently shown (ignores stale responses)
 
 export function initUI() {
@@ -97,7 +98,7 @@ async function submit() {
   try {
     const runId = await run;
     if (!runId) throw Object.assign(new Error("network"), { code: "network" });
-    const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, time: Math.round(last.time * 100) / 100, acorns: last.acorns, bumps: last.bumps });
+    const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, time: Math.round(last.time * 100) / 100, acorns: last.acorns, bumps: last.bumps, control: last.control });
     store.set("miuu-name", name.trim());
     track("leaderboard_submit", { stage, rank_week: r.week.rank, rank_all: r.all.rank });   // ranks only, never the nickname
     $("lbForm").hidden = true;
@@ -122,7 +123,7 @@ async function showBoard(listId, weekTab, allTab, s) {
   $(weekTab).classList.toggle("on", s === "week");
   $(allTab).classList.toggle("on", s === "all");
   const list = $(listId);
-  if (!list.children.length || list.dataset.stage !== stage) list.replaceChildren(row("…", "Loading", "", ""));
+  if (!list.children.length || list.dataset.stage !== stage) list.replaceChildren(row("…", "Loading"));
   list.dataset.stage = stage;
   try {
     const d = await call("GET", `/board?scope=${s}&stage=${stage}&deviceId=${encodeURIComponent(deviceId())}`);
@@ -131,20 +132,24 @@ async function showBoard(listId, weekTab, allTab, s) {
       list.replaceChildren(empty(s === "week" ? "No catches yet this week. Be the first!" : "No catches yet. Be the first!"));
       return;
     }
-    list.replaceChildren(...d.entries.map((e) => row(medal(e.rank), e.name, `${e.time.toFixed(2)}s`, `🌰 ${e.acorns}`, e.me)));
+    list.replaceChildren(...d.entries.map((e) => row(medal(e.rank), e.name, e.control, `${e.time.toFixed(2)}s`, `${item} ${e.acorns}`, e.me)));
   } catch {
     list.replaceChildren(empty("The leaderboard is offline right now"));
   }
 }
 
 const medal = (r) => (r === 1 ? "🥇" : r === 2 ? "🥈" : r === 3 ? "🥉" : String(r));
-function row(rank, name, time, acorns, me = false) {
+// How each score was steered. Scores saved before this was recorded have no icon.
+const CONTROLS = { tilt: ["📱", "Tilt"], touch: ["👆", "Touch"], keyboard: ["⌨️", "Keyboard"] };
+function row(rank, name, control, time = "", acorns = "", me = false) {
   const li = document.createElement("li");
   if (me) li.className = "me";
-  for (const [cls, text] of [["rk", rank], ["nm", name], ["tm", time], ["ac", acorns]]) {
+  const [icon, label] = CONTROLS[control] || ["", ""];
+  for (const [cls, text] of [["rk", rank], ["nm", name], ["ct", icon], ["tm", time], ["ac", acorns]]) {
     const span = document.createElement("span");
     span.className = cls;
     span.textContent = text; // names are user text: never innerHTML
+    if (cls === "ct" && label) { span.title = label; span.setAttribute("role", "img"); span.setAttribute("aria-label", label); }
     li.append(span);
   }
   return li;

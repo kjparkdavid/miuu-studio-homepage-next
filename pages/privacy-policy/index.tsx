@@ -445,9 +445,11 @@ const PrivacyPolicyPage = () => {
           <li>
             <strong>Leaderboard</strong>: if you catch the squirrel and choose
             to add your score, we store the nickname you type, your catch time,
-            how many acorns you collected and the date.{" "}
+            how many acorns you collected, how you steered (tilt, touch or
+            keyboard) and the date.{" "}
             <strong>
-              Your nickname, time and acorn count are shown publicly
+              Your nickname, time, acorn count and steering method are shown
+              publicly
             </strong>{" "}
             on the weekly and all-time leaderboards, so please don&apos;t use
             your real name or anything that identifies you. Nicknames that are
@@ -652,7 +654,8 @@ const PrivacyPolicyPage = () => {
           </li>
           <li>
             <strong>Game leaderboard</strong> (nickname, catch time, acorn count,
-            date): kept while the game is online, and shown publicly. To have an
+            steering method, date): kept while the game is online, and shown
+            publicly. To have an
             entry removed, email us the nickname and roughly when you played.
             Race records and spam counters delete themselves within about two
             days.

@@ -1,6 +1,6 @@
 // HTTP API for the Diary Chase leaderboard.
 //   POST /start                 -> { runId }                  (called when the player taps Start / Play again)
-//   POST /submit {runId, deviceId, name, time, acorns, bumps} -> ranks (only catches are submitted)
+//   POST /submit {runId, deviceId, name, time, acorns, bumps[, stage, control]} -> ranks (only catches are submitted)
 //   GET  /board?scope=week|all[&deviceId=] -> top entries
 // Firestore layout (clients have no direct access; see firestore.rules):
 //   runs/{runId}            one per race start; used once
@@ -8,7 +8,7 @@
 //   ratelimits/{ip}_{slot}  request counters
 const crypto = require("crypto");
 const { Timestamp } = require("firebase-admin/firestore");
-const { RULES, STAGES, weekId, scopeIds, checkScore, cleanName, DEVICE_RE } = require("./rules");
+const { RULES, STAGES, weekId, scopeIds, checkScore, cleanName, cleanControl, DEVICE_RE } = require("./rules");
 
 const LIMITS = { start: 40, submit: 15, windowMs: 10 * 60 * 1000 };
 const BOARD_CACHE_MS = 15000;
@@ -44,6 +44,8 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
     if (!Object.hasOwn(STAGES, stage)) return send(res, 400, { error: "bad_stage" });
     const nm = cleanName(b.name);
     if (!nm.ok) return send(res, 400, { error: nm.reason });
+    const control = cleanControl(b.control);
+    const how = control ? { control } : {};   // left off the documents when unknown
     if (!(await rateLimit(ip, "submit"))) return send(res, 429, { error: "slow_down" });
 
     const t = now();
@@ -61,12 +63,12 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
         if (!check.ok) throw httpError(400, check.reason);
         const refs = scopes.map((s) => db.collection("bests").doc(`${s}_${device}`));
         const prev = await Promise.all(refs.map((r) => tx.get(r)));
-        tx.update(runRef, { used: true, stage, time: check.time, acorns: b.acorns, name: nm.name, device });
+        tx.update(runRef, { used: true, stage, time: check.time, acorns: b.acorns, name: nm.name, device, ...how });
         const out = {};
         scopes.forEach((s, i) => {
           const old = prev[i].exists ? prev[i].data() : null;
           const improved = !old || check.time < old.time;
-          if (improved) tx.set(refs[i], { scope: s, name: nm.name, time: check.time, acorns: b.acorns, updatedAt: t });
+          if (improved) tx.set(refs[i], { scope: s, name: nm.name, time: check.time, acorns: b.acorns, updatedAt: t, ...how });
           out[s] = { best: improved ? check.time : old.time, improved };
         });
         return out;
@@ -94,7 +96,7 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
     if (!cached || now() - cached.at > BOARD_CACHE_MS) {
       const snap = await db.collection("bests").where("scope", "==", scope)
         .orderBy("time", "asc").orderBy("acorns", "desc").limit(RULES.boardSize).get();
-      cached = { at: now(), entries: snap.docs.map((d) => ({ id: d.id, name: d.get("name"), time: d.get("time"), acorns: d.get("acorns") })) };
+      cached = { at: now(), entries: snap.docs.map((d) => ({ id: d.id, name: d.get("name"), time: d.get("time"), acorns: d.get("acorns"), control: cleanControl(d.get("control")) })) };
       boardCache.set(scope, cached);
     }
     const mine = typeof req.query.deviceId === "string" && DEVICE_RE.test(req.query.deviceId) ? `${scope}_${hash(req.query.deviceId)}` : null;

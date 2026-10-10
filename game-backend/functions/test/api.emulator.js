@@ -27,10 +27,10 @@ function call(method, path, { body, query = {}, ip = "1.2.3.4" } = {}) {
   });
 }
 const dev = (n) => `device-${String(n).padStart(12, "0")}`;
-async function race(device, name, time, { acorns = 40, wait = time + 6, ip } = {}) {
+async function race(device, name, time, { acorns = 40, wait = time + 6, ip, control } = {}) {
   const s = await call("POST", "/start", { ip });
   clock += wait * 1000;
-  return call("POST", "/submit", { ip, body: { runId: s.body.runId, deviceId: device, name, time, acorns, bumps: 1 } });
+  return call("POST", "/submit", { ip, body: { runId: s.body.runId, deviceId: device, name, time, acorns, bumps: 1, control } });
 }
 
 test.before(async () => {
@@ -93,6 +93,20 @@ test("ocean scores go on the ocean boards only", async () => {
   assert.ok(!land.body.entries.some((e) => e.name === "Bubbles"));
   const bad = await call("GET", "/board", { query: { scope: "all", stage: "moon" } });
   assert.equal(bad.status, 400);
+});
+
+test("the board shows how each best was steered", async () => {
+  await race(dev(7), "Tilty", 27, { control: "tilt", ip: "6.6.6.1" });
+  await race(dev(8), "Keys", 27.5, { control: "keyboard", ip: "6.6.6.2" });
+  await race(dev(9), "Oldie", 28.5, { ip: "6.6.6.3" });                       // older game version: no control sent
+  await race(dev(10), "Odd", 29, { control: "gamepad", ip: "6.6.6.4" });      // unknown values are dropped, not refused
+  await race(dev(7), "Tilty", 31, { control: "touch", ip: "6.6.6.1" });       // slower retry keeps the best's icon
+  const b = await call("GET", "/board", { query: { scope: "week" } });
+  const how = Object.fromEntries(b.body.entries.map((e) => [e.name, e.control]));
+  assert.deepEqual([how.Tilty, how.Keys, how.Oldie, how.Odd], ["tilt", "keyboard", null, null]);
+  await race(dev(7), "Tilty", 25, { control: "touch", ip: "6.6.6.1" });       // a new best brings its own icon
+  const b2 = await call("GET", "/board", { query: { scope: "week" } });
+  assert.equal(b2.body.entries.find((e) => e.name === "Tilty").control, "touch");
 });
 
 test("rate limit kicks in for a flood from one IP", async () => {

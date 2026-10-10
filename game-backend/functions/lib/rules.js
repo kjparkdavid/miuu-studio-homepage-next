@@ -66,10 +66,15 @@ function cleanName(raw) {
 
 const DEVICE_RE = /^[A-Za-z0-9-]{16,64}$/;
 
+// How the player steered, shown as an icon next to their time. Self-reported and optional: older
+// game versions don't send it, and anything unexpected is dropped rather than refused.
+const CONTROLS = ["tilt", "touch", "keyboard"];
+const cleanControl = (raw) => (typeof raw === "string" && CONTROLS.includes(raw) ? raw : null);
+
 // Board scope ids. The burrow keeps its original ids ("all", "2026-W41"); other stages are prefixed.
 function scopeIds(stage, ms) {
   const pre = stage === "burrow" ? "" : stage + ":";
   return { week: pre + weekId(ms), all: pre + "all" };
 }
 
-module.exports = { RULES, STAGES, weekId, scopeIds, checkScore, cleanName, DEVICE_RE };
+module.exports = { RULES, STAGES, CONTROLS, weekId, scopeIds, checkScore, cleanName, cleanControl, DEVICE_RE };
