@@ -1,6 +1,6 @@
 // HTTP API for the Diary Chase leaderboard.
 //   POST /start                 -> { runId }                  (called when the player taps Start / Play again)
-//   POST /submit {runId, deviceId, name, time, acorns, bumps[, stage, control, caught, gap]} -> ranks
+//   POST /submit {runId, deviceId, name, time, acorns, bumps[, stage, control, country, caught, gap]} -> ranks
 //   GET  /board?scope=week|all[&stage=][&deviceId=] -> top entries, plus the caller's own entry when it is further down
 // Catches rank by time; misses (caught: false, gap = how far ahead the thief was) rank below every
 // catch, closest first. Both sort on one stored field, `order` (see rules.js).
@@ -10,7 +10,7 @@
 //   ratelimits/{ip}_{slot}  request counters
 const crypto = require("crypto");
 const { Timestamp } = require("firebase-admin/firestore");
-const { RULES, STAGES, weekId, scopeIds, checkScore, cleanName, cleanControl, DEVICE_RE } = require("./rules");
+const { RULES, STAGES, weekId, scopeIds, checkScore, cleanName, cleanControl, cleanCountry, DEVICE_RE } = require("./rules");
 
 const LIMITS = { start: 40, submit: 40, windowMs: 10 * 60 * 1000 };   // every race can end in a submit now, and each needs its own /start
 const BOARD_CACHE_MS = 15000;
@@ -19,7 +19,7 @@ const BOARD_CACHE_MS = 15000;
 const orderOf = (e) => e.order ?? e.time;
 function publicEntry(e) {
   const caught = e.caught !== false;
-  return { name: e.name, caught, time: e.time, ...(caught ? {} : { gap: e.gap }), acorns: e.acorns, control: cleanControl(e.control) };
+  return { name: e.name, caught, time: e.time, ...(caught ? {} : { gap: e.gap }), acorns: e.acorns, control: cleanControl(e.control), country: cleanCountry(e.country) };
 }
 
 function createApi({ db, now = () => Date.now(), salt = "" }) {
@@ -54,8 +54,8 @@ function createApi({ db, now = () => Date.now(), salt = "" }) {
     if (!Object.hasOwn(STAGES, stage)) return send(res, 400, { error: "bad_stage" });
     const nm = cleanName(b.name);
     if (!nm.ok) return send(res, 400, { error: nm.reason });
-    const control = cleanControl(b.control);
-    const how = control ? { control } : {};   // left off the documents when unknown
+    const control = cleanControl(b.control), country = cleanCountry(b.country);
+    const how = { ...(control && { control }), ...(country && { country }) };   // each left off the documents when unknown
     if (!(await rateLimit(ip, "submit"))) return send(res, 429, { error: "slow_down" });
 
     const t = now();

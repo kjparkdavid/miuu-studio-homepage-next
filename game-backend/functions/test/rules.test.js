@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert");
-const { weekId, scopeIds, checkScore, cleanName, cleanControl, RULES } = require("../lib/rules");
+const { weekId, scopeIds, checkScore, cleanName, cleanControl, cleanCountry, RULES } = require("../lib/rules");
 
 test("weekId follows ISO weeks in UTC", () => {
   assert.equal(weekId(Date.UTC(2026, 9, 9, 12)), "2026-W41");      // Fri Oct 9 2026
@@ -80,4 +80,9 @@ test("checkScore takes misses, which always sort below catches", () => {
   assert.equal(checkScore({ time: 30, acorns: 1, caught: false, gap: 5 }, 20).reason, "too_fast_for_run");
   for (const caught of ["no", 0, null]) assert.equal(checkScore({ time: 30, acorns: 1, caught, gap: 5 }, 40).reason, "bad_result");
   assert.equal(checkScore({ time: 24, acorns: 1, gap: 5 }, 40).caught, true);  // older game versions send no `caught`: a catch
+});
+
+test("cleanCountry keeps real two-letter country codes and drops everything else", () => {
+  assert.deepEqual(["KR", "US", "GB", "AQ"].map(cleanCountry), ["KR", "US", "GB", "AQ"]);
+  for (const bad of [undefined, null, "", "kr", "KOR", "ZZ", "XX", "U", "__proto__", "constructor", 82, ["KR"]]) assert.equal(cleanCountry(bad), null, String(bad));
 });

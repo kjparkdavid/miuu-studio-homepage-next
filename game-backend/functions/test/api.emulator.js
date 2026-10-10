@@ -28,11 +28,11 @@ function call(method, path, { body, query = {}, ip = "1.2.3.4" } = {}) {
   });
 }
 const dev = (n) => `device-${String(n).padStart(12, "0")}`;
-async function race(device, name, time, { acorns = 40, wait = time + 6, ip, control, stage, gap } = {}) {
+async function race(device, name, time, { acorns = 40, wait = time + 6, ip, control, country, stage, gap } = {}) {
   const s = await call("POST", "/start", { ip });
   clock += wait * 1000;
   const miss = gap === undefined ? {} : { caught: false, gap };
-  return call("POST", "/submit", { ip, body: { runId: s.body.runId, deviceId: device, name, time, acorns, bumps: 1, control, stage, ...miss } });
+  return call("POST", "/submit", { ip, body: { runId: s.body.runId, deviceId: device, name, time, acorns, bumps: 1, control, country, stage, ...miss } });
 }
 
 test.before(async () => {
@@ -143,7 +143,7 @@ test("your own entry comes back even when it is below the top of the board", asy
   assert.deepEqual(b.body.entries.slice(0, 2).map((e) => [e.name, e.caught]), [["Bubbles", true], ["Miss0", false]]);   // this week's one ocean catch, then the misses
   assert.ok(b.body.entries.every((e) => !e.me));
   // Bubbles and 21 closer misses are ahead
-  assert.deepEqual(b.body.mine, { rank: RULES.boardSize + 3, name: `Miss${RULES.boardSize + 1}`, caught: false, time: 24, gap: 5 + RULES.boardSize + 1, acorns: 40, control: null });
+  assert.deepEqual(b.body.mine, { rank: RULES.boardSize + 3, name: `Miss${RULES.boardSize + 1}`, caught: false, time: 24, gap: 5 + RULES.boardSize + 1, acorns: 40, control: null, country: null });
   const anon = await call("GET", "/board", { query: { scope: "week", stage: "ocean" } });
   assert.equal(anon.body.mine, undefined);
 });
@@ -155,6 +155,18 @@ test("scores saved before misses existed still count as catches", async () => {
   const miss = await race(dev(50), "Veteran", 30, { gap: 3, ip: "8.8.2.1" });
   assert.deepEqual([miss.body.all.improved, miss.body.all.caught, miss.body.all.best], [false, true, 20]);
   assert.deepEqual([miss.body.week.improved, miss.body.week.caught, miss.body.week.gap], [true, false, 3]);
+});
+
+test("the board shows each player's country when the game sent one", async () => {
+  await race(dev(60), "Seoulite", 33, { country: "KR", ip: "6.7.0.1" });
+  await race(dev(61), "Nowhere", 33.5, { country: "ZZ", ip: "6.7.0.2" });       // not a country: dropped, score still counts
+  await race(dev(62), "Oldgame", 34, { ip: "6.7.0.3" });                          // older game version: none sent
+  let b = await call("GET", "/board", { query: { scope: "week" } });
+  const where = () => Object.fromEntries(b.body.entries.map((e) => [e.name, e.country]));
+  assert.deepEqual([where().Seoulite, where().Nowhere, where().Oldgame], ["KR", null, null]);
+  await race(dev(60), "Seoulite", 32, { country: "JP", ip: "6.7.0.1" });          // a new best carries where it was set
+  b = await call("GET", "/board", { query: { scope: "week" } });
+  assert.equal(where().Seoulite, "JP");
 });
 
 test("rate limit kicks in for a flood from one IP", async () => {

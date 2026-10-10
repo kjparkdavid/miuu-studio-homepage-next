@@ -3,6 +3,7 @@
 
 // Firebase project miuu-diary-chase, function `api` (see /game-backend).
 import { track } from "./analytics.js";
+import { detectCountry, flag, countryName } from "./countries.js";
 
 const DEFAULT_API = "https://us-central1-miuu-diary-chase.cloudfunctions.net/api";
 const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
@@ -100,7 +101,7 @@ async function submit() {
     const runId = await run;
     if (!runId) throw Object.assign(new Error("network"), { code: "network" });
     const score = { time: Math.round(last.time * 100) / 100, caught: last.caught, ...(last.caught ? {} : { gap: Math.round(last.gap * 100) / 100 }) };
-    const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, ...score, acorns: last.acorns, bumps: last.bumps, control: last.control });
+    const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, ...score, acorns: last.acorns, bumps: last.bumps, control: last.control, country: detectCountry() || undefined });
     store.set("miuu-name", name.trim());
     track("leaderboard_submit", { stage, result: last.caught ? "caught" : "escaped", rank_week: r.week.rank, rank_all: r.all.rank });   // ranks only, never the nickname
     $("lbForm").hidden = true;
@@ -137,7 +138,7 @@ async function showBoard(listId, weekTab, allTab, s, reveal = false) {
       return;
     }
     const rows = [];
-    const add = (e, rank, me) => rows.push(row(rank, e.name, e.control, score(e), `${item} ${e.acorns}`, me));
+    const add = (e, rank, me) => rows.push(row(rank, e.name, e.control, score(e), `${item} ${e.acorns}`, me, e.country));
     d.entries.forEach((e, i) => {
       // catches come first; this line marks where the misses start
       if (e.caught === false && (i === 0 || d.entries[i - 1].caught !== false)) rows.push(divider("Almost caught it · how far behind"));
@@ -157,15 +158,16 @@ const metres = (gap) => Math.max(1, Math.round(gap * 2));   // same rounding as 
 const score = (e) => (e.caught === false ? `💨 ${metres(e.gap)} m` : `${e.time.toFixed(2)}s`);
 // How each score was steered. Scores saved before this was recorded have no icon.
 const CONTROLS = { tilt: ["📱", "Tilt"], touch: ["👆", "Touch"], keyboard: ["⌨️", "Keyboard"] };
-function row(rank, name, control, time = "", acorns = "", me = false) {
+function row(rank, name, control, time = "", acorns = "", me = false, country = null) {
   const li = document.createElement("li");
   if (me) li.className = "me";
   const [icon, label] = CONTROLS[control] || ["", ""];
-  for (const [cls, text] of [["rk", rank], ["nm", name], ["ct", icon], ["tm", time], ["ac", acorns]]) {
+  const labels = { fl: flag(country) && countryName(country), ct: label };   // the two picture-only cells
+  for (const [cls, text] of [["rk", rank], ["fl", flag(country)], ["nm", name], ["ct", icon], ["tm", time], ["ac", acorns]]) {
     const span = document.createElement("span");
     span.className = cls;
     span.textContent = text; // names are user text: never innerHTML
-    if (cls === "ct" && label) { span.title = label; span.setAttribute("role", "img"); span.setAttribute("aria-label", label); }
+    if (labels[cls]) { span.title = labels[cls]; span.setAttribute("role", "img"); span.setAttribute("aria-label", labels[cls]); }
     li.append(span);
   }
   return li;

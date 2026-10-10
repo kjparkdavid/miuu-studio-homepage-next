@@ -514,15 +514,17 @@ const PrivacyPolicyPage = () => {
             <strong>Leaderboard</strong>: after a race, if you choose to add
             your score, we store the nickname you type, whether you caught the
             squirrel, your catch time or how far behind you finished, how many
-            acorns you collected, how you steered (tilt, touch or keyboard) and
-            the date.{" "}
+            acorns you collected, how you steered (tilt, touch or keyboard), the
+            country your device&apos;s time zone is set to and the date.{" "}
             <strong>
-              Your nickname, result (catch time or distance behind), acorn count
-              and steering method are shown publicly
+              Your nickname, result (catch time or distance behind), acorn
+              count, steering method and country flag are shown publicly
             </strong>{" "}
             on the weekly and all-time leaderboards, so please don&apos;t use
             your real name or anything that identifies you. Nicknames that are
             offensive or pretend to be someone else may be blocked or removed.
+            The country is worked out on your device from its time zone; we
+            don&apos;t use your IP address or location for it.
           </li>
           <li>
             <strong>Keeping the board fair</strong>: when you start a race, our
@@ -723,8 +725,8 @@ const PrivacyPolicyPage = () => {
           </li>
           <li>
             <strong>Game leaderboard</strong> (nickname, result, catch time or
-            distance behind, acorn count, steering method, date): kept while the
-            game is online, and shown publicly. To have an
+            distance behind, acorn count, steering method, country, date): kept
+            while the game is online, and shown publicly. To have an
             entry removed, email us the nickname and roughly when you played.
             Race records and spam counters delete themselves within about two
             days.
