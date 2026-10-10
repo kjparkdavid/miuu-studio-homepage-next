@@ -64,6 +64,8 @@ const tilt = new Tilt();
 const touch = new TouchKeys(canvas, () => requestBoost());
 const isTouchDevice = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 let mode = isTouchDevice && Tilt.supported() ? "tilt" : "touch";
+// What we call the steering in analytics: a computer has no tilt or touch, it plays on the keyboard.
+const controlName = () => (isTouchDevice ? mode : "keyboard");
 let renderScale = 1;
 let qualityCap = 2;   // lowered automatically if frames take too long
 
@@ -73,11 +75,18 @@ function setMode(m) {
   ui.modeTouch.classList.toggle("on", m === "touch");
   ui.modeNote.textContent = m === "tilt"
     ? "Hold your phone like a steering wheel and turn it."
-    : isTouchDevice ? "Drag sideways, or put two thumbs down and twist." : "Use ← → (or A / D). Space to boost.";
+    : isTouchDevice ? "Drag sideways, or put two thumbs down and twist." : "← → or A / D to steer. Space to boost.";
 }
 ui.modeTilt.onclick = () => setMode("tilt");
 ui.modeTouch.onclick = () => setMode("touch");
 if (!Tilt.supported()) ui.modeTilt.disabled = true;
+if (!isTouchDevice) {
+  // On a computer there is one way to play, so say so instead of offering phone controls.
+  ui.modeTilt.hidden = true;
+  ui.modeTouch.textContent = "⌨️ Keyboard";
+  ui.start.textContent = "Start · press Enter";
+  ui.again.textContent = "Play again · Enter";
+}
 setMode(mode);
 
 function toast(msg, ms = 2600) {
@@ -158,10 +167,11 @@ function nextAttempt() {
   return n;
 }
 function beginRace() {
+  if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   reset();
   state.attempt = nextAttempt();
   lb.onRaceStart();
-  track("game_start", { stage: ST.id, control: mode, attempt: state.attempt });
+  track("game_start", { stage: ST.id, control: controlName(), attempt: state.attempt });
 }
 
 function requestBoost() {
@@ -234,6 +244,15 @@ ui.share.addEventListener("click", async () => {
 }
 canvas.addEventListener("pointerdown", () => {
   if (state.phase === "intro" && intro && state.phaseT < intro.dur) state.phaseT = intro.dur;   // tap to skip
+});
+// Keyboard shortcuts: Enter / Space start the race and skip the intro; Enter plays again.
+window.addEventListener("keydown", (e) => {
+  if (e.repeat || (e.code !== "Enter" && e.code !== "Space")) return;
+  if (e.target instanceof HTMLElement && e.target.closest("input, textarea, button, a")) return;   // typing, or a focused control
+  if (!document.getElementById("board").classList.contains("hide")) return;                      // leaderboard is open
+  if (state.phase === "title") { e.preventDefault(); ui.start.click(); }
+  else if (state.phase === "intro" && intro && state.phaseT < intro.dur) { e.preventDefault(); state.phaseT = intro.dur; }
+  else if (state.phase === "done" && e.code === "Enter") { e.preventDefault(); ui.again.click(); }
 });
 ui.mute.addEventListener("click", () => { sfx.muted = !sfx.muted; ui.mute.textContent = sfx.muted ? "🔇" : "🔊"; });
 
@@ -489,7 +508,7 @@ function finish() {
   s.lastResult = { caught: s.caught, time };
   ui.share.textContent = s.caught ? "📣 Challenge a friend" : "📣 Dare a friend to catch it";
   track("race_end", {
-    stage: ST.id, control: mode, result: s.caught ? "caught" : "escaped", time_s: Math.round(time * 10) / 10,
+    stage: ST.id, control: controlName(), result: s.caught ? "caught" : "escaped", time_s: Math.round(time * 10) / 10,
     items: s.acorns, bonks: s.bumps, attempt: s.attempt || 0, challenged: challenge && challenge.stage === ST.id ? 1 : 0,
   });
   lb.showResult({ caught: s.caught, time, acorns: s.acorns, bumps: s.bumps });
@@ -533,7 +552,7 @@ function drawHud() {
   const s = state;
   if (s.phase === "title") return;
   if (s.phase === "intro") {
-    if (s.phaseT < intro.dur) outlinedText(ctx, "tap to skip", W - 70, 40, 16, { alpha: 0.85 });
+    if (s.phaseT < intro.dur) outlinedText(ctx, isTouchDevice ? "tap to skip" : "Enter to skip", W - (isTouchDevice ? 70 : 80), 40, 16, { alpha: 0.85 });
     return;
   }
   if (s.phase === "countdown") {
@@ -548,7 +567,8 @@ function drawHud() {
       for (const x of [W * 0.22, W * 0.78]) { ctx.beginPath(); ctx.arc(x, 760, 52, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
       ctx.restore();
     } else {
-      outlinedText(ctx, "← →  to steer", W / 2, 220, 34);
+      outlinedText(ctx, "← →  to steer", W / 2, 205, 34);
+      outlinedText(ctx, "Space to boost", W / 2, 248, 24);
     }
     if (n >= 1 && n <= 3) {
       const f = 1 - (n - (COUNT - s.phaseT));
