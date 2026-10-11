@@ -16,7 +16,7 @@ const burrow = {
   imageKeys: BURROW_KEYS,
   intro: "img/intro_burrow",
   titleBg: "img/bg_title.png",
-  music: { src: "audio/burrow.mp3", vol: 0.3 },      // vol evens out how loud the two tracks are mastered
+  music: { src: "audio/burrow.mp3", vol: 0.3 },      // vol evens out how loud the tracks are mastered
   tag: "🐿️ A squirrel ran off with Miuu's diary!",
   // The easy stage. Balanced with the human-like test player (bot 4): a first-timer catches the squirrel
   // about half the time (55%), an average gamer almost always (99%). Re-run the simulation before
@@ -142,7 +142,7 @@ const sky = {
   imageKeys: [...SKY_KEYS, "tree_p", "tree_g", "tree_o", "diary", "sign_miuu"],   // shared with the burrow: the meadow's trees, the catch pop, the app billboard
   intro: "img/sky/intro_sky",
   titleBg: "img/sky/bg_title.png",
-  music: { src: "audio/menu.mp3", vol: 0.8 },   // no track of its own yet: the menu's plays on (same level as MENU_MUSIC in main.js)
+  music: { src: "audio/sky.mp3", vol: 0.29 },
   tag: "🐦 A crow flew off with Miuu's diary!",
   // The bonus stage, made so that most people win it on their first try. The first-try rate measured on
   // the live game in its first days (Oct 2026) was about 1 in 7 on the burrow, far under what the
