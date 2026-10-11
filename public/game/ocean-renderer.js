@@ -1,6 +1,6 @@
 // Ocean stage renderer — ported from render_scene() / frame() in source/sea.py.
 // Logical canvas 540x960, same projection constants as the burrow.
-import { W, H, S, VP, IMG, mix, hash01, drawSprite, registerSprites } from "./renderer.js";
+import { W, H, S, VP, IMG, mix, hash01, drawSprite, registerSprites, glow } from "./renderer.js";
 import { CAM_DEPTH } from "./track.js";
 import {
   N, SEG_LEN, CAM_H, DOCK_END, DIVE_END, REEF_END, KELP_END, WRECK_END, ABYSS_END, RISE_END, DOCK_W, WHALE_SEG,
@@ -570,24 +570,6 @@ export function renderOcean(ctx, view) {
     ctx.beginPath(); ctx.ellipse(hx + hr * 0.05, hy, hr * 1.05, hr * 0.8, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.fillStyle = "rgb(220,250,255)"; ctx.beginPath(); ctx.arc(hx + hr * 0.35, hy - hr * 0.25, hr * 0.22, 0, Math.PI * 2); ctx.fill();
   }
-}
-
-// A soft round light added onto the scene: colour "r,g,b", centre, radius, strength at the centre. The
-// falloff is drawn once into a small picture and stretched, and only the square it covers is painted.
-// (It used to be a fresh gradient blended over the whole screen every frame: the abyss's slowest paint.)
-const GLOWS = new Map();
-function glow(ctx, colour, x, y, radius, strength) {
-  let img = GLOWS.get(colour);
-  if (!img) {
-    img = document.createElement("canvas"); img.width = img.height = 128;
-    const c = img.getContext("2d"), g = c.createRadialGradient(64, 64, 0, 64, 64, 64);
-    g.addColorStop(0, `rgba(${colour},1)`); g.addColorStop(1, `rgba(${colour},0)`);
-    c.fillStyle = g; c.fillRect(0, 0, 128, 128);
-    GLOWS.set(colour, img);
-  }
-  ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = strength;
-  ctx.drawImage(img, x - radius, y - radius, radius * 2, radius * 2);
-  ctx.restore();
 }
 
 // ---------------- splashes and bubble bursts (fx values are seconds since each event) ----------------

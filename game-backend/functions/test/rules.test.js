@@ -32,11 +32,16 @@ test("each stage has its own limits and its own boards", () => {
   assert.equal(checkScore({ time: 13, acorns: 80, stage: "ocean" }, 60).ok, true);        // fine in the sea, too quick for the burrow
   assert.equal(checkScore({ time: 13, acorns: 80, stage: "burrow" }, 60).reason, "implausible_time");
   assert.equal(checkScore({ time: 19, acorns: 96, stage: "ocean" }, 60).reason, "bad_acorns");
-  assert.equal(checkScore({ time: 25, acorns: 1, stage: "sky" }, 60).reason, "bad_stage");
+  assert.equal(checkScore({ time: 18.4, acorns: 135, bumps: 23, stage: "sky" }, 60).ok, true);   // the sky's fastest line, every star
+  assert.equal(checkScore({ time: 15, acorns: 40, stage: "sky" }, 60).reason, "implausible_time");   // the crow can't be caught that early
+  assert.equal(checkScore({ time: 20, acorns: 136, stage: "sky" }, 60).reason, "bad_acorns");
+  assert.equal(checkScore({ time: 30, acorns: 20, stage: "sky", caught: false, gap: 16 }, 60).ok, true);
+  assert.equal(checkScore({ time: 25, acorns: 1, stage: "moon" }, 60).reason, "bad_stage");
   assert.equal(checkScore({ time: 25, acorns: 1, stage: "__proto__" }, 60).reason, "bad_stage");
   const t = Date.UTC(2026, 9, 9, 12);
   assert.deepEqual(scopeIds("burrow", t), { week: "2026-W41", all: "all" });               // unchanged ids for existing scores
   assert.deepEqual(scopeIds("ocean", t), { week: "ocean:2026-W41", all: "ocean:all" });
+  assert.deepEqual(scopeIds("sky", t), { week: "sky:2026-W41", all: "sky:all" });
 });
 
 test("cleanName keeps friendly names", () => {

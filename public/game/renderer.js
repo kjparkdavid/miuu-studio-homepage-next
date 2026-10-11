@@ -61,7 +61,7 @@ export async function loadImages(base = "img/", keys = BURROW_KEYS) {
     const im = new Image();
     im.onload = () => { loaded[n] = im; res(); };
     im.onerror = () => rej(new Error("missing image " + n));
-    im.src = base + n + ".png";
+    im.src = base + (/\.\w+$/.test(n) ? n : n + ".png");   // a name may carry its own extension (.webp)
   })));
   for (const k of keys) {
     const n = FILES[k];
@@ -117,14 +117,15 @@ function makeSky() {
   return c;
 }
 function mulberry(a) { return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-function makeVignette() {
+// The darkened corners laid over a finished frame: colour "r,g,b", and how strong (1 = the burrow's).
+export function makeVignette(colour = "40,20,60", strength = 1) {
   const c = document.createElement("canvas");
   c.width = W; c.height = H;
   const x = c.getContext("2d");
   x.translate(W / 2, H * 0.42);
   x.scale(1, (H * 0.62) / (W * 0.75));
   const g = x.createRadialGradient(0, 0, 0, 0, 0, W * 0.75);
-  for (const [s, a] of [[0, 0], [0.5, 0.0875], [0.7, 0.17], [0.85, 0.25], [1, 0.35]]) g.addColorStop(s, `rgba(40,20,60,${a})`);
+  for (const [s, a] of [[0, 0], [0.5, 0.0875], [0.7, 0.17], [0.85, 0.25], [1, 0.35]]) g.addColorStop(s, `rgba(${colour},${a * strength})`);
   x.fillStyle = g;
   x.fillRect(-W * 2, -H * 2, W * 4, H * 4);
   return c;
@@ -480,6 +481,24 @@ export function drawSprite(ctx, kind, x, yBottom, scale, squashX = 1, opts) {
     ctx.restore();
   } else ctx.drawImage(src, x - (tw * squashX) / 2, yBottom - th, tw * squashX, th);
   ctx.globalAlpha = prev;
+}
+
+// A soft round light added onto the scene: colour "r,g,b", centre, radius, strength at the centre. The
+// falloff is drawn once into a small picture and stretched, and only the square it covers is painted.
+// (It used to be a fresh gradient blended over the whole screen every frame: the abyss's slowest paint.)
+const GLOWS = new Map();
+export function glow(ctx, colour, x, y, radius, strength) {
+  let img = GLOWS.get(colour);
+  if (!img) {
+    img = document.createElement("canvas"); img.width = img.height = 128;
+    const c = img.getContext("2d"), g = c.createRadialGradient(64, 64, 0, 64, 64, 64);
+    g.addColorStop(0, `rgba(${colour},1)`); g.addColorStop(1, `rgba(${colour},0)`);
+    c.fillStyle = g; c.fillRect(0, 0, 128, 128);
+    GLOWS.set(colour, img);
+  }
+  ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = strength;
+  ctx.drawImage(img, x - radius, y - radius, radius * 2, radius * 2);
+  ctx.restore();
 }
 
 // ---------------- cockpit + text helpers ----------------

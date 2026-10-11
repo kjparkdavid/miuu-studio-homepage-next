@@ -26,9 +26,11 @@ const T_BASE = {
 const T = { ...T_BASE };
 
 const params = new URLSearchParams(location.search);
-// Every stage in STAGE_ORDER is offered on the start screen. (?stage=ocean still jumps straight to one.)
+// Every stage in STAGE_ORDER is offered on the start screen, and a visitor lands on the first of them.
+// (?stage=ocean still jumps straight to one.)
 const OCEAN_PUBLIC = true;
-let ST = STAGES[params.get("stage")] || STAGES.burrow;
+const FIRST_STAGE = STAGES[STAGE_ORDER[0]];
+let ST = STAGES[params.get("stage")] || FIRST_STAGE;
 // A shared link carries the sender's catch time to beat (?b=24.3) for the stage it opens.
 const challenge = challengeTime() ? { time: challengeTime(), stage: ST.id } : null;
 const DEBUG = params.has("debug");
@@ -393,7 +395,7 @@ function update(dt) {
     for (let seg = Math.floor(prevPos) + 1; seg <= Math.floor(s.pos); seg++) collide(ST.wrap(seg));
     // boost pads
     for (const pd of ST.pads) {
-      if (s.pos >= pd.seg && s.pos < pd.seg + ST.padLen && Math.abs(s.camX - pd.x) < 300 && !pd.used) {
+      if (s.pos >= pd.seg && s.pos < pd.seg + ST.padLen && Math.abs(s.camX - pd.x) < (pd.w || 300) && !pd.used) {
         pd.used = true;
         startBoost("Boost!");
       }
@@ -421,7 +423,7 @@ function update(dt) {
   s.wheelDeg = s.steer * 60;
   if (s.banner) { s.banner.t += dt; if (s.banner.t > s.banner.dur) s.banner = null; }
   s.pop = s.pop.filter((p) => (p.t += dt) < p.dur);
-  s.flyers = s.flyers.filter((f) => (f.t += dt) < 0.65);
+  s.flyers = s.flyers.filter((f) => (f.t += dt) < (f.dur || 0.65));
 }
 
 function botSteer() {
@@ -434,7 +436,7 @@ function botSteer() {
       const pad = ST.pads.find((p) => p.seg === seg);
       if (pad) { want = pad.x; break; }
       if (pk && !pk[0].taken) { want = pk[0].x; break; }
-      if (ob && Math.abs(ob[0].x - want) < 330) { want = ob[0].x > 0 ? ob[0].x - 400 : ob[0].x + 400; break; }
+      if (ob && !ST.softHits && Math.abs(ob[0].x - want) < 330) { want = ob[0].x > 0 ? ob[0].x - 400 : ob[0].x + 400; break; }
     }
   }
   if (s.meter >= T.acornsPerBoost && (BOT !== 3 || Math.random() < 0.01)) requestBoost();
@@ -472,7 +474,7 @@ function humanSteer(dt) {
       const pad = ST.pads.find((p) => p.seg === seg);
       if (pad && notices("p" + seg, P.pad)) { want = pad.x; break; }
       if (pk && !pk[0].taken && notices("k" + Math.floor(seg / 15), P.collect)) { want = pk[0].x; break; }
-      if (ob && !ob[0].hit && Math.abs(ob[0].x - want) < 330 && notices("o" + seg, P.dodge)) { want = ob[0].x > 0 ? ob[0].x - 400 : ob[0].x + 400; break; }
+      if (ob && !ST.softHits && !ob[0].hit && Math.abs(ob[0].x - want) < 330 && notices("o" + seg, P.dodge)) { want = ob[0].x > 0 ? ob[0].x - 400 : ob[0].x + 400; break; }
     }
     hb.want = want;
   }
@@ -494,11 +496,12 @@ function collide(seg) {
   const pk = gp.pickups.get(seg);
   if (pk) for (const p of pk) {
     if (!p.taken && Math.abs(s.camX - p.x) < 260) {
-      p.taken = true; s.acorns++;
+      const worth = p.worth || 1;   // a gift box holds several
+      p.taken = true; s.acorns += worth;
       const wasFull = s.meter >= T.acornsPerBoost;
-      s.meter = Math.min(T.acornsPerBoost, s.meter + 1);
+      s.meter = Math.min(T.acornsPerBoost, s.meter + worth);
       sfx.pickup(s.acorns);
-      s.pop.push({ t: 0, dur: 0.5, x: W / 2 + (p.x - s.camX) * 0.25, y: 560 });
+      s.pop.push({ t: 0, dur: worth > 1 ? 0.8 : 0.5, x: W / 2 + (p.x - s.camX) * 0.25, y: 560, text: "+" + worth, size: worth > 1 ? 40 : 26 });
       if (!wasFull && s.meter >= T.acornsPerBoost) { sfx.ready(); vibrate(15); }
     }
   }
@@ -506,10 +509,15 @@ function collide(seg) {
   if (ob) for (const o of ob) {
     if (!o.hit && Math.abs(s.camX - o.x) < 320) {
       o.hit = true; s.bumps++;
-      s.speed *= T.bumpSlow; s.stun = 0.6; s.shake = 1;
-      s.boostT = 0;
-      sfx.bump(); vibrate([40, 30, 40]);
-      banner("Bonk!", 0.7, 56);
+      if (ST.softHits) {   // sent flying, for fun: no slowing, no lost boost
+        s.shake = Math.max(s.shake, 0.45);
+        sfx.whack(s.bumps); vibrate(25);
+      } else {
+        s.speed *= T.bumpSlow; s.stun = 0.6; s.shake = 1;
+        s.boostT = 0;
+        sfx.bump(); vibrate([40, 30, 40]);
+        banner("Bonk!", 0.7, 56);
+      }
       ST.onBonk(s, o);
     }
   }
@@ -529,7 +537,8 @@ function updateSquirrel(dt) {
   const gap = s.sqPos - s.pos;
   // smooth rubber band: the squirrel eases off when far ahead so it never leaves the screen
   const far = Math.max(0, Math.min(1, (gap - 35) / 45));
-  const tired = ST.tired(s.sqPos) ? T.squirrelTired : 1;   // runs out of steam near the end
+  // runs out of steam near the end: all at once (`tired`), or little by little along the way (`pace`)
+  const tired = ST.pace ? ST.pace(s.sqPos, gap, T) : ST.tired(s.sqPos) ? T.squirrelTired : 1;
   const k = T.squirrelPace * tired * (1 - T.squirrelRubber * far * far * (3 - 2 * far));
   const launch = Math.min(1, s.phaseT / 0.6);
   s.sqSpeed = T.baseSpeed * ST.speedAt(s.sqPos) * k * launch;
@@ -565,8 +574,8 @@ function finish() {
   ui.resultSub.textContent = s.caught ? tx.win : tx.lose;
   ui.resultImg.src = s.caught ? "img/miuu_diary.png" : ST.loseImg;
   ui.resultStats.innerHTML = s.caught
-    ? `<b>${time.toFixed(1)}s</b> catch time${isBest ? " · new best!" : best ? ` · best ${best.time.toFixed(1)}s` : ""}<br>${tx.item} ${s.acorns} ${tx.items} · ${s.bumps} bonks`
-    : `It was ${Math.max(1, Math.round(s.escapeGap * 2))} m ahead ${tx.where}<br>${tx.item} ${s.acorns} ${tx.items} · ${s.bumps} bonks`;
+    ? `<b>${time.toFixed(1)}s</b> catch time${isBest ? " · new best!" : best ? ` · best ${best.time.toFixed(1)}s` : ""}<br>${tx.item} ${s.acorns} ${tx.items} · ${s.bumps} ${tx.bumps}`
+    : `It was ${Math.max(1, Math.round(s.escapeGap * 2))} m ahead ${tx.where}<br>${tx.item} ${s.acorns} ${tx.items} · ${s.bumps} ${tx.bumps}`;
   if (s.caught && challenge && challenge.stage === ST.id) {
     ui.resultStats.innerHTML += time < challenge.time
       ? `<br>🎉 You beat your friend's ${challenge.time.toFixed(1)}s!`
@@ -593,7 +602,8 @@ function draw() {
   const tiltRot = mode === "tilt" && s.phase !== "title" ? (-tilt.angle() * T.levelHorizon * Math.PI) / 180 : 0;
   const entities = [];
   if (s.phase !== "intro" && (!(s.caught || s.escaped) || s.sqRun < 1.2)) {
-    entities.push({ kind: s.caught ? ST.thief.empty : ST.thief.carry, pos: s.sqPos, x: s.sqX, y: ST.thief.motion(s.t, s.sqPos).y });
+    const look = s.caught ? ST.thief.empty : ST.thief.carry;   // one picture, or a few played in turn
+    entities.push({ kind: Array.isArray(look) ? look[Math.floor(s.t * 7) % look.length] : look, pos: s.sqPos, x: s.sqX, y: ST.thief.motion(s.t, s.sqPos).y });
   }
   const fx = {};
   if (s.fxT) for (const k in s.fxT) fx[k] = s.t - s.fxT[k];
@@ -700,7 +710,7 @@ function drawHud() {
       const sc = 0.0016 * (k < 0.2 ? k / 0.2 : 1) * (1 + 0.05 * Math.sin(p.t * 12));
       drawSprite(ctx, "diary", W / 2, 600 - 40 * Math.sin(k * Math.PI), sc);
     } else {
-      outlinedText(ctx, "+1", p.x, p.y - p.t * 120, 26, { alpha: 1 - p.t / p.dur });
+      outlinedText(ctx, p.text, p.x, p.y - p.t * 120, p.size, { alpha: 1 - p.t / p.dur });
     }
   }
   if (DEBUG) drawDebug();
@@ -801,7 +811,7 @@ function idleState() {
 
 // ---------------- stages ----------------
 async function selectStage(id) {
-  ST = STAGES[id] || STAGES.burrow;
+  ST = STAGES[id] || FIRST_STAGE;
   Object.assign(T, T_BASE, ST.tune);
   state.phase = "loading";
   ui.loading.classList.remove("hide");
@@ -853,7 +863,10 @@ function initStagePicker() {
   for (const id of STAGE_ORDER) {
     const b = document.createElement("button");
     b.type = "button"; b.dataset.stage = id;
-    b.textContent = `${STAGES[id].emoji} ${STAGES[id].name}`;
+    const stars = document.createElement("small");
+    stars.textContent = "★".repeat(STAGES[id].stars);
+    stars.title = ["Easy", "Medium", "Hard"][STAGES[id].stars - 1];
+    b.append(`${STAGES[id].emoji} ${STAGES[id].name}`, stars);
     b.onclick = () => { if (ST.id !== id && state.phase === "title") { track("stage_select", { stage: id }); selectStage(id); } };
     ui.stagePick.append(b);
   }
@@ -869,4 +882,4 @@ function initStagePicker() {
   requestAnimationFrame(frame);
 })();
 
-if (DEBUG) window.__game = { state, T, tilt, update, reset, selectStage, judgeQuality, perf, stage: () => ST, setBot: (b) => (BOT = b) };
+if (DEBUG) window.__game = { state, T, tilt, update, draw, reset, selectStage, judgeQuality, perf, stage: () => ST, setBot: (b) => (BOT = b) };
