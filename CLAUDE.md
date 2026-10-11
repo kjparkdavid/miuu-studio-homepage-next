@@ -68,3 +68,6 @@ Mobile-first Tailwind: single column on phones, `sm:` two-column bento, `lg:` si
 - All images imported as static assets for optimization
 - Components follow functional component pattern with TypeScript
 - ESLint configured with Next.js defaults
+## Tiny Us pages
+
+`pages/tiny-us/` holds Tiny Us's (the couples app's) Support, Privacy Policy and Terms of Use, framed by `components/tinyUsPage.tsx` (Figtree and the app's colours). The Tiny Us app links to `/tiny-us/terms/` and `/tiny-us/privacy-policy/` from its Welcome screen, so keep those paths. Keep both documents true to the app as built: what it stores, who sees it, which services receive it (the app has no analytics, ads or tracking SDKs; adding one means updating the policy first).
