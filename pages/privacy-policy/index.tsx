@@ -163,10 +163,11 @@ const PrivacyPolicyPage = () => {
             <strong>Removing it:</strong> to have your answer removed, write to
             us at{" "}
             <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>{" "}
-            and include your support ID, which you can copy in the app from
-            Settings &rarr; Copy support ID (if your version of the app does
-            not have it yet, write to us anyway; we may ask you to update the
-            app so that we can find your record).
+            with your support ID, which the app adds to the email it opens from
+            Settings &rarr; Help &amp; Miuu &rarr; Contact Us and which you can
+            also copy from Settings &rarr; Help &amp; Miuu &rarr; Copy support
+            ID (on an older version without it, write to us anyway; we may ask
+            you to update the app so that we can find your record).
           </li>
         </ul>
         <p>
