@@ -139,23 +139,34 @@ const PrivacyPolicyPage = () => {
           <li>
             <strong>Where it goes:</strong> your choice, including
             &ldquo;Prefer not to say&rdquo;, is kept on your device and sent to
-            our analytics provider, Google Analytics for Firebase,
-            and to our subscription provider, RevenueCat. We attach it to the
-            identifier each of them uses for your installation of the app or
-            your purchases, not to your name or email address.
+            our analytics provider, Google Analytics for Firebase. We attach it
+            to the identifier it uses for your installation of the app, not to
+            your name or email address.
           </li>
           <li>
             <strong>Why we ask:</strong> to understand, in totals across many
-            users, how different age groups use and pay for the app.
+            users, how different age groups use the app.
           </li>
           <li>
             <strong>What we do not do with it:</strong> we do not use it for
             advertising, and it does not change what the app shows you.
           </li>
           <li>
+            <strong>How long it is kept:</strong> Google Analytics keeps the
+            data it holds about an installation, this answer included, for 14
+            months from your most recent activity in the app (each time you use
+            the app, the 14 months start again) and then deletes it
+            automatically; totals across many users, which no longer relate to
+            any installation, are not affected.
+          </li>
+          <li>
             <strong>Removing it:</strong> to have your answer removed, write to
             us at{" "}
-            <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>.
+            <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>{" "}
+            and include your support ID, which you can copy in the app from
+            Settings &rarr; Copy support ID (if your version of the app does
+            not have it yet, write to us anyway; we may ask you to update the
+            app so that we can find your record).
           </li>
         </ul>
         <p>
@@ -199,9 +210,7 @@ const PrivacyPolicyPage = () => {
           see your card details. We use <strong>RevenueCat</strong> to tell the
           app whether a purchase or subscription is active; it receives an
           anonymous app user identifier and the purchase information the store
-          provides. RevenueCat also receives your answer to the age question
-          asked during setup (see &ldquo;The age range you choose during
-          setup&rdquo; above). Cancelling or refunding a subscription is done through your
+          provides. Cancelling or refunding a subscription is done through your
           store account.
         </p>
         <p>
