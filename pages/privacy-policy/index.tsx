@@ -90,6 +90,10 @@ const PrivacyPolicyPage = () => {
             Estimated age range, gender and interests, seen only as totals
             across many users (see Google signals below)
           </li>
+          <li>
+            The age range you choose during setup, if you choose one (see
+            &ldquo;The age range you choose during setup&rdquo; below)
+          </li>
         </ul>
         <p>
           <strong>What we do NOT collect through analytics:</strong>
@@ -122,6 +126,50 @@ const PrivacyPolicyPage = () => {
           </a>
           .
         </p>
+        <p>
+          <strong>The age range you choose during setup</strong>: when you
+          first set up the app, it asks which age group you are in (18&ndash;24,
+          25&ndash;34, 35&ndash;44, 45&ndash;54, or 55 and over). Telling us
+          is optional: &ldquo;Prefer not to say&rdquo; is always one of the
+          choices, and the app works the same whatever you pick. This is
+          separate from the estimates described under Google signals above: it
+          is the answer you give us yourself.
+        </p>
+        <ul>
+          <li>
+            <strong>Where it goes:</strong> your choice, including
+            &ldquo;Prefer not to say&rdquo;, is kept on your device and sent to
+            our analytics provider, Google Analytics for Firebase. We attach it
+            to the identifier it uses for your installation of the app, not to
+            your name or email address.
+          </li>
+          <li>
+            <strong>Why we ask:</strong> to understand, in totals across many
+            users, how different age groups use the app.
+          </li>
+          <li>
+            <strong>What we do not do with it:</strong> we do not use it for
+            advertising, and it does not change what the app shows you.
+          </li>
+          <li>
+            <strong>How long it is kept:</strong> Google Analytics keeps the
+            data it holds about an installation, this answer included, for 14
+            months from your most recent activity in the app (each time you use
+            the app, the 14 months start again) and then deletes it
+            automatically; totals across many users, which no longer relate to
+            any installation, are not affected.
+          </li>
+          <li>
+            <strong>Removing it:</strong> to have your answer removed, write to
+            us at{" "}
+            <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>{" "}
+            with your support ID, which the app adds to the email it opens from
+            Settings &rarr; Help &amp; Miuu &rarr; Contact Us and which you can
+            also copy from Settings &rarr; Help &amp; Miuu &rarr; Copy support
+            ID (on an older version without it, write to us anyway; we may ask
+            you to update the app so that we can find your record).
+          </li>
+        </ul>
         <p>
           Analytics data is used strictly for product improvement and is never
           sold. For more information, please review{" "}
@@ -675,6 +723,11 @@ const PrivacyPolicyPage = () => {
           target audience of 18 and over.
         </p>
         <p>
+          The age question asked during setup lists only adult age ranges,
+          starting at 18, together with &ldquo;Prefer not to say&rdquo;. We do
+          not ask for, or knowingly collect, the age range of anyone under 18.
+        </p>
+        <p>
           Consistent with the Children&apos;s Online Privacy Protection Act
           (COPPA), we do not knowingly collect personal information from children
           under 13, and we do not knowingly send any child&apos;s content to
@@ -802,7 +855,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: October 10, 2026</p>
+        <p>Effective Date: October 11, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
