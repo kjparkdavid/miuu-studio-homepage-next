@@ -155,6 +155,7 @@ const sky = {
   // rules.js) under the racing-line bot's time (18.4 s).
   tune: { centrifugal: 120, offroadMult: 0.7, squirrelPace: 1.12, squirrelTired: 0.55, squirrelRubber: 0.3 },
   softHits: true,              // a bird you hit is sent flying; you lose nothing
+  catchTitle: true,            // "Miuu Note" shows along the bottom with "Got it!"
   // How hard the crow flies (x squirrelPace). It darts ahead whenever you get close, so nobody catches
   // it before the storm and everyone sees the whole sky; deep in the storm it tires for good.
   pace(pos, gap, T) {

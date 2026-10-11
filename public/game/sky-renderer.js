@@ -30,6 +30,7 @@ export const SKY_FILES = {
   hb_yellow: F("ki_bird_yellow"), hb_blue: F("ki_bird_blue"), hb_grey: F("ki_crow_grey"),
   crow_diary_u: F("crow_back_diary_up"), crow_diary_d: F("crow_back_diary_down"), crow_empty_u: F("crow_back_empty_up"), crow_empty_d: F("crow_back_empty_down"),
   yoke: F("yoke"), s_frame: F("window_frame"), s_console: F("console"), s_miuu: F("miuu_back"), bank: F("cloud_bank"),
+  app_icon: "app_icon",   // beside the app's name when the crow is caught
 };
 const SKY_WW = {
   flag_p: 300, flag_b: 300, flag_y: 300, sock: 480, bal1: 900, bal2: 900, bal3: 900, bal4: 900, birdU: 300, birdD: 300,

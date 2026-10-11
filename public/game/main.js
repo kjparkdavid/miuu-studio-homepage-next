@@ -1,4 +1,4 @@
-import { W, H, S, WW, loadImages, outlinedText, drawSprite } from "./renderer.js";
+import { W, H, S, WW, IMG, loadImages, outlinedText, drawSprite } from "./renderer.js";
 import { STAGES, STAGE_ORDER } from "./stages.js";
 import { mulberry32 } from "./track.js";
 import { Tilt, TouchKeys } from "./input.js";
@@ -709,11 +709,27 @@ function drawHud() {
       const k = p.t / p.dur;
       const sc = 0.0016 * (k < 0.2 ? k / 0.2 : 1) * (1 + 0.05 * Math.sin(p.t * 12));
       drawSprite(ctx, "diary", W / 2, 600 - 40 * Math.sin(k * Math.PI), sc);
+      if (ST.catchTitle && IMG.app_icon) drawAppTitle(Math.min(1, p.t / 0.15) * Math.min(1, (p.dur - p.t) / 0.25));
     } else {
       outlinedText(ctx, p.text, p.x, p.y - p.t * 120, p.size, { alpha: 1 - p.t / p.dur });
     }
   }
   if (DEBUG) drawDebug();
+}
+
+// The app's icon and name along the bottom of the view, shown with "Got it!" on stages that ask for it.
+function drawAppTitle(alpha) {
+  const size = 40, icon = 46, gap = 10, y = 748;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.font = `800 ${size}px Poppins, system-ui, sans-serif`;
+  const x0 = (W - (icon + gap + ctx.measureText("Miuu Note").width)) / 2;
+  ctx.fillStyle = "#4b3a6e"; roundRect(ctx, x0 - 3, y - icon / 2 - 3, icon + 6, icon + 6, 14); ctx.fill();
+  ctx.save(); roundRect(ctx, x0, y - icon / 2, icon, icon, 11); ctx.clip();
+  ctx.drawImage(IMG.app_icon, x0, y - icon / 2, icon, icon);
+  ctx.restore();
+  ctx.restore();
+  outlinedText(ctx, "Miuu Note", x0 + icon + gap, y + 2, size, { align: "left", alpha });
 }
 
 let lastZone = null, zoneT0 = 0;
