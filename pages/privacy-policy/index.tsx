@@ -129,16 +129,17 @@ const PrivacyPolicyPage = () => {
         <p>
           <strong>The age range you choose during setup</strong>: when you
           first set up the app, it asks which age group you are in (18&ndash;24,
-          25&ndash;34, 35&ndash;44, 45&ndash;54, or 55 and over). Answering is
-          optional: &ldquo;Prefer not to say&rdquo; is always one of the
+          25&ndash;34, 35&ndash;44, 45&ndash;54, or 55 and over). Telling us
+          is optional: &ldquo;Prefer not to say&rdquo; is always one of the
           choices, and the app works the same whatever you pick. This is
           separate from the estimates described under Google signals above: it
           is the answer you give us yourself.
         </p>
         <ul>
           <li>
-            <strong>Where it goes:</strong> your choice is kept on your device
-            and sent to our analytics provider, Google Analytics for Firebase,
+            <strong>Where it goes:</strong> your choice, including
+            &ldquo;Prefer not to say&rdquo;, is kept on your device and sent to
+            our analytics provider, Google Analytics for Firebase,
             and to our subscription provider, RevenueCat. We attach it to the
             identifier each of them uses for your installation of the app or
             your purchases, not to your name or email address.
@@ -198,8 +199,8 @@ const PrivacyPolicyPage = () => {
           see your card details. We use <strong>RevenueCat</strong> to tell the
           app whether a purchase or subscription is active; it receives an
           anonymous app user identifier and the purchase information the store
-          provides. If you chose an age range during setup, RevenueCat also
-          receives that choice (see &ldquo;The age range you choose during
+          provides. RevenueCat also receives your answer to the age question
+          asked during setup (see &ldquo;The age range you choose during
           setup&rdquo; above). Cancelling or refunding a subscription is done through your
           store account.
         </p>
