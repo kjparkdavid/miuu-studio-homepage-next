@@ -90,6 +90,10 @@ const PrivacyPolicyPage = () => {
             Estimated age range, gender and interests, seen only as totals
             across many users (see Google signals below)
           </li>
+          <li>
+            The age range you choose during setup, if you choose one (see
+            &ldquo;The age range you choose during setup&rdquo; below)
+          </li>
         </ul>
         <p>
           <strong>What we do NOT collect through analytics:</strong>
@@ -122,6 +126,37 @@ const PrivacyPolicyPage = () => {
           </a>
           .
         </p>
+        <p>
+          <strong>The age range you choose during setup</strong>: when you
+          first set up the app, it asks which age group you are in (18&ndash;24,
+          25&ndash;34, 35&ndash;44, 45&ndash;54, or 55 and over). Answering is
+          optional: &ldquo;Prefer not to say&rdquo; is always one of the
+          choices, and the app works the same whatever you pick. This is
+          separate from the estimates described under Google signals above: it
+          is the answer you give us yourself.
+        </p>
+        <ul>
+          <li>
+            <strong>Where it goes:</strong> your choice is kept on your device
+            and sent to our analytics provider, Google Analytics for Firebase,
+            and to our subscription provider, RevenueCat. We attach it to the
+            identifier each of them uses for your installation of the app or
+            your purchases, not to your name or email address.
+          </li>
+          <li>
+            <strong>Why we ask:</strong> to understand, in totals across many
+            users, how different age groups use and pay for the app.
+          </li>
+          <li>
+            <strong>What we do not do with it:</strong> we do not use it for
+            advertising, and it does not change what the app shows you.
+          </li>
+          <li>
+            <strong>Removing it:</strong> to have your answer removed, write to
+            us at{" "}
+            <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>.
+          </li>
+        </ul>
         <p>
           Analytics data is used strictly for product improvement and is never
           sold. For more information, please review{" "}
@@ -163,7 +198,9 @@ const PrivacyPolicyPage = () => {
           see your card details. We use <strong>RevenueCat</strong> to tell the
           app whether a purchase or subscription is active; it receives an
           anonymous app user identifier and the purchase information the store
-          provides. Cancelling or refunding a subscription is done through your
+          provides. If you chose an age range during setup, RevenueCat also
+          receives that choice (see &ldquo;The age range you choose during
+          setup&rdquo; above). Cancelling or refunding a subscription is done through your
           store account.
         </p>
         <p>
@@ -675,6 +712,11 @@ const PrivacyPolicyPage = () => {
           target audience of 18 and over.
         </p>
         <p>
+          The age question asked during setup lists only adult age ranges,
+          starting at 18, together with &ldquo;Prefer not to say&rdquo;. We do
+          not ask for, or knowingly collect, the age range of anyone under 18.
+        </p>
+        <p>
           Consistent with the Children&apos;s Online Privacy Protection Act
           (COPPA), we do not knowingly collect personal information from children
           under 13, and we do not knowingly send any child&apos;s content to
@@ -802,7 +844,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: October 10, 2026</p>
+        <p>Effective Date: October 11, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
