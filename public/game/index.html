@@ -150,7 +150,6 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   /* how hard each map is: one to three stars under its name */
   .modes.stages button small { display: block; font-size: 10px; line-height: 1.1; letter-spacing: 2px; margin: 1px 0 -2px 2px; opacity: .75; }
   #lbBox { margin: 0 0 12px; }
-  .modes.mini button { font-size: 13px; padding: 5px 6px; border-radius: 12px; }
   /* Play again, with a compact button per other map beside it so all of them show without scrolling */
   #againRow { display: flex; gap: 8px; align-items: stretch; }
   #againRow .big { flex: 1; min-width: 0; padding-left: 4px; padding-right: 4px; font-size: clamp(17px, 5.4cqw, 22px); }   /* stays on one line beside two maps on a phone */
@@ -162,7 +161,7 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   }
   #stageSwitch button:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
   #stageSwitch button b { display: block; font-size: 22px; line-height: 1.2; font-weight: 400; }
-  #rBoardList { max-height: 172px; margin: 8px 0 0; }
+  #rBoardList { max-height: 172px; margin: 4px 0 0; }
   #lbForm { display: flex; gap: 8px; }
   #lbName {
     flex: 1; min-width: 0; font: 600 16px Poppins, system-ui; color: var(--ink); padding: 9px 12px;
@@ -240,10 +239,6 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
         </form>
         <div id="lbRank"></div>
         <div id="lbNote"></div>
-        <div class="modes mini">
-          <button id="rTabWeek" type="button" class="on">This week</button>
-          <button id="rTabAll" type="button">All time</button>
-        </div>
         <ol id="rBoardList" class="boardList"></ol>
       </div>
       <p id="tiltHelp" hidden></p>
@@ -264,10 +259,6 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   <div id="board" class="overlay hide">
     <div class="panel">
       <h2>🏆 Leaderboard</h2>
-      <div class="modes">
-        <button id="tabWeek" type="button" class="on">This week</button>
-        <button id="tabAll" type="button">All time</button>
-      </div>
       <ol id="boardList" class="boardList"></ol>
       <p class="boardKey">📱 tilt · 👆 touch · ⌨️ keyboard</p>
       <button id="boardClose" class="big" type="button">Close</button>

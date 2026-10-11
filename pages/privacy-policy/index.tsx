@@ -520,8 +520,8 @@ const PrivacyPolicyPage = () => {
               Your nickname, result (catch time or distance behind), acorn
               count, steering method and country flag are shown publicly
             </strong>{" "}
-            on the weekly and all-time leaderboards, so please don&apos;t use
-            your real name or anything that identifies you. Nicknames that are
+            on the game&apos;s leaderboard, so please don&apos;t use your real
+            name or anything that identifies you. Nicknames that are
             offensive or pretend to be someone else may be blocked or removed.
             The country is worked out on your device from its time zone; we
             don&apos;t use your IP address or location for it.

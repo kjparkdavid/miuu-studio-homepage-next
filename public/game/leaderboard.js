@@ -1,5 +1,7 @@
 // Leaderboard client: talks to the `api` Cloud Function (see /game-backend). Any finished race can be
 // added: catches rank by time, misses below them by how far ahead the thief was when it got away.
+// One board per stage, all-time. (The server still answers for a weekly board too; the game no longer
+// shows it.)
 
 // Firebase project miuu-diary-chase, function `api` (see /game-backend).
 import { track } from "./analytics.js";
@@ -63,17 +65,13 @@ export function onRaceStart() {
 // ---------------- UI ----------------
 const $ = (id) => document.getElementById(id);
 let last = null;    // { caught, time, gap (misses only), acorns, bumps, control }
-const views = {};   // list element id -> scope currently shown (ignores stale responses)
+const asked = {};   // list element id -> its latest request (ignores stale responses)
 
 export function initUI() {
   if (!enabled) return;
   $("boardBtn").hidden = false;
-  $("boardBtn").onclick = () => openBoard("week");
+  $("boardBtn").onclick = openBoard;
   $("boardClose").onclick = () => $("board").classList.add("hide");
-  $("tabWeek").onclick = () => openBoard("week");
-  $("tabAll").onclick = () => openBoard("all");
-  $("rTabWeek").onclick = () => showBoard("rBoardList", "rTabWeek", "rTabAll", "week");
-  $("rTabAll").onclick = () => showBoard("rBoardList", "rTabWeek", "rTabAll", "all");
   $("lbForm").addEventListener("submit", (e) => { e.preventDefault(); submit(); });
 }
 
@@ -88,7 +86,7 @@ export function showResult(result) {
   $("lbSend").disabled = false;
   // desktop: put the cursor in the name box (on phones that would pop the keyboard over the board)
   if (!matchMedia("(pointer: coarse)").matches) setTimeout(() => $("lbName").focus(), 50);
-  showBoard("rBoardList", "rTabWeek", "rTabAll", "week");
+  showBoard("rBoardList");
 }
 
 async function submit() {
@@ -103,13 +101,13 @@ async function submit() {
     const score = { time: Math.round(last.time * 100) / 100, caught: last.caught, ...(last.caught ? {} : { gap: Math.round(last.gap * 100) / 100 }) };
     const r = await call("POST", "/submit", { runId, stage, deviceId: deviceId(), name, ...score, acorns: last.acorns, bumps: last.bumps, control: last.control, country: detectCountry() || undefined });
     store.set("miuu-name", name.trim());
-    track("leaderboard_submit", { stage, result: last.caught ? "caught" : "escaped", rank_week: r.week.rank, rank_all: r.all.rank });   // ranks only, never the nickname
+    track("leaderboard_submit", { stage, result: last.caught ? "caught" : "escaped", rank_all: r.all.rank });   // the rank only, never the nickname
     $("lbForm").hidden = true;
     note.textContent = "";
-    // one entry per player per board, their best: a run that beats neither changes nothing, so say so plainly
+    // one entry per player, their best: a run that doesn't beat it changes nothing, so say so plainly
     const mark = (b) => (b.caught === false ? `${metres(b.gap)} m behind` : `${b.best.toFixed(2)}s`);
-    $("lbRank").textContent = (r.week.improved || r.all.improved ? "Saved! " : `Your best stays ${mark(r.week)} · `) + `#${r.week.rank} this week · #${r.all.rank} all-time`;
-    showBoard("rBoardList", "rTabWeek", "rTabAll", views.rBoardList || "week", true);
+    $("lbRank").textContent = (r.all.improved ? "Saved! " : `Your best stays ${mark(r.all)} · `) + `#${r.all.rank} on the board`;
+    showBoard("rBoardList", true);
   } catch (e) {
     btn.disabled = false;
     note.textContent = MESSAGES[e.code] || "The leaderboard is offline right now";
@@ -117,25 +115,23 @@ async function submit() {
   }
 }
 
-function openBoard(s) {
+function openBoard() {
   if ($("board").classList.contains("hide")) track("leaderboard_open", { stage });
   $("board").classList.remove("hide");
-  showBoard("boardList", "tabWeek", "tabAll", s);
+  showBoard("boardList");
 }
 
 // reveal: scroll the list to the player's own row (used right after they add a score)
-async function showBoard(listId, weekTab, allTab, s, reveal = false) {
-  views[listId] = s;
-  $(weekTab).classList.toggle("on", s === "week");
-  $(allTab).classList.toggle("on", s === "all");
+async function showBoard(listId, reveal = false) {
+  const request = (asked[listId] = {});
   const list = $(listId);
   if (!list.children.length || list.dataset.stage !== stage) list.replaceChildren(row("…", "Loading"));
   list.dataset.stage = stage;
   try {
-    const d = await call("GET", `/board?scope=${s}&stage=${stage}&deviceId=${encodeURIComponent(deviceId())}`);
-    if (views[listId] !== s) return;
+    const d = await call("GET", `/board?scope=all&stage=${stage}&deviceId=${encodeURIComponent(deviceId())}`);
+    if (asked[listId] !== request) return;
     if (!d.entries.length) {
-      list.replaceChildren(empty(s === "week" ? "Nobody on the board yet this week. Be the first!" : "Nobody on the board yet. Be the first!"));
+      list.replaceChildren(empty("Nobody on the board yet. Be the first!"));
       return;
     }
     const rows = [];
@@ -150,7 +146,7 @@ async function showBoard(listId, weekTab, allTab, s, reveal = false) {
     const me = reveal && list.querySelector(".me");
     if (me) list.scrollTop += Math.max(0, me.getBoundingClientRect().bottom - list.getBoundingClientRect().bottom);
   } catch {
-    list.replaceChildren(empty("The leaderboard is offline right now"));
+    if (asked[listId] === request) list.replaceChildren(empty("The leaderboard is offline right now"));
   }
 }
 
