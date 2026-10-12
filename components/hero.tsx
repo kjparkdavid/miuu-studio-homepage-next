@@ -1,8 +1,8 @@
 import Image from "next/image";
 import appIcon from "@/public/images/app-icon.png";
-import home from "@/public/images/app/home.jpg";
-import journals from "@/public/images/app/journals.jpg";
-import dressingRoom from "@/public/images/app/dressing-room.jpg";
+import writeEntry from "@/public/images/app/write-entry.png";
+import journals from "@/public/images/app/journals-list.png";
+import calendar from "@/public/images/app/mood-calendar.png";
 import studyMiuu from "@/public/images/outfits/study.png";
 import StoreBadges from "@/components/storeBadges";
 import { PLAY_STATS, SOCIAL_LINKS } from "@/lib/links";
@@ -45,19 +45,6 @@ const JarProp = ({ className }: { className: string }) => (
   </svg>
 );
 
-const HouseProp = ({ className }: { className: string }) => (
-  <svg viewBox="0 0 160 110" className={`absolute ${className}`} aria-hidden>
-    <ellipse cx="80" cy="66" rx="76" ry="26" fill="none" stroke="#fff" strokeOpacity="0.8" strokeWidth="1.5" transform="rotate(14 80 66)" />
-    <g transform="rotate(-14 60 50)">
-      <rect x="38" y="44" width="42" height="40" rx="6" fill="#fff" />
-      <path d="M32 48L59 22l27 26z" fill="#F9C4D2" stroke="#fff" strokeWidth="4" strokeLinejoin="round" />
-      <rect x="46" y="54" width="10" height="10" rx="2" fill="#C9B8FF" />
-      <rect x="60" y="62" width="11" height="22" rx="3" fill="#FFD66B" />
-    </g>
-    <path d="M128 92l2 4 4 1-4 1-2 4-2-4-4-1 4-1z" fill="#fff" />
-  </svg>
-);
-
 const PencilProp = ({ className }: { className: string }) => (
   <svg viewBox="0 0 100 40" className={`absolute ${className}`} aria-hidden>
     <g transform="rotate(12 50 20)">
@@ -69,11 +56,11 @@ const PencilProp = ({ className }: { className: string }) => (
 );
 
 const MiuuAtDesk = () => (
-  <div className="relative mx-auto aspect-square w-full max-w-[460px] animate-pop-in [animation-delay:250ms]">
-    {/* frosted desk Miuu sits behind */}
-    <div className="absolute inset-x-[12%] bottom-[14%] h-[30%] rounded-[2rem] bg-white/15 ring-1 ring-white/25 backdrop-blur-sm" aria-hidden>
-      <div className="absolute inset-x-6 top-3 h-px bg-white/50" />
-      <div className="absolute inset-x-[18%] -bottom-1 h-1/2 rounded-b-2xl rounded-t-md bg-violet-soft/40 ring-1 ring-white/25" />
+  <div className="relative mx-auto aspect-square w-full">
+    {/* soft lilac desk Miuu sits behind */}
+    <div className="absolute inset-x-[12%] bottom-[14%] h-[30%] rounded-[2rem] bg-lilac ring-1 ring-violet/10" aria-hidden>
+      <div className="absolute inset-x-6 top-3 h-px bg-white" />
+      <div className="absolute inset-x-[18%] -bottom-1 h-1/2 rounded-b-2xl rounded-t-md bg-violet-soft/30 ring-1 ring-violet/10" />
     </div>
     <Image
       src={studyMiuu}
@@ -82,15 +69,41 @@ const MiuuAtDesk = () => (
       className="absolute inset-x-[16%] bottom-[20%] w-[68%] animate-float-slow"
     />
 
-    <JournalProp className="left-0 top-[30%] w-16 animate-float sm:w-20" />
-    <JarProp className="right-0 top-[18%] w-16 animate-float [animation-delay:1.2s] sm:w-20" />
-    <HouseProp className="-left-4 bottom-0 w-32 sm:w-40" />
-    <PencilProp className="-right-2 bottom-[4%] w-20 animate-float [animation-delay:2s] sm:w-24" />
+    <JournalProp className="left-0 top-[30%] w-14 animate-float drop-shadow-md sm:w-16" />
+    <JarProp className="right-0 top-[18%] w-14 animate-float drop-shadow-md [animation-delay:1.2s] sm:w-16" />
+    <PencilProp className="-right-2 bottom-[4%] w-16 animate-float drop-shadow-md [animation-delay:2s] sm:w-20" />
 
-    <Sparkle className="left-[22%] top-[12%] h-6 w-6 text-white" />
-    <Sparkle className="right-[30%] top-[4%] h-7 w-7 text-white [animation-delay:1s]" />
-    <Sparkle className="right-[16%] top-[44%] h-4 w-4 text-white [animation-delay:2s]" />
-    <Sparkle className="bottom-[16%] left-[26%] h-5 w-5 text-white [animation-delay:1.5s]" />
+    <Sparkle className="left-[22%] top-[12%] h-5 w-5 text-violet-soft" />
+    <Sparkle className="right-[30%] top-[4%] h-6 w-6 text-violet-soft [animation-delay:1s]" />
+    <Sparkle className="bottom-[16%] left-[20%] h-4 w-4 text-violet-soft [animation-delay:1.5s]" />
+  </div>
+);
+
+// Journals list, a journal entry and the mood calendar fanned out beside the headline. Each phone
+// has three layers: the entrance, a gentle float (offset so they bob out of step) and its tilt.
+const HeroPhones = () => (
+  <div className="relative mx-auto flex w-full max-w-[520px] items-start justify-center pt-4">
+    <div className="-me-6 mt-12 w-[32%] animate-fade-up [animation-delay:550ms]">
+      <div className="animate-float [animation-delay:0.8s]">
+        <div className="phone -rotate-6">
+          <Image src={journals} alt="Journals: this month's sticker jar and recent entries" />
+        </div>
+      </div>
+    </div>
+    <div className="relative z-10 w-[38%] animate-fade-up [animation-delay:450ms]">
+      <div className="animate-float-slow">
+        <div className="phone">
+          <Image src={writeEntry} alt="A journal entry titled Finally hit send, with stickers" priority />
+        </div>
+      </div>
+    </div>
+    <div className="-ms-6 mt-12 w-[32%] animate-fade-up [animation-delay:650ms]">
+      <div className="animate-float [animation-delay:2.2s]">
+        <div className="phone rotate-6">
+          <Image src={calendar} alt="Mood calendar: a mood sticker on each day of October" />
+        </div>
+      </div>
+    </div>
   </div>
 );
 
@@ -124,7 +137,7 @@ const Hero = () => {
         {/* desktop: socials rest in the bottom-right corner, clear of the phones */}
         <SocialIcons className="absolute bottom-10 right-10 z-10 hidden animate-fade-up [animation-delay:700ms] lg:flex" />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-6 px-4 pb-44 pt-12 sm:px-6 sm:pb-56 lg:grid-cols-[1.05fr_1fr] lg:pt-20">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-16 pt-12 sm:px-6 sm:pb-20 lg:grid-cols-[1.05fr_1fr] lg:pt-20">
           <div>
             <div className="flex animate-fade-up items-center gap-4">
               <Image src={appIcon} alt="" width={64} height={64} className="rounded-2xl" />
@@ -133,13 +146,13 @@ const Hero = () => {
             <h1 className="mt-10 animate-fade-up font-display [animation-delay:100ms] text-5xl font-extrabold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
               {/* names the app for search engines; the wordmark above already shows it visually */}
               <span className="sr-only">Miuu Note, a cute journal app: </span>
-              Journal your days.
+              Your cute
               <br />
-              Build your little world.
+              mood journal.
             </h1>
             <p className="mt-6 max-w-md animate-fade-up text-base font-medium leading-relaxed text-white/80 [animation-delay:200ms] sm:text-lg">
-              Miuu Note is a cute, private journal app for iPhone and Android. Write with gentle prompts,
-              track your mood with stickers, keep a gratitude jar and decorate a cozy room with Miuu.
+              Write it down, track your mood, collect stickers and make a cozy little room your own. A
+              private space for the end of the day, on iPhone and Android.
             </p>
 
             <StoreBadges className="mt-8 animate-fade-up [animation-delay:300ms]" />
@@ -157,29 +170,14 @@ const Hero = () => {
             <SocialIcons className="mt-8 animate-fade-up [animation-delay:450ms] lg:hidden" />
           </div>
 
-          <MiuuAtDesk />
+          <HeroPhones />
         </div>
       </section>
 
-      {/* Journals list, home and dressing room, straddling the edge of the violet hero */}
-      <section className="relative flow-root bg-canvas px-2 pb-8 sm:px-6" aria-label="Miuu Note screens">
-        <div className="relative mx-auto -mt-36 flex max-w-4xl items-start justify-center sm:-mt-48">
-          {/* wrappers carry the entrance so it doesn't fight each phone's tilt */}
-          <div className="-me-3 mt-14 w-[32%] max-w-[240px] animate-fade-up [animation-delay:550ms] sm:-me-6">
-            <div className="phone -rotate-6">
-              <Image src={journals} alt="Journals: this month's mood stickers and today's entries" />
-            </div>
-          </div>
-          <div className="relative z-10 w-[36%] max-w-[270px] animate-fade-up [animation-delay:450ms]">
-            <div className="phone">
-              <Image src={home} alt="Miuu Note home screen: Miuu's decorated room" priority />
-            </div>
-          </div>
-          <div className="-ms-3 mt-14 w-[32%] max-w-[240px] animate-fade-up [animation-delay:650ms] sm:-ms-6">
-            <div className="phone rotate-6">
-              <Image src={dressingRoom} alt="Miuu's dressing room: a donut outfit and bubble tea" />
-            </div>
-          </div>
+      {/* Miuu at a desk, just below the violet hero */}
+      <section className="relative bg-canvas px-4 pt-10" aria-label="Miuu at a desk">
+        <div className="relative mx-auto max-w-[220px] animate-pop-in [animation-delay:250ms] sm:max-w-[260px]">
+          <MiuuAtDesk />
         </div>
       </section>
     </>

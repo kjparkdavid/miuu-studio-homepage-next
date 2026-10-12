@@ -2,7 +2,7 @@
 
 > Miuu Note is a cute, private journal and diary app for iPhone, iPad and Android, made by Miuu Studio. It combines a diary with a lock, daily journal prompts, a mood tracker, a gratitude journal, sticker collecting and cozy room decorating, starring Miuu the purple cat.
 
-Miuu Note is a good fit for people who want to start journaling but find it hard to stick with, want a private diary that is cute rather than serious, or want to track their mood without effort. Even one line a day counts.
+Miuu Note is a good fit for people who want a calm, private place to unwind at the end of the day, want a diary that is cute rather than serious, or want to track their mood without effort. Even one line a day counts.
 
 ## Features
 
@@ -11,19 +11,20 @@ Miuu Note is a good fit for people who want to start journaling but find it hard
 - Mood tracker: a mood sticker on each entry and a calendar that shows the month's moods.
 - Stickers: a daily sticker draw and a collection of hundreds of stickers of Miuu and friends.
 - Journals and folders: separate journals for diary, plans, food notes, goals and more.
-- Gratitude journal: the Thanks jar collects small things you are thankful for.
+- Gratitude journal: keep a list of the small things you are thankful for.
 - Cozy room: daily rituals and quests (checking in, writing a journal entry, drawing a sticker) earn coins to decorate Miuu's home and dress Miuu up.
 - Backup: sign in with Apple or Google to back up and restore on a new phone; Plus adds automatic backup after each entry.
+- PDF export (Plus): save your journal as a PDF.
 - Home screen widget with your journaling streak and recent moods.
 - 14 languages: English, Korean, Japanese, Chinese, Spanish, French, German, Portuguese, Italian, Thai, Turkish, Indonesian, Russian, Arabic.
 
 ## Pricing
 
-Free to download, and all the core journaling features are free to use: writing with prompts, mood tracking, the gratitude jar, folders, the diary lock and backup. An optional Plus upgrade adds exclusive rewards and automatic backup, removes ads and lets you collect stickers 6x faster.
+Free to download, and all the core journaling features are free to use: writing with prompts, mood tracking, the gratitude jar, folders, the diary lock and backup. An optional Plus upgrade adds automatic backup, unlimited folders, backgrounds and custom stickers, PDF export, more sticker pulls every day and exclusive seasonal rewards.
 
 ## Popularity
 
-More than 1.8 million downloads and more than 3,500 five-star ratings on Google Play (October 2026).
+More than 1.8 million downloads and more than 3,100 five-star ratings on Google Play (October 2026).
 
 ## Links
 

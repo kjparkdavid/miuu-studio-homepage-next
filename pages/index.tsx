@@ -5,7 +5,6 @@ import Hero from "@/components/hero";
 import Features from "@/components/features";
 import HomesSection from "@/components/homesSection";
 import Testimonials from "@/components/testimonials";
-import FriendsSection from "@/components/friendsSection";
 import Faq from "@/components/faq";
 import DownloadCta from "@/components/downloadCta";
 import Footer from "@/components/footer";
@@ -17,8 +16,8 @@ const body = Montserrat({ subsets: ["latin"], variable: "--font-body" });
 const SITE_URL = "https://miuunote.site/";
 const TITLE = "Miuu Note: Cute Journal & Diary App with Lock";
 const DESCRIPTION =
-  "Miuu Note is a cute, private journal app for iPhone & Android. Write with gentle prompts, track moods with stickers, keep a gratitude jar and decorate a cozy room.";
-const OG_IMAGE = `${SITE_URL}images/app/home.jpg`;
+  "Miuu Note is a cute mood journal and private diary for iPhone & Android. Write it down, track your mood with stickers, keep a gratitude list and make a cozy little room your own.";
+const OG_IMAGE = `${SITE_URL}images/app/room-cozy.png`;
 
 // Structured data so search engines and AI assistants can read what the app is and answer questions about it
 const STRUCTURED_DATA = [
@@ -38,6 +37,7 @@ const STRUCTURED_DATA = [
     featureList: [
       "Private diary with passcode and Face ID lock",
       "Daily journal prompts",
+      "PDF export of your journal",
       "Custom photo stickers and deco stickers",
       "Journal backgrounds",
       "Voice recording and drawing in entries",
@@ -104,7 +104,6 @@ export default function Home() {
         <Features />
         <HomesSection />
         <Testimonials />
-        <FriendsSection />
         <Faq />
         <DownloadCta />
         <Footer />

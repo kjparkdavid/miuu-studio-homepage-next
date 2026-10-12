@@ -23,13 +23,12 @@ This is a **Next.js 13 landing page for the Miuu Note app** (made by Miuu Studio
 The homepage (`pages/index.tsx`) stacks these sections:
 
 1. **SiteNav** (`components/siteNav.tsx`): fixed nav that slides in after scrolling past the hero, with a #features anchor and a "Get the app" button
-2. **Hero** (`components/hero.tsx`): violet hero with study Miuu at a desk, then three phones (journals list, home, dressing room) straddling its bottom edge
-3. **Features** (`components/features.tsx`): bento grid of cards (write freely, lock, mood calendar, sticker shelf, folders, thanks jar, backup + languages), each with its app screenshot
-4. **HomesSection** (`components/homesSection.tsx`): three decorated home themes from `public/images/homes/` plus the furniture shop
-5. **Testimonials** (`components/testimonials.tsx`): real Google Play reviews (the same ones the app's Pro page shows)
-6. **FriendsSection** (`components/friendsSection.tsx`): character marquee + store link
-7. **Faq** (`components/faq.tsx`): questions from `lib/faq.ts`, also emitted as FAQPage JSON-LD
-8. **DownloadCta** (`components/downloadCta.tsx`) and **Footer** (`components/footer.tsx`)
+2. **Hero** (`components/hero.tsx`): violet hero with the headline and three floating phones (journals list, journal entry, mood calendar), then study Miuu at a desk just below it
+3. **Features** (`components/features.tsx`): bento grid of cards (write, lock, mood calendar, sticker jar, folders, gratitude, backup + languages), each with its app screenshot
+4. **HomesSection** (`components/homesSection.tsx`): three decorated home themes from `public/images/homes/` plus the cozy autumn room, then a Miuu skins block (skin tiles + dressing room)
+5. **Testimonials** (`components/testimonials.tsx`): two real Google Play reviews (the Plus page one and the onboarding one by MIkky)
+6. **Faq** (`components/faq.tsx`): questions from `lib/faq.ts`, also emitted as FAQPage JSON-LD
+7. **DownloadCta** (`components/downloadCta.tsx`) and **Footer** (`components/footer.tsx`)
 
 Store, shop and social URLs are in `lib/links.ts`; `components/storeBadges.tsx` renders the App Store / Google Play badges.
 
@@ -46,12 +45,9 @@ Images live in `public/images/`:
 
 Only feature shipped features: check with the owner before adding screenshots of anything unreleased (e.g. the Universe view).
 
-### Data Management
+### Audience and copy
 
-Character data is centralized in `lib/characters.ts`:
-- Strongly typed with TypeScript enums and interfaces
-- `getAllCharacters()` function provides complete character list
-- `getCharacteThumbnail()` function maps character IDs to image assets
+Since Oct 2026 the copy targets 25–35 and matches the store listing (Figma page "Store · 25–35", file vF1C6SPnaC90VEhwuMBMrV): calm, private, small wins. App screenshots in `/app/` (`*-list.png`, `write-entry.png`, `mood-calendar.png`, `room-cozy.png`, `folders-grid.png`, `sticker-jar.png`) are exported from that page's EN Play screens.
 
 ### Responsive Design
 

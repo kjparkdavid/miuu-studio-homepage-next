@@ -4,17 +4,17 @@ export const FAQ = [
   {
     question: "What is Miuu Note?",
     answer:
-      "Miuu Note is a cute, private journal and diary app for iPhone, iPad and Android. You can write daily journal entries and decorate them with stickers, your own photo stickers, backgrounds, voice recordings and drawings, track your mood with stickers, keep a gratitude journal in the Thanks jar, collect adorable stickers and decorate a cozy room with Miuu the cat.",
+      "Miuu Note is a cute, private journal and diary app for iPhone, iPad and Android. You can write daily journal entries and decorate them with stickers, your own photo stickers, backgrounds, voice recordings and drawings, track your mood with stickers, keep a gratitude journal in the Thanks jar, collect stickers and decorate a cozy room with Miuu the cat.",
   },
   {
     question: "Is Miuu Note a good journal app for beginners?",
     answer:
-      "Yes. If you don't know what to write, Miuu asks a gentle journal prompt like \"What made you smile today?\". Even one line counts, and small daily rewards make it easy to build a journaling habit without pressure.",
+      "Yes. Even one line counts. If you don't know what to write, Miuu offers a gentle journal prompt, and small daily rewards make it easy to keep the habit going without pressure.",
   },
   {
     question: "Is Miuu Note free?",
     answer:
-      "Yes. Miuu Note is free to download on the App Store and Google Play, and all the core journaling features are free to use: writing with prompts, mood tracking, the gratitude jar, folders, the diary lock and backup. An optional Plus upgrade adds exclusive rewards and automatic backup, removes ads and lets you collect stickers 6x faster.",
+      "Yes. Miuu Note is free to download on the App Store and Google Play, and all the core journaling features are free to use: writing with prompts, mood tracking, the gratitude jar, folders, the diary lock and backup. An optional Plus upgrade adds automatic backup, unlimited folders, backgrounds and custom stickers, PDF export, more sticker pulls every day and exclusive seasonal rewards.",
   },
   {
     question: "Can I lock my diary?",
