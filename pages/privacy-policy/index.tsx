@@ -101,6 +101,16 @@ const PrivacyPolicyPage = () => {
           <li>Any personally identifiable journal data</li>
         </ul>
         <p>
+          <strong>Crash and error reports</strong>: reports sent to Firebase
+          Crashlytics and Sentry are labelled with an installation ID, a random
+          identifier Firebase creates for each install of the app. It
+          identifies that copy of the app, not you, and a new one is made if you
+          reinstall. We use it only to find the reports that belong to a support
+          request, and, when we are fixing a problem for you, to turn a feature
+          on or off for that one installation through Firebase&apos;s feature
+          configuration.
+        </p>
+        <p>
           <strong>Google signals</strong>: we have turned on Google signals in
           Google Analytics. If you are signed in to a Google account and have
           allowed Google to personalise ads for you, Google may link the
@@ -768,6 +778,15 @@ const PrivacyPolicyPage = () => {
           <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>.
         </p>
         <p>
+          <strong>Your support ID</strong>: in the app, Settings &rarr; Copy
+          support ID copies the identifiers of your installation (its analytics,
+          installation and purchase IDs, and the app version). Include it when
+          you write to us, for example to have your analytics data removed:
+          without it we cannot tell which records are yours. Tapping it only
+          copies the text; the app sends nothing. Contact Us in the app adds the
+          same text to your email, and you can delete it before sending.
+        </p>
+        <p>
           <strong>Deleting your account and backups</strong>: email{" "}
           <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>{" "}
           from the address you signed in with, and we will delete your account
@@ -802,7 +821,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: October 10, 2026</p>
+        <p>Effective Date: October 12, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
