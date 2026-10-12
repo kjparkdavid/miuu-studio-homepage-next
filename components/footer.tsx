@@ -4,7 +4,7 @@ import instagram from "@/public/images/footer/instagram.png";
 import tiktok from "@/public/images/footer/tiktok.png";
 import youtube from "@/public/images/footer/youtube.png";
 import logo from "@/public/images/mobileHeader/logo.png";
-import { SOCIAL_LINKS } from "@/lib/links";
+import { SOCIAL_LINKS, STUDIO_URL } from "@/lib/links";
 
 const SOCIAL_ICONS = { Instagram: instagram, TikTok: tiktok, YouTube: youtube };
 
@@ -13,7 +13,9 @@ const Footer = () => {
     <footer className="border-t border-ink/10 bg-canvas px-4 py-12 sm:px-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <Image src={logo} alt="Miuu Studio" width={160} />
+          <a href={STUDIO_URL} aria-label="Miuu Studio official website">
+            <Image src={logo} alt="Miuu Studio" width={160} />
+          </a>
           <p className="mt-4 max-w-xs text-sm font-medium text-ink/60">
             We make cute, gentle things starring Miuu and friends, to bring a little joy to every day.
           </p>
@@ -43,6 +45,9 @@ const Footer = () => {
             <a href="#faq" className="hover:text-violet">FAQ</a>
             <Link href="/privacy-policy" className="hover:text-violet">Privacy Policy</Link>
           </div>
+          <a href={STUDIO_URL} className="hover:text-violet">
+            Miuu Studio official website ↗
+          </a>
           <p className="font-medium text-ink/60">
             Contact:{" "}
             <a href="mailto:support@miuustudio.com" className="font-semibold text-ink hover:text-violet">

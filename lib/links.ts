@@ -2,7 +2,8 @@ export const GOOGLE_PLAY_URL =
   "https://play.google.com/store/apps/details?id=com.miuustudio.miuudiary";
 export const APP_STORE_URL =
   "https://apps.apple.com/us/app/miuu-note-cute-diary-with-lock/id6446296872";
-export const SHOP_URL = "https://miuustudio.com/";
+// Miuu Studio's official website (comics, characters, all apps)
+export const STUDIO_URL = "https://miuustudio.com/";
 
 export const SOCIAL_LINKS = [
   { name: "Instagram", href: "https://www.instagram.com/miuustudio/" },

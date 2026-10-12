@@ -8,7 +8,7 @@ import Testimonials from "@/components/testimonials";
 import Faq from "@/components/faq";
 import DownloadCta from "@/components/downloadCta";
 import Footer from "@/components/footer";
-import { APP_STORE_URL, GOOGLE_PLAY_URL, SOCIAL_LINKS } from "@/lib/links";
+import { APP_STORE_URL, GOOGLE_PLAY_URL, SOCIAL_LINKS, STUDIO_URL } from "@/lib/links";
 import { FAQ } from "@/lib/faq";
 
 const body = Montserrat({ subsets: ["latin"], variable: "--font-body" });
@@ -55,7 +55,7 @@ const STRUCTURED_DATA = [
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Miuu Studio",
-    url: SITE_URL,
+    url: STUDIO_URL,
     logo: `${SITE_URL}images/app-icon.png`,
     email: "support@miuustudio.com",
     sameAs: SOCIAL_LINKS.map((social) => social.href),
