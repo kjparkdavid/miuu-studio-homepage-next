@@ -67,3 +67,7 @@ Mobile-first Tailwind: single column on phones, `sm:` two-column bento, `lg:` si
 ## Tiny Us pages
 
 `pages/tiny-us/` holds Tiny Us's (the couples app's) Support, Privacy Policy and Terms of Use, framed by `components/tinyUsPage.tsx` (Figtree and the app's colours). The Tiny Us app links to `/tiny-us/terms/` and `/tiny-us/privacy-policy/` from its Welcome screen, so keep those paths. Keep both documents true to the app as built: what it stores, who sees it, which services receive it (the app has no analytics, ads or tracking SDKs; adding one means updating the policy first).
+
+## Miuu Card Club pages
+
+`pages/miuu-cards/` holds Miuu Card Club's (the card-collecting game's) Support, Privacy Policy and Terms of Service, framed by `components/miuuCardsPage.tsx`. The game's Settings and store listings link to `/miuu-cards/support/`, `/miuu-cards/privacy-policy/` and `/miuu-cards/terms/`, so keep those paths. Keep the documents true to the game as built (source: the `miuu-trading-card-game` repo): it uses Firebase (Auth, Firestore, Functions, Remote Config, Analytics, Storage), AdMob rewarded videos and RevenueCat, and has no crash reporting or push notifications. The drop rates on the support page must match the game's current drop table.
