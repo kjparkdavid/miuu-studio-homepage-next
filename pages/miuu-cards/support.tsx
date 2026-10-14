@@ -47,7 +47,7 @@ const MiuuCardsSupport = () => {
       <Section title="Keeping your collection on a new phone">
         <p>
           You start as a guest, and a guest account stays on the phone you started on. To keep
-          your cards, coins and Moon Pass, link a sign-in first: Settings → Account → Link Apple
+          your cards and coins, link a sign-in first: Settings → Account → Link Apple
           or Link Google. On the new phone, do the same with the same Apple or Google account,
           and choose Switch account.
         </p>
@@ -56,10 +56,12 @@ const MiuuCardsSupport = () => {
       <Section title="Restoring purchases">
         <p>
           Settings → Restore purchases asks the App Store or Google Play what your store account
-          has bought, and sends it to our server. Use it if a purchase doesn&apos;t show up in the
-          game. Coins and the Moon Pass belong to your Miuu Card Club account, so on a new phone,
-          sign in to the same account first (see above). If something you paid for is still
-          missing, write to us at <SupportEmail />.
+          has bought, and our server checks each purchase with Apple or Google. Use it if a
+          purchase doesn&apos;t show up in the game. An active Moon Pass is linked to the account
+          that restores it, straight away. Coins are kept in your Miuu Card Club account, not in
+          the store, so on a new phone, sign in to the same Apple or Google account first (see
+          above) to keep them. If something you paid for is still missing, write to us at{" "}
+          <SupportEmail />.
         </p>
       </Section>
 

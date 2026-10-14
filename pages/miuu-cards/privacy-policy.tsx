@@ -154,12 +154,17 @@ const MiuuCardsPrivacyPolicy = () => {
           details.
         </p>
         <p>
-          RevenueCat processes purchases for us: it receives your account ID and the purchase
-          details from the store (product, store, transaction reference, dates and price), and
-          tells our server, which then adds your coins or turns on your Moon Pass. We keep a
-          record of each of these purchase events, so that a purchase or a refund never counts
-          twice.{" "}
-          <ExternalLink href="https://www.revenuecat.com/privacy/">RevenueCat Privacy Policy</ExternalLink>
+          Your account has a random purchase ID, which the game sends to Apple or Google with each
+          purchase, so that the store&apos;s messages about it name your account and nothing
+          else about you. After you buy, our own server (on Google Cloud) checks the purchase
+          with Apple or Google before it adds your coins or turns on your Moon Pass. Apple and
+          Google also tell our server directly about renewals, cancellations and refunds.
+        </p>
+        <p>
+          For each purchase, our server keeps a record of: the product, the store&apos;s
+          transaction or order ID, the purchase token, the price and currency, the country, the
+          dates (bought, renewed, expires, refunded), and your purchase ID. We use it to give you
+          what you bought exactly once, to handle renewals and refunds, and to keep our accounts.
         </p>
       </Section>
 
@@ -203,9 +208,10 @@ const MiuuCardsPrivacyPolicy = () => {
         <Bullets>
           <li>
             <strong>Google Firebase and Google Cloud</strong>: sign-in (Firebase Authentication),
-            the game&apos;s database (Firestore) and server (Cloud Functions), Remote Config (which
-            lets us pause pack opening if something goes wrong), Analytics, and the storage that
-            serves card pictures to your phone.{" "}
+            the game&apos;s database (Firestore) and server (Cloud Functions), which also checks
+            and records your purchases, Remote Config (which lets us pause pack opening if
+            something goes wrong), Analytics, and the storage that serves card pictures to your
+            phone.{" "}
             <ExternalLink href="https://firebase.google.com/support/privacy">Firebase privacy</ExternalLink>
           </li>
           <li>
@@ -213,20 +219,20 @@ const MiuuCardsPrivacyPolicy = () => {
             <ExternalLink href="https://policies.google.com/privacy">Google Privacy Policy</ExternalLink>
           </li>
           <li>
-            <strong>RevenueCat</strong>: processes purchases and subscriptions.{" "}
-            <ExternalLink href="https://www.revenuecat.com/privacy/">RevenueCat Privacy Policy</ExternalLink>
-          </li>
-          <li>
             <strong>Apple and Google</strong>: Sign in with Apple and Sign in with Google, and
-            payments in the App Store and Google Play.{" "}
+            payments in the App Store and Google Play. They also confirm each purchase to our
+            server.{" "}
             <ExternalLink href="https://www.apple.com/legal/privacy/">Apple Privacy Policy</ExternalLink>
           </li>
         </Bullets>
         <p>
-          These services may store and process your information outside your country, including
-          in the United States. It may then be accessible to courts and authorities there under
-          the local law. We may also disclose information when the law requires it, or to protect
-          someone&apos;s safety.
+          Your account, your game and our purchase records are stored in the United States, in
+          Google Cloud&apos;s us-central1 region (Iowa). Analytics, AdMob, Apple and Google may
+          also process information in the United States and other countries. Because of this,
+          your information is stored and processed outside your country, including outside
+          Canada, and may be accessible to courts and authorities there under the local law. We
+          may also disclose information when the law requires it, or to protect someone&apos;s
+          safety.
         </p>
       </Section>
 
@@ -240,10 +246,9 @@ const MiuuCardsPrivacyPolicy = () => {
         <p>Some information is not deleted with your account:</p>
         <Bullets>
           <li>
-            our records of purchase events (your account ID, the product, the store and its
-            transaction reference), which stop a refund or a repeated message from the store
-            from being counted twice, and the purchase records RevenueCat, Apple and Google keep
-            for accounting and legal reasons;
+            our records of your purchases (described under Purchases), kept only where we need
+            them to handle refunds and for accounting, and the purchase records Apple and Google
+            keep under their own terms;
           </li>
           <li>
             Analytics and AdMob data, which isn&apos;t linked to your account ID and is kept by
