@@ -9,7 +9,7 @@ const MiuuCardsPrivacyPolicy = () => {
       path="/miuu-cards/privacy-policy/"
     >
       <h1 className="text-2xl font-bold mb-1">Privacy Policy</h1>
-      <p className="text-sm text-gray-400">Effective Date: October 14, 2026</p>
+      <p className="text-sm text-gray-400">Effective Date: October 15, 2026</p>
 
       <div className="mt-6 space-y-3">
         <p>
@@ -99,8 +99,9 @@ const MiuuCardsPrivacyPolicy = () => {
         </Bullets>
         <p>
           Firebase Analytics also records some things on its own: first launch, sessions and
-          screens viewed, your device model, operating system and app version, and your
-          approximate region, worked out from your IP address. These events are linked to an ID
+          screens viewed, your device model, operating system and app version, your approximate
+          region, worked out from your IP address, and diagnostic and performance data about the
+          app (such as how quickly it starts). These events are linked to an ID
           Firebase gives this install of the game. We don&apos;t send Analytics your account ID,
           name or email address.{" "}
           <ExternalLink href="https://firebase.google.com/support/privacy">Firebase privacy</ExternalLink>
@@ -127,7 +128,8 @@ const MiuuCardsPrivacyPolicy = () => {
           <li>
             <strong>What AdMob may collect:</strong> your phone&apos;s advertising ID (on iPhone,
             only if you allow tracking), your IP address and the approximate location it reveals,
-            device details, and how you interact with the ad. Google uses this to show, measure
+            device details, how you interact with the ad, and diagnostic and performance data
+            about the ad code (such as load times and errors). Google uses this to show, measure
             and, where you allow it, personalise ads.{" "}
             <ExternalLink href="https://policies.google.com/technologies/partner-sites">
               How Google uses information from apps that use its services
@@ -179,7 +181,10 @@ const MiuuCardsPrivacyPolicy = () => {
 
       <Section title="What we don't collect">
         <Bullets>
-          <li>no crash reports;</li>
+          <li>
+            no crash reports of our own: the game has no crash reporter. Google&apos;s AdMob and
+            Firebase code does collect diagnostic and performance data, as described above;
+          </li>
           <li>no precise location;</li>
           <li>no contacts, photos or files;</li>
           <li>
