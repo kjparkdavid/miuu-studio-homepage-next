@@ -294,6 +294,61 @@ const MiuuCardsPrivacyPolicy = () => {
         </p>
       </Section>
 
+      <Section title="If you live in the United States">
+        <p>
+          Some US states, including California, Virginia, Colorado and Connecticut, give their
+          residents specific privacy rights. This section explains how they apply to Miuu Card
+          Club.
+        </p>
+        <p>
+          <strong>What we collect</strong>, as described above:
+        </p>
+        <Bullets>
+          <li>
+            identifiers: your account ID, the ID Firebase gives this install, your IP address, and
+            your phone&apos;s advertising ID (on iPhone, only if you allow tracking);
+          </li>
+          <li>commercial information: your store purchases and Moon Pass subscription;</li>
+          <li>
+            game and app activity: packs opened, cards collected, missions and the other gameplay
+            events listed under Analytics, and how you interact with reward videos;
+          </li>
+          <li>approximate location, worked out from your IP address.</li>
+        </Bullets>
+        <p>
+          We collect it from you and your phone, use it for the purposes listed under &ldquo;How
+          we use your information&rdquo;, and keep it as described under &ldquo;How long we keep
+          it&rdquo;. We don&apos;t collect sensitive personal information.
+        </p>
+        <p>
+          <strong>Selling and sharing.</strong> We don&apos;t sell your information for money.
+          When you allow it, Google AdMob may use your advertising ID to show personalised ads in
+          the reward videos, which some state laws call &ldquo;sharing&rdquo; or &ldquo;targeted
+          advertising&rdquo;. To opt out:
+        </p>
+        <Bullets>
+          <li>
+            on iPhone, choose &ldquo;Ask App Not to Track&rdquo; when asked, or turn tracking off
+            later in Settings → Privacy &amp; Security → Tracking. Without tracking permission,
+            the game asks Google only for ads that aren&apos;t personalised;
+          </li>
+          <li>
+            on Android, delete your advertising ID in your phone&apos;s settings (Settings →
+            Privacy → Ads, or Google → Ads, depending on your phone).
+          </li>
+        </Bullets>
+        <p>
+          <strong>Your rights.</strong> You may have the right to know what we collect about you
+          and get a copy of it, to correct it, to delete it, and to opt out of targeted
+          advertising. You can delete your account in the app (Settings → Delete account). For
+          anything else, write to us at <SupportEmail />. We&apos;ll answer within 45 days, and
+          may ask for details that show the account is yours. Someone you authorise can make a
+          request for you. If we turn down your request, you can appeal by replying to our answer;
+          if we turn down the appeal, you can contact your state&apos;s attorney general. Using
+          these rights never changes how the game treats you.
+        </p>
+      </Section>
+
       <Section title="Age">
         <p>
           Miuu Card Club is meant for players aged 13 and over. We don&apos;t knowingly collect
