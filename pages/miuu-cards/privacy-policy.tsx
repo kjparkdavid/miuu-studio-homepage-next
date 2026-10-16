@@ -322,19 +322,18 @@ const MiuuCardsPrivacyPolicy = () => {
         </p>
         <p>
           <strong>Selling and sharing.</strong> We don&apos;t sell your information for money.
-          When you allow it, Google AdMob may use your advertising ID to show personalised ads in
-          the reward videos, which some state laws call &ldquo;sharing&rdquo; or &ldquo;targeted
-          advertising&rdquo;. To opt out:
+          Personalised ads are opt-in:
         </p>
         <Bullets>
           <li>
-            on iPhone, choose &ldquo;Ask App Not to Track&rdquo; when asked, or turn tracking off
-            later in Settings → Privacy &amp; Security → Tracking. Without tracking permission,
-            the game asks Google only for ads that aren&apos;t personalised;
+            on Android, the game always asks Google for ads that aren&apos;t personalised;
           </li>
           <li>
-            on Android, delete your advertising ID in your phone&apos;s settings (Settings →
-            Privacy → Ads, or Google → Ads, depending on your phone).
+            on iPhone, ads are personalised only if you choose &ldquo;Allow&rdquo; when the game
+            asks to track. Google AdMob may then use your advertising ID to show personalised
+            ads in the reward videos, which some state laws call &ldquo;sharing&rdquo; or
+            &ldquo;targeted advertising&rdquo;. You can turn this off at any time in Settings →
+            Privacy &amp; Security → Tracking.
           </li>
         </Bullets>
         <p>
