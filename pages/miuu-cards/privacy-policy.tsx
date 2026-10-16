@@ -9,7 +9,7 @@ const MiuuCardsPrivacyPolicy = () => {
       path="/miuu-cards/privacy-policy/"
     >
       <h1 className="text-2xl font-bold mb-1">Privacy Policy</h1>
-      <p className="text-sm text-gray-400">Effective Date: October 15, 2026</p>
+      <p className="text-sm text-gray-400">Effective Date: October 16, 2026</p>
 
       <div className="mt-6 space-y-3">
         <p>
@@ -143,9 +143,10 @@ const MiuuCardsPrivacyPolicy = () => {
           </li>
         </Bullets>
         <p>
-          You can change your tracking choice at any time in iPhone Settings → Privacy &amp;
-          Security → Tracking. On Android, you can reset or delete your advertising ID in your
-          phone&apos;s settings.
+          Where Google&apos;s consent form applies, you can reopen it at any time from the
+          game&apos;s Settings → Ad privacy choices and change your answer. You can change your
+          tracking choice at any time in iPhone Settings → Privacy &amp; Security → Tracking. On
+          Android, you can reset or delete your advertising ID in your phone&apos;s settings.
         </p>
       </Section>
 
