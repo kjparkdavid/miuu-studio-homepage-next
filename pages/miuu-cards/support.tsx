@@ -80,9 +80,10 @@ const MiuuCardsSupport = () => {
         </Bullets>
       </Section>
 
-      <Section title="Deleting your account">
+      <section id="delete-account" className="mt-8 space-y-3 scroll-mt-8">
+        <h2 className="text-lg font-semibold">Deleting your account</h2>
         <p>
-          Settings → Delete account, then Delete forever. This permanently deletes your cards,
+          In the game: Settings → Delete account, then Delete forever. This permanently deletes your cards,
           coins, stardust, characters and pull history, and your sign-in. It can&apos;t be undone,
           and coins you bought aren&apos;t refunded. It doesn&apos;t cancel a Moon Pass: cancel it in
           your store account first. Our{" "}
@@ -91,7 +92,15 @@ const MiuuCardsSupport = () => {
           </Link>{" "}
           explains what is deleted and what is kept.
         </p>
-      </Section>
+        <p>
+          Can&apos;t open the game, or deleted it? Email <SupportEmail /> and ask us to delete your
+          account. If you linked Sign in with Apple or Google, write from that email address (or
+          tell us which one it is) so we can find your account; we&apos;ll delete it within 30
+          days and confirm. A guest account that was never linked is identified only by the
+          phone it was made on: deleting the game leaves it unreachable, and you can delete it in
+          the game while it is still installed.
+        </p>
+      </section>
 
       <section id="drop-rates" className="mt-8 space-y-3 scroll-mt-8">
         <h2 className="text-lg font-semibold">Drop rates</h2>
