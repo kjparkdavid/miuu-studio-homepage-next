@@ -786,15 +786,57 @@ const PrivacyPolicyPage = () => {
           copies the text; the app sends nothing. Contact Us in the app adds the
           same text to your email, and you can delete it before sending.
         </p>
+        <p id="delete-account">
+          <strong>Deleting your account and backups</strong>: if you sign in
+          with Apple or Google, you can delete your account in the app, from
+          Settings &rarr; Delete account. To make sure it is you, the app
+          confirms your sign-in with Apple or Google first. With Google this
+          usually needs no extra step; with Apple you confirm once on
+          Apple&apos;s sign-in sheet, with Face ID or your passcode.
+        </p>
+        <ul>
+          <li>
+            <strong>7 days to change your mind</strong>: your account is
+            deleted 7 days after you ask. Until then, backups, restores and the
+            AI features stop on every device signed in to it. If you sign in
+            again within those 7 days, the app asks whether you want to keep
+            your account, and one tap keeps it.
+          </li>
+          <li>
+            <strong>What is deleted</strong>: your account record (email
+            address and display name) and everything stored for it on our
+            servers &mdash; your backups, their photos and voice notes, your
+            reminder schedules, your usage counters, your invite code, and any
+            link between your iPhone and Android accounts. Everything on our
+            servers is deleted within 30 days of your request. If you signed in
+            with Apple, we also ask Apple to remove the app&apos;s access to
+            your Apple ID. Signing in again later with the same Apple or Google
+            account starts a new, empty account.
+          </li>
+          <li>
+            <strong>What is kept</strong>: records of your purchases are kept
+            for refunds and accounting. Deleting your account does not cancel a
+            subscription; cancel it in your App Store or Google Play
+            subscriptions. The invite records described under Invite a Friend
+            (the hashed device check and the link between friends) are kept to
+            prevent fraud, as set out under How Long We Keep Data. Analytics data
+            is not part of your account; to have it removed, email us with your
+            support ID.
+          </li>
+          <li>
+            <strong>On your device</strong>: diary entries on your own device
+            are not affected; delete the app to remove those. If you have an
+            older backup in your own Google Drive, that copy is yours to delete
+            from Drive.
+          </li>
+        </ul>
         <p>
-          <strong>Deleting your account and backups</strong>: email{" "}
+          If you are not signed in, or your version of the app has no Delete
+          account option, email{" "}
           <a href="mailto:support@miuustudio.com">support@miuustudio.com</a>{" "}
           from the address you signed in with, and we will delete your account
-          record and everything stored for it on our servers &mdash; your
-          backups, their media, your reminder schedules and your usage counters
-          &mdash; within 30 days. Diary entries on your own device are not
-          affected; delete the app to remove those. If you have an older backup
-          in your own Google Drive, that copy is yours to delete from Drive.
+          record and everything stored for it on our servers, as listed above,
+          within 30 days of your email.
         </p>
         <p>
           We do not sell your personal information, and we do not share it for
