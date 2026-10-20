@@ -165,7 +165,7 @@ const InvitePage = () => {
                     Get Miuu on the App Store
                   </a>
                   <p className="mt-4 text-[13px] text-[#755E82]">
-                    Then in Miuu: Settings → Got a friend&rsquo;s code?
+                    Then in Miuu: Settings → enter your friend&rsquo;s code
                   </p>
                   {desktop && view.kind === "invite" && (
                     <a
