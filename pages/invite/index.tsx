@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
 
-import { appStoreUrlWithCampaign } from "@/lib/attribution";
+import { appStoreUrlWithCampaign, playUrlWithAttribution } from "@/lib/attribution";
 import { formatCode, isAndroid, normalizeCode, playInviteUrl } from "@/lib/invite";
 import { trackStoreClick } from "@/lib/analytics";
 
@@ -16,12 +16,15 @@ const TITLE = "Your friend invited you to Miuu";
 const GIFT_LINE = "Write your first entry to get 150 coins.";
 // App Store installs from invite links, as their own campaign in App Store Connect
 const INVITE_APP_STORE_URL = appStoreUrlWithCampaign("invite");
+// A link that lost its code has no referral to carry, but the install still
+// came from an invite: the same `utm_source` as the coded Play link.
+const NO_CODE_PLAY_URL = playUrlWithAttribution({ source: "referral", medium: "invite" });
 
 type View =
   | { kind: "loading" }
   | { kind: "android"; code: string }
   | { kind: "invite"; code: string }
-  | { kind: "no-code" };
+  | { kind: "no-code"; android: boolean };
 
 /**
  * `/invite/?c=CODE` (secret-note#1210, Figma W01 `3811:160`, preview W02
@@ -32,6 +35,9 @@ type View =
  *   A button stays on screen in case the redirect is blocked.
  * - **iPhone and desktop** see the code, a copy button, the App Store, and
  *   where in Miuu to enter it. Desktop gets the Play link too.
+ * - **A link with no code** (cut off on the way) says so and offers the store
+ *   for the device: Google Play on Android, the App Store on iPhone, both on
+ *   desktop. No redirect, so the "ask your friend again" line is read.
  *
  * Static export: the code is read in the browser, never at build time.
  */
@@ -45,7 +51,7 @@ const InvitePage = () => {
     const ua = navigator.userAgent;
     setDesktop(!/iphone|ipad|ipod|android/i.test(ua));
     if (!code) {
-      setView({ kind: "no-code" });
+      setView({ kind: "no-code", android: isAndroid(ua) });
       return;
     }
     if (isAndroid(ua)) {
@@ -111,13 +117,34 @@ const InvitePage = () => {
               <p className="mt-3 text-[14px] text-[#755E82]">
                 This invite link is missing its code. Ask your friend to send it again, or get Miuu now.
               </p>
-              <a
-                href={INVITE_APP_STORE_URL}
-                onClick={() => trackStoreClick("app_store")}
-                className="mt-10 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
-              >
-                Get Miuu on the App Store
-              </a>
+              {view.android ? (
+                <a
+                  href={NO_CODE_PLAY_URL}
+                  onClick={() => trackStoreClick("google_play")}
+                  className="mt-10 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
+                >
+                  Get Miuu on Google Play
+                </a>
+              ) : (
+                <>
+                  <a
+                    href={INVITE_APP_STORE_URL}
+                    onClick={() => trackStoreClick("app_store")}
+                    className="mt-10 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
+                  >
+                    Get Miuu on the App Store
+                  </a>
+                  {desktop && (
+                    <a
+                      href={NO_CODE_PLAY_URL}
+                      onClick={() => trackStoreClick("google_play")}
+                      className="mt-6 text-[13px] font-semibold text-[#651DFF]"
+                    >
+                      On Android? Get it on Google Play
+                    </a>
+                  )}
+                </>
+              )}
             </>
           ) : (
             <>
