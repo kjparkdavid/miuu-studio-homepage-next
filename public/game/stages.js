@@ -7,6 +7,8 @@ import * as OT from "./ocean-track.js";
 import { renderOcean, drawOceanCockpit, camYOf, OCEAN_KEYS } from "./ocean-renderer.js";
 import * as KT from "./sky-track.js";
 import { renderSky, drawSkyCockpit, camYOf as skyCamYOf, SKY_KEYS, FLY_TIME } from "./sky-renderer.js";
+import * as HT from "./halloween-track.js";
+import { renderHalloween, drawHalloweenCockpit, camYOf as hwCamYOf, HALLOWEEN_KEYS, FLY_TIME as SPIDER_TIME } from "./halloween-renderer.js";
 
 const burrow = {
   id: "burrow",
@@ -215,6 +217,86 @@ const sky = {
   onBonk(s, o) { s.flyers.push({ t: 0, dur: FLY_TIME, kind: o.kind, dx: Math.max(-135, Math.min(135, (o.x - s.camX) * 0.42)), spin: (Math.random() < 0.5 ? -1 : 1) * (0.8 + Math.random() * 0.4) }); },
 };
 
-export const STAGES = { sky, burrow, ocean };
-// The order they are offered in, easiest first; the first one is what a new visitor lands on.
+// Halloween: ported from the Halloween reel (miuu_assets_4_halloween). Set up but not offered yet: it opens
+// only with ?stage=halloween until it is in STAGE_ORDER. Still to come before it is: the music, an intro
+// clip, the drawn art (the thief and every prop in img/halloween/ are the pack's stand-ins; a drawing
+// saved over a file of the same name replaces it), balancing with the test players, and its limits in
+// the leaderboard's rules (game-backend rules.js) — until then its board answers "bad_stage" and shows
+// as offline.
+const halloween = {
+  id: "halloween",
+  name: "Halloween",
+  emoji: "🎃",
+  stars: 1,
+  imageKeys: [...HALLOWEEN_KEYS, "diary", "sign_miuu"],   // shared with the burrow: the catch pop and the app billboard
+  intro: null,                 // no intro clip yet: the race starts straight from the countdown
+  titleBg: "img/halloween/bg_title.webp",
+  music: null,                 // no track yet: the menu music stops and the race is silent but for the effects
+  tag: "🧙 A witch flew off with Miuu's diary!",
+  // A first tune, for the stand-in art (Oct 23 2026), to be re-run once the stage is final: easy, like the
+  // sky. The racing-line bot (2) catches the witch in 16.5 s, after the bridge's drop; the human-like test
+  // player (4) always does, and the sky's clumsier ones ("new" and "clumsy", in its comment) 100% and 89%.
+  tune: { centrifugal: 150, squirrelPace: 1.1, squirrelTired: 0.55, squirrelRubber: 0.36 },
+  wrap: (i) => i,
+  curveAt: HT.curveAt,
+  speedAt: HT.speedAt,
+  zoneOf: HT.zoneOf,
+  zoneTitles: HT.ZONE_TITLES,
+  pads: HT.PADS,
+  padLen: HT.PAD_LEN,
+  buildGameplay: HT.buildGameplay,
+  escapeAt: HT.ESCAPE,
+  brakeFrom: HT.BRAKE_FROM,
+  stop: HT.P_STOP,
+  roadHalf: HT.RW + 100,
+  lateral(pos) {
+    if (HT.inTunnel(Math.floor(pos))) return { limit: HT.RIB_R - 350, wall: true };   // the crypt's walls
+    if (HT.overChasm(Math.floor(pos))) return { limit: HT.RW - 40, wall: true };      // the rails over the chasm
+    return { limit: 2000, wall: false };
+  },
+  pitchTarget: (pos) => Math.atan(-HT.slopeAt(pos)) * 1.25,
+  cam: { look: 12.5, yawK: 1.5, leanK: 0.19, leanMax: 17 },
+  // How hard the witch flies (x squirrelPace). As on the sky, she darts ahead whenever you get close, so
+  // nobody catches her before the bridge and everyone sees the crypt; past the drop she tires for good.
+  pace(pos, gap, T) {
+    const tired = HT.smooth((pos - HT.TIRED_FROM) / 25);
+    const dart = 1 + 0.6 * HT.smooth((10 - gap) / 6);
+    return (1 - tired) * dart + tired * T.squirrelTired;
+  },
+  thief: {
+    carry: "witch_back_diary", empty: "witch_back_empty",
+    motion: (t) => ({ x: 240 * Math.sin(t / 0.85), y: 260 + Math.sin(t * 5) * 60 }),   // flies above the road on her broom
+  },
+  pickupKind: "candy_orange",
+  text: {
+    thief: "witch", thiefEmoji: "🧙", item: "🍬", items: "candies", bumps: "spiders", where: "at the haunted house",
+    win: "You caught the witch. Miuu got his diary back 💜",
+    lose: "The witch got away with Miuu's diary. Try again?",
+  },
+  loseImg: "img/halloween/witch.png",
+  render(ctx, view) {
+    view.camY = hwCamYOf(view.pos);
+    renderHalloween(ctx, view);
+  },
+  drawCockpit: drawHalloweenCockpit,
+  onReset(s) { s.fxT = {}; },
+  // remember when the bats, the ghost, the way out of the crypt and the lightning were triggered
+  onUpdate(s, prevPos) {
+    const crossed = (p) => prevPos < p && s.pos >= p;
+    HT.SWARMS.forEach((p, j) => { if (crossed(p)) s.fxT["swarm" + j] = s.t; });
+    if (crossed(HT.BOO_SEG - 2.3)) { s.fxT.boo = s.t; s.shake = Math.max(s.shake, 0.6); }
+    if (crossed(HT.TUNNEL_END - 2)) s.fxT.exit = s.t;
+    if (crossed(HT.P_STOP - 12)) s.fxT.arrive = s.t;
+    // three strikes over the haunted house as the car rolls up to it
+    if (s.fxT.arrive !== undefined) [0, 1.33, 2.4].forEach((d, j) => {
+      if (s.fxT["bolt" + j] === undefined && s.t >= s.fxT.arrive + d) { s.fxT["bolt" + j] = s.t; sfx.thunder(); }
+    });
+  },
+  // the spider flies off to the side away from where you hit it
+  onBonk(s, o) { s.flyers.push({ t: 0, dur: SPIDER_TIME, kind: o.kind, dx: Math.max(-135, Math.min(135, (o.x - s.camX) * 0.42)), side: o.x >= s.camX ? 1 : -1 }); },
+};
+
+export const STAGES = { sky, burrow, ocean, halloween };
+// The order they are offered in, easiest first; the first one is what a new visitor lands on. A stage
+// left out of it is still reachable with ?stage=<id>, for trying it out before it goes public.
 export const STAGE_ORDER = ["sky", "burrow", "ocean"];

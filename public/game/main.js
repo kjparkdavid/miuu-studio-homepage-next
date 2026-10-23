@@ -169,6 +169,7 @@ const intros = {};            // stage id -> { img, frames, order, fps, dur, pla
 let intro = null;             // the current stage's intro, once loaded
 function loadIntro(st) {
   if (intros[st.id]) { intro = intros[st.id].img ? intros[st.id] : null; return; }
+  if (!st.intro) { intros[st.id] = { played: true, ready: Promise.resolve() }; intro = null; return; }   // a stage with no clip yet
   const entry = (intros[st.id] = { played: false });
   intro = null;
   const img = new Image();
@@ -611,7 +612,7 @@ function draw() {
     pos: s.pos, camX: s.camX, pitch: s.pitch, yaw: s.yaw, jitter, t: s.t,
     rot: leanRot + tiltRot + Math.sin(s.t * 40) * s.shake * 0.01,
     speedNorm: s.phase === "countdown" || s.phase === "intro" ? 0 : Math.min(1.6, s.speed / T.baseSpeed), boostE: s.boostE,
-    pickups: gp.pickups, obstacles: gp.obstacles, entities, fx, flyers: s.flyers,
+    pickups: gp.pickups, obstacles: gp.obstacles, entities, fx, flyers: s.flyers, items: s.acorns,
   });
   if (s.phase === "intro") {
     const e = s.phaseT - intro.dur;
