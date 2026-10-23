@@ -2,7 +2,7 @@
 // A drive through a dusk pumpkin patch, a graveyard, a haunted street and a crypt, then a candy-corn
 // bridge that plunges over a misty chasm and a moon road up into the night, ending at a haunted house.
 // path_y is the road's height: a rollercoaster of hills, with the big drop on the bridge.
-import { mulberry32, fairObstacles } from "./track.js";
+import { mulberry32 } from "./track.js";
 
 export const N = 1400;
 export const SEG_LEN = 200;
@@ -196,7 +196,9 @@ export const PAD_LEN = 4;
 export const GIFT = 5;   // candies in a gift pumpkin
 const CANDIES = ["candy_pink", "candycorn", "candy_mint", "lollipop", "candy_orange"];
 
-// Lines of candy along the road, a gift pumpkin now and then, and spiders hanging in the lane to bonk.
+// Lines of candy along the road, a gift pumpkin now and then, and spiders hanging in the lane. A spider
+// costs nothing to hit (it is blasted into the sky), so, as the sky's birds, they hang where the player
+// is already being led: at the end of the candy line before them, and now and then a row of three.
 export function buildGameplay(seed = 41) {
   const r = mulberry32(seed);
   const pk = (arr) => arr[Math.floor(r() * arr.length)];
@@ -216,12 +218,11 @@ export function buildGameplay(seed = 41) {
       for (let k = 0; k < 5; k++) put(pickups, g + k * 3, { x: x0 + ((x1 - x0) * k) / 4, kind: CANDIES[(j + k) % 5], worth: 1, taken: false });
     }
     const o = g + 20;
-    if (o >= 110 && !nearPad(o, 10) && !noGo(o) && r() < 0.6) {
-      const c = curves[o];
-      put(obstacles, o, { x: Math.abs(c) > 1 ? -Math.sign(c) * 450 : pk([-450, 0, 450]), kind: "spider", hit: false });   // outside line punishes drifting wide
+    if (j % 2 === 0 && o >= 110 && !nearPad(o, 8) && !noGo(o)) {
+      if (j % 4 === 0) for (const x of [-520, 0, 520]) put(obstacles, o, { x, kind: "spider", hit: false });   // a row of them: no way round
+      else put(obstacles, o, { x: x1, kind: "spider", hit: false });
     }
     if (j % 4 === 1 && !nearPad(g + 27, 8) && !noGo(g + 27)) put(pickups, g + 27, { x: x1, kind: "gift_pumpkin", worth: GIFT, taken: false });
   }
-  fairObstacles(pickups, obstacles, PADS, PAD_LEN, 450);
   return { pickups, obstacles };
 }

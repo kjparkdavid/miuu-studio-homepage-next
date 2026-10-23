@@ -442,13 +442,15 @@ function drawFx(ctx, fx, cx0, hz) {
   }
 }
 
-// ---------------- a spider you hit (flyers: {t, dur, kind, dx, side}) ----------------
-// It squashes against the glass with a burst of stars, flies off spinning to one side, and leaves a
-// web on the glass that fades in half a second.
+// ---------------- a spider you hit is blasted into the sky (flyers: {t, dur, kind, dx, spin}) ----------------
+// It squashes against the glass with a burst of stars, then spins away up into the sky, shrinking to a
+// twinkle (the sky's birds' flight), and leaves a web on the glass that fades in half a second.
+export const FLY_TIME = 0.95;
 function drawFlyers(ctx, flyers) {
   for (const fl of flyers) {
     const d = fl.t * 30;
     const c0x = W / 2 + fl.dx, c0y = 430, h0 = 230;
+    const dir = Math.abs(fl.dx) < 45 ? (fl.spin > 0 ? 0.3 : -0.3) : Math.sign(fl.dx);   // dead centre: straight up
     if (d >= 1 && d < 16) {
       const a = Math.min(1, d / 2) * 0.75 * (1 - smooth01((d - 7) / 8));
       const sm = IMG.web_smear, w = sm.naturalWidth * 0.42, h = sm.naturalHeight * 0.42;
@@ -458,22 +460,38 @@ function drawFlyers(ctx, flyers) {
     }
     if (d < 5) {
       const star = IMG["spider_impact_" + Math.floor(d)], s = 330;
-      ctx.drawImage(star, c0x - fl.side * h0 * 0.12 - s / 2, c0y - s / 2, s, s);
+      ctx.drawImage(star, c0x - s / 2, c0y - s / 2, s, s);
     }
-    if (d < 1.5) {   // flat against the glass
+    if (fl.t < 0.07) {   // flat against the glass
       const img = IMG.spider_hit_squash, w = h0 * 1.6, h = (w * img.naturalHeight) / img.naturalWidth;
       ctx.drawImage(img, c0x - w / 2, c0y + h0 * 0.14 - h / 2, w, h);
       ctx.fillStyle = "rgba(230,255,220,0.3)"; ctx.fillRect(0, 0, W, H);
-    } else if (d <= 9) {   // ...then straight up and away to one side
-      const u = (d - 1.5) / 7.5, e = u ** 1.4, img = IMG.spider_hit;
-      const h = h0 * (1 + 0.5 * u), w = (h * img.naturalWidth) / img.naturalHeight;
-      ctx.save(); ctx.translate(c0x + fl.side * 650 * e, c0y - 550 * e); ctx.rotate((-fl.side * 30 * d * Math.PI) / 180);
+      continue;
+    }
+    const img = IMG.spider_hit, aspect = img.naturalWidth / img.naturalHeight;
+    const pose = (time) => {
+      const u = clamp01((time - 0.07) / (FLY_TIME - 0.07)), e = 1 - (1 - u) ** 2.4;
+      // a tighter arc than the birds', kept inside the windshield so the twinkle shows
+      return { u, x: Math.max(70, Math.min(W - 70, c0x + dir * (40 + 80 * e))), y: c0y - 270 * e - 50 * Math.sin(u * Math.PI), scale: 1.1 - 0.98 * e ** 1.2, rot: fl.spin * 24 * (time - 0.07) };
+    };
+    for (const [lag, alpha] of [[0.07, 0.18], [0.035, 0.4], [0, 1]]) {   // two ghosts trail behind
+      if (fl.t - lag < 0.07) continue;
+      const p = pose(fl.t - lag), h = h0 * p.scale, w = h * aspect;
+      ctx.save(); ctx.globalAlpha = alpha; ctx.translate(p.x, p.y); ctx.rotate(p.rot);
       ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      ctx.restore();
+    }
+    const p = pose(fl.t);
+    if (p.u > 0.8) {   // ...and a twinkle where it vanishes
+      const s = 26 * Math.sin(((p.u - 0.8) / 0.2) * Math.PI);
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.u * 3);
+      ctx.fillStyle = "#fff"; ctx.beginPath();
+      for (let i = 0; i < 8; i++) { const rr = i % 2 ? s * 0.22 : s, a = (i * Math.PI) / 4; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+      ctx.closePath(); ctx.fill();
       ctx.restore();
     }
   }
 }
-export const FLY_TIME = 0.55;
 
 // ---------------- cockpit: the window frame, the dashboard, the candy bucket, the wheel with Miuu's paws ----------------
 // Placed as in the reel (1080x1920 there, half here). The bucket fills as candy comes in.

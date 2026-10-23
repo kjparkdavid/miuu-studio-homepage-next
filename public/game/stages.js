@@ -228,14 +228,16 @@ const halloween = {
   name: "Halloween",
   emoji: "🎃",
   stars: 1,
+  softHits: true,              // made for promotion, so easy: a spider you hit is blasted into the sky; you lose nothing
   imageKeys: [...HALLOWEEN_KEYS, "diary", "sign_miuu"],   // shared with the burrow: the catch pop and the app billboard
   intro: null,                 // no intro clip yet: the race starts straight from the countdown
   titleBg: "img/halloween/bg_title.webp",
   music: null,                 // no track yet: the menu music stops and the race is silent but for the effects
   tag: "🧙 A witch flew off with Miuu's diary!",
-  // A first tune, for the stand-in art (Oct 23 2026), to be re-run once the stage is final: easy, like the
-  // sky. The racing-line bot (2) catches the witch in 16.5 s, after the bridge's drop; the human-like test
-  // player (4) always does, and the sky's clumsier ones ("new" and "clumsy", in its comment) 100% and 89%.
+  // Easy, like the sky: it is mainly for promotion. A first tune, for the stand-in art (Oct 23 2026), to be
+  // re-run once the stage is final. The racing-line bot (2) catches the witch in 15.1 s, after the bridge's
+  // drop; the human-like test player (4) and the sky's clumsier ones ("new", "clumsy", "lost", in its
+  // comment) 100%, 100%, 100% and 98%; someone who never steers does not.
   tune: { centrifugal: 150, squirrelPace: 1.1, squirrelTired: 0.55, squirrelRubber: 0.36 },
   wrap: (i) => i,
   curveAt: HT.curveAt,
@@ -269,7 +271,7 @@ const halloween = {
   },
   pickupKind: "candy_orange",
   text: {
-    thief: "witch", thiefEmoji: "🧙", item: "🍬", items: "candies", bumps: "spiders", where: "at the haunted house",
+    thief: "witch", thiefEmoji: "🧙", item: "🍬", items: "candies", bumps: "spiders sent flying", where: "at the haunted house",
     win: "You caught the witch. Miuu got his diary back 💜",
     lose: "The witch got away with Miuu's diary. Try again?",
   },
@@ -292,8 +294,8 @@ const halloween = {
       if (s.fxT["bolt" + j] === undefined && s.t >= s.fxT.arrive + d) { s.fxT["bolt" + j] = s.t; sfx.thunder(); }
     });
   },
-  // the spider flies off to the side away from where you hit it
-  onBonk(s, o) { s.flyers.push({ t: 0, dur: SPIDER_TIME, kind: o.kind, dx: Math.max(-135, Math.min(135, (o.x - s.camX) * 0.42)), side: o.x >= s.camX ? 1 : -1 }); },
+  // as on the sky: which way it spins is a coin toss; how far off-centre it starts is where it hung across the road
+  onBonk(s, o) { s.flyers.push({ t: 0, dur: SPIDER_TIME, kind: o.kind, dx: Math.max(-135, Math.min(135, (o.x - s.camX) * 0.42)), spin: (Math.random() < 0.5 ? -1 : 1) * (0.8 + Math.random() * 0.4) }); },
 };
 
 export const STAGES = { sky, burrow, ocean, halloween };
