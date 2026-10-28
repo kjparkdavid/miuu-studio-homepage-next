@@ -216,7 +216,7 @@ export function renderHalloween(ctx, view) {
     // a band at a time, painted when its furthest segment comes up, so that everything standing in the
     // band still lands on top of it; split where the zone changes
     if (segi % 3 === 2 || top) {
-      let a = n - (segi % 3);
+      let a = Math.max(0, n - (segi % 3));   // never behind the camera: edge -1 does not exist
       while (a < n && EZ[a] <= 60) a++;
       for (let e = a; e <= n;) {
         const z = zoneOf(base + e);
@@ -372,8 +372,6 @@ export function renderHalloween(ctx, view) {
   ctx.restore();
 
   // ---- screen-space effects ----
-  // the crypt's light flickers
-  if (inTunnel(Math.floor(pos)) && hash01(Math.floor(t * 15), 9) < 0.14) { ctx.fillStyle = "rgba(0,0,0,0.28)"; ctx.fillRect(0, 0, W, H); }
   // speed lines
   const inten = Math.min(1.3, 0.5 * view.speedNorm + 0.9 * view.boostE);
   if (inten > 0.05) {

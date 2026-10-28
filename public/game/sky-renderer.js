@@ -290,7 +290,7 @@ export function renderSky(ctx, view) {
     // the rainbow road, a band at a time: painted when the band's furthest segment comes up, so that
     // everything standing in the band still lands on top of it
     if (segi % 3 === 2 || top) {
-      let a = n - (segi % 3);
+      let a = Math.max(0, n - (segi % 3));   // never behind the camera: edge -1 does not exist
       while (a < n && EZ[a] <= 60) a++;
       const f = fogOf((a + n + 1) / 2);
       for (let e = n; e >= a; e--) underRoad(e, fogOf(e));
