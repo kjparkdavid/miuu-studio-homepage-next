@@ -8,6 +8,7 @@ const STAGES = {
   burrow: { minTime: 14, maxItems: 110, minMissTime: 25, maxGap: 1090 },     // bot: ~16.4s; 110 acorns; escape at 28.0s, 1086 units in
   ocean: { minTime: 12, maxItems: 95, minMissTime: 21, maxGap: 940 },        // bot: ~14.6s; 95 starfish; escape at 23.1s, 938 units in
   sky: { minTime: 16, maxItems: 135, minMissTime: 22, maxGap: 980 },         // bot: ~18.4s (the crow can't be caught before the storm); 135 stars; soonest escape seen ~27s, 973 units in
+  halloween: { minTime: 13, maxItems: 140, minMissTime: 20, maxGap: 960 },  // bot: ~15.1s (the ghost can't be caught before the bridge's drop); 140 candies; soonest escape seen ~23.7s, 958 units in
 };
 
 const RULES = {

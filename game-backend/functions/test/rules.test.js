@@ -36,6 +36,10 @@ test("each stage has its own limits and its own boards", () => {
   assert.equal(checkScore({ time: 15, acorns: 40, stage: "sky" }, 60).reason, "implausible_time");   // the crow can't be caught that early
   assert.equal(checkScore({ time: 20, acorns: 136, stage: "sky" }, 60).reason, "bad_acorns");
   assert.equal(checkScore({ time: 30, acorns: 20, stage: "sky", caught: false, gap: 16 }, 60).ok, true);
+  assert.equal(checkScore({ time: 15.1, acorns: 140, bumps: 30, stage: "halloween" }, 60).ok, true);   // the fastest line, every candy
+  assert.equal(checkScore({ time: 12, acorns: 40, stage: "halloween" }, 60).reason, "implausible_time");   // the ghost can't be caught that early
+  assert.equal(checkScore({ time: 20, acorns: 141, stage: "halloween" }, 60).reason, "bad_acorns");
+  assert.equal(checkScore({ time: 32, acorns: 20, stage: "halloween", caught: false, gap: 34 }, 60).ok, true);
   assert.equal(checkScore({ time: 25, acorns: 1, stage: "moon" }, 60).reason, "bad_stage");
   assert.equal(checkScore({ time: 25, acorns: 1, stage: "__proto__" }, 60).reason, "bad_stage");
   const t = Date.UTC(2026, 9, 9, 12);

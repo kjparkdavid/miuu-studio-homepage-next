@@ -853,7 +853,9 @@ function initStageSwitch() {
     b.type = "button"; b.dataset.stage = id;
     const icon = document.createElement("b");
     icon.textContent = STAGES[id].emoji;
-    b.append(icon, `Play ${STAGES[id].name}`);
+    const play = document.createElement("span");
+    play.textContent = "Play ";   // dropped on a phone, where the maps have a row of their own
+    b.append(icon, play, STAGES[id].name);
     b.onclick = () => switchStage(id);
     ui.stageSwitch.append(b);
   }

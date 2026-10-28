@@ -144,7 +144,10 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   }
   #boardBtn { display: block; margin: 12px auto 0; }
   .modes.stages { margin-bottom: 10px; }
-  .modes.stages button { font-size: 13.5px; padding: 8px 2px; white-space: nowrap; }   /* three maps side by side on a phone */
+  /* four maps side by side on a phone: the names shrink with the screen rather than taking a second row,
+     which would push Start off a short one */
+  .modes.stages { gap: clamp(4px, 1.5cqw, 8px); }
+  .modes.stages button { flex: 1 1 auto; font-size: clamp(10px, 3cqw, 13.5px); padding: 8px 0; white-space: nowrap; min-width: 0; overflow: hidden; }
   .label { text-align: left; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .7; margin: 0 4px 5px; }
   .modes.stages button.on { background: var(--pink); }
   /* how hard each map is: one to three stars under its name */
@@ -161,6 +164,15 @@ if (/(^|\.)miuunote\.site$/.test(location.hostname)) {
   }
   #stageSwitch button:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
   #stageSwitch button b { display: block; font-size: 22px; line-height: 1.2; font-weight: 400; }
+  /* a phone has no room for three maps beside Play again: they take a row of their own under it */
+  @container (max-width: 470px) {
+    #againRow { flex-wrap: wrap; }
+    #againRow .big { flex-basis: 100%; }
+    #stageSwitch { flex: 1 1 100%; }
+    #stageSwitch button { flex: 1 1 auto; width: auto; min-width: 0; padding: 7px 2px; font-size: clamp(11px, 3.4cqw, 13px); white-space: nowrap; border-radius: 16px; box-shadow: 0 4px 0 var(--ink); }
+    #stageSwitch button b { display: inline; font-size: 1.2em; margin-right: 3px; }
+    #stageSwitch button span { display: none; }
+  }
   #rBoardList { max-height: 172px; margin: 4px 0 0; }
   #lbForm { display: flex; gap: 8px; }
   #lbName {

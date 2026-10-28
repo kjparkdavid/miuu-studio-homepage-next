@@ -17,7 +17,7 @@ const MIST = [[86, 66, 118], [80, 60, 110]];
 const WALL = [[74, 66, 92], [66, 58, 84]], ROOT = [104, 94, 124], MORTAR = [36, 30, 50];
 
 // Every picture here is the asset pack's, under the same name: drop a new drawing over the file and the
-// game picks it up. The thief (witch_back_*) and bg_title are stand-ins made by tools/make_halloween_assets.py.
+// game picks it up. The thief (ghost_back_*) and bg_title are stand-ins made by tools/make_halloween_assets.py.
 const F = (n) => "halloween/" + n;
 const NAMES = [
   "jack", "jack_dim", "pumpkin", "deadtree_0", "deadtree_1", "scarecrow", "tombstone_0", "tombstone_1", "tombstone_2",
@@ -29,7 +29,7 @@ const NAMES = [
   "spider", "spider_hit", "spider_hit_squash", "spider_impact_0", "spider_impact_1", "spider_impact_2", "spider_impact_3", "spider_impact_4",
   "web_smear", "cockpit_frame", "cockpit_console", "cockpit_wheel", "charm_pumpkin",
   "bucket_fill_0", "bucket_fill_1", "bucket_fill_2", "bucket_fill_3", "bucket_fill_4", "bucket_fill_5",
-  "witch_back_diary", "witch_back_empty",
+  "ghost_back_diary", "ghost_back_empty",
 ];
 export const HALLOWEEN_FILES = Object.fromEntries(NAMES.map((n) => [n, F(n)]));
 Object.assign(HALLOWEEN_FILES, { sky_dusk: F("sky_dusk"), sky_grave: F("sky_graveyard"), sky_night: F("sky_night_bloodmoon"), app_icon: "app_icon" });
@@ -43,7 +43,7 @@ const HW_WW = {
   mist_cloud: 5200, haunted_house: 9000, haunted_house_lightning: 9000, skull: 230, coffin_closed: 520, coffin_open: 520,
   sconce: 300, cage: 520, skeleton_0: 520, skeleton_1: 520,
   candy_pink: 230, candy_mint: 230, candy_orange: 230, lollipop: 160, candycorn: 150, gift_pumpkin: 600,
-  witch_back_diary: 640, witch_back_empty: 640,
+  ghost_back_diary: 560, ghost_back_empty: 560,
 };
 registerSprites(HALLOWEEN_FILES, HW_WW);
 export const HALLOWEEN_KEYS = Object.keys(HALLOWEEN_FILES);
