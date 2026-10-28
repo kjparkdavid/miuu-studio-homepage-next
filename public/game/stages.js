@@ -229,7 +229,7 @@ const halloween = {
   imageKeys: [...HALLOWEEN_KEYS, "diary", "sign_miuu"],   // shared with the burrow: the catch pop and the app billboard
   intro: "img/halloween/intro_halloween",
   titleBg: "img/halloween/bg_title.webp",
-  music: { src: "audio/halloween.mp3", vol: 0.32 },   // mastered at -12 LUFS: plays as loud as the others
+  music: { src: "audio/halloween.mp3", vol: 0.23 },   // mastered at -9 LUFS: plays as loud as the others
   tag: "👻 A ghost flew off with Miuu's diary!",
   // Easy, like the sky: it is mainly for promotion. Tuned Oct 23 2026, checked again with the clip and the
   // ghost on Oct 28 (unchanged). The racing-line bot (2) catches the ghost in 15.1 s, after the bridge's
