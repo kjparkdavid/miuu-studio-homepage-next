@@ -191,6 +191,19 @@ const TinyUsTerms = () => {
         </p>
       </Section>
 
+      <Section title="Credits">
+        <p>Tiny Us is made with the work of others, and we thank them:</p>
+        <Bullets>
+          <li>
+            <strong>Music</strong> by Alex Cook, from his Relaxing &amp; Cozy Music Loop Pack.
+          </li>
+          <li>
+            <strong>Fonts:</strong> Figtree and Pretendard Std, each under the SIL Open Font
+            License 1.1.
+          </li>
+        </Bullets>
+      </Section>
+
       <Section title="Contact">
         <p>
           Questions about these terms: <SupportEmail />
