@@ -23,12 +23,19 @@ This is a **Next.js 13 landing page for the Miuu Note app** (made by Miuu Studio
 The homepage (`pages/index.tsx`) stacks these sections:
 
 1. **SiteNav** (`components/siteNav.tsx`): fixed nav that slides in after scrolling past the hero, with a #features anchor and a "Get the app" button
-2. **Hero** (`components/hero.tsx`): violet hero with the headline and three floating phones (journals list, journal entry, mood calendar), then study Miuu at a desk just below it
-3. **Features** (`components/features.tsx`): bento grid of cards (write, lock, mood calendar, sticker jar, folders, gratitude, backup + languages), each with its app screenshot
-4. **HomesSection** (`components/homesSection.tsx`): three decorated home themes from `public/images/homes/` plus the cozy autumn room, then a Miuu skins block (skin tiles + dressing room)
-5. **Testimonials** (`components/testimonials.tsx`): two real Google Play reviews (the Plus page one and the onboarding one by MIkky)
-6. **Faq** (`components/faq.tsx`): questions from `lib/faq.ts`, also emitted as FAQPage JSON-LD
-7. **DownloadCta** (`components/downloadCta.tsx`) and **Footer** (`components/footer.tsx`)
+2. **Hero** (`components/hero.tsx`): a plain canvas page with one soft wash, the headline, and the app's sticker jar (`components/stickerJar.tsx`) on the onboarding's pink-lilac-sky backdrop. The jar is the app's jar card (343 × 120 pt, white, grey5 border, the month over "N entries") and fills the way Onboarding V4's full jar does: `lib/jarPile.ts` (ported from the app's `jarPile.ts`) works the pile out with the app's solver (`lib/jarPhysics.ts`, copied from secret-note's `jarPhysicsCore.ts`), then thirty stickers fall from the rim to their places 35 ms apart, and the solver takes the pile over for pokes, tosses, tilts and shakes. Under it, "How was today?" offers the app's journal mood faces (`public/images/moods/`); picking one adds an entry, and that entry's sticker (more from the same packs) drops in. The faces themselves never go in the jar. The jar holds stickers, never mood faces: the art in `public/images/stickers/jar/` is from the app's three newest packs (Miuu's Cozy Autumn, Everyday Food, Little Miuu & Friends) mixed with its basic stickers
+3. **Below the hero, the page is the app** (`components/journal/`): cream journal paper (`ui.tsx` holds the ruled paper, the app's chips, its soft segmented control and the two-column `Row`), each feature drawn as the app's own screen in HTML with gentle motion:
+   - `writeSection.tsx`: the editor, with a Diary / Scrapbook toggle. Scrapbook (`scrapbookPage.tsx`) is the app's Scrapbook drawer (ScrapbookTab.tsx) playing itself: a tile is pressed and its sticker flies onto the page. Scrapbook art is in `public/images/scrapbook/` (from the app's allJournalStickers.zip)
+   - `roomSection.tsx`: Miuu's room with a theme switcher (Cozy, Seashell, Witchy, Pink) and the skins
+   - `giftSection.tsx`: save an entry and one of the app's pixel friends (Rocco, Tori, Poppy…) crawls in, leaves a treasure and waves, from the app's gift sprite sheets (`public/images/gifts/`, data in `lib/giftFriends.json`, names and treasures from the app's enUS strings)
+   - `calendarSection.tsx`: the Calendar with its Stickers / Photos / Moods views
+   - `thanksSection.tsx`: the Thank you jar (the app's Classic jar vector); a thank-you is tucked in through the lid
+   - `drawSection.tsx`: the daily sticker draw, magician Miuu over the cauldron, two hearts a day
+   - `moreSection.tsx`: lock, folders, backup and the 14 languages
+   The photos in `public/images/photos/` (scrapbook and the photo calendar) were made for the site with Codex image generation; they are stand-ins for a user's own photos
+4. **Testimonials** (`components/testimonials.tsx`): two real Google Play reviews, the onboarding one by MIkky taped on a ruled page with its key line large, beside the five-star count and the Plus page one
+5. **Faq** (`components/faq.tsx`): questions from `lib/faq.ts` as a divided list beside a sticky heading, also emitted as FAQPage JSON-LD
+6. **DownloadCta** (`components/downloadCta.tsx`) and **Footer** (`components/footer.tsx`)
 
 Store, shop and social URLs are in `lib/links.ts`; `components/storeBadges.tsx` renders the App Store / Google Play badges.
 

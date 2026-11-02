@@ -1,0 +1,2172 @@
+{
+ "rocco": {
+  "name": "Rocco",
+  "species": "Raccoon",
+  "bio": "A proud little collector. Washes every find twice, just to be sure.",
+  "tier": "free",
+  "size": [
+   41,
+   28
+  ],
+  "ground": 26,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     0,
+     0,
+     41,
+     28
+    ],
+    "a": [
+     20,
+     26
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     84,
+     0,
+     41,
+     28
+    ],
+    "a": [
+     19,
+     26
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     42,
+     0,
+     41,
+     28
+    ],
+    "a": [
+     20,
+     26
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     126,
+     0,
+     41,
+     28
+    ],
+    "a": [
+     19,
+     26
+    ]
+   },
+   "drop": {
+    "r": [
+     168,
+     0,
+     41,
+     28
+    ],
+    "a": [
+     20,
+     26
+    ]
+   },
+   "wave-a": {
+    "r": [
+     210,
+     0,
+     41,
+     28
+    ],
+    "a": [
+     20,
+     26
+    ]
+   },
+   "wave-b": {
+    "r": [
+     0,
+     29,
+     41,
+     28
+    ],
+    "a": [
+     20,
+     26
+    ]
+   },
+   "happy": {
+    "r": [
+     168,
+     29,
+     41,
+     28
+    ],
+    "a": [
+     20,
+     26
+    ]
+   },
+   "idle": {
+    "r": [
+     42,
+     87,
+     41,
+     28
+    ],
+    "a": [
+     20,
+     26
+    ]
+   },
+   "blink": {
+    "r": [
+     84,
+     87,
+     41,
+     28
+    ],
+    "a": [
+     20,
+     26
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   120
+  ],
+  "treasureSheet": [
+   128,
+   40
+  ],
+  "treasures": [
+   {
+    "id": "bottle-cap",
+    "r": [
+     0,
+     0,
+     14,
+     14
+    ],
+    "name": "Bottle cap",
+    "phrase": "a bottle cap"
+   },
+   {
+    "id": "odd-sock",
+    "r": [
+     15,
+     0,
+     12,
+     14
+    ],
+    "name": "Odd sock",
+    "phrase": "an odd sock"
+   },
+   {
+    "id": "paper-clip-heart",
+    "r": [
+     28,
+     0,
+     13,
+     12
+    ],
+    "name": "Heart paper clip",
+    "phrase": "a heart paper clip"
+   },
+   {
+    "id": "marble",
+    "r": [
+     42,
+     0,
+     12,
+     12
+    ],
+    "name": "Marble",
+    "phrase": "a marble"
+   },
+   {
+    "id": "button",
+    "r": [
+     55,
+     0,
+     14,
+     14
+    ],
+    "name": "Button",
+    "phrase": "a button"
+   },
+   {
+    "id": "key",
+    "r": [
+     70,
+     0,
+     14,
+     9
+    ],
+    "name": "Old key",
+    "phrase": "an old key"
+   }
+  ]
+ },
+ "tori": {
+  "name": "Tori",
+  "species": "Squirrel",
+  "bio": "Hides everything. Remembers almost none of it.",
+  "tier": "free",
+  "size": [
+   43,
+   43
+  ],
+  "ground": 41,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     0,
+     0,
+     43,
+     43
+    ],
+    "a": [
+     19,
+     41
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     88,
+     0,
+     43,
+     43
+    ],
+    "a": [
+     18,
+     41
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     44,
+     0,
+     43,
+     43
+    ],
+    "a": [
+     19,
+     41
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     132,
+     0,
+     43,
+     43
+    ],
+    "a": [
+     18,
+     41
+    ]
+   },
+   "drop": {
+    "r": [
+     176,
+     0,
+     43,
+     43
+    ],
+    "a": [
+     19,
+     41
+    ]
+   },
+   "wave-a": {
+    "r": [
+     0,
+     44,
+     43,
+     43
+    ],
+    "a": [
+     19,
+     41
+    ]
+   },
+   "wave-b": {
+    "r": [
+     44,
+     44,
+     43,
+     43
+    ],
+    "a": [
+     19,
+     41
+    ]
+   },
+   "happy": {
+    "r": [
+     44,
+     176,
+     43,
+     43
+    ],
+    "a": [
+     19,
+     41
+    ]
+   },
+   "idle": {
+    "r": [
+     176,
+     132,
+     43,
+     43
+    ],
+    "a": [
+     19,
+     41
+    ]
+   },
+   "blink": {
+    "r": [
+     0,
+     176,
+     43,
+     43
+    ],
+    "a": [
+     19,
+     41
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   219
+  ],
+  "treasureSheet": [
+   128,
+   53
+  ],
+  "treasures": [
+   {
+    "id": "acorn",
+    "r": [
+     0,
+     0,
+     12,
+     14
+    ],
+    "name": "Acorn",
+    "phrase": "an acorn"
+   },
+   {
+    "id": "pine-cone",
+    "r": [
+     13,
+     0,
+     12,
+     14
+    ],
+    "name": "Pine cone",
+    "phrase": "a pine cone"
+   },
+   {
+    "id": "leaf",
+    "r": [
+     26,
+     0,
+     13,
+     13
+    ],
+    "name": "Autumn leaf",
+    "phrase": "an autumn leaf"
+   },
+   {
+    "id": "walnut",
+    "r": [
+     40,
+     0,
+     13,
+     14
+    ],
+    "name": "Walnut",
+    "phrase": "a walnut"
+   },
+   {
+    "id": "mushroom",
+    "r": [
+     54,
+     0,
+     12,
+     11
+    ],
+    "name": "Mushroom",
+    "phrase": "a mushroom"
+   },
+   {
+    "id": "clover",
+    "r": [
+     67,
+     0,
+     14,
+     14
+    ],
+    "name": "Four-leaf clover",
+    "phrase": "a four-leaf clover"
+   }
+  ]
+ },
+ "poppy": {
+  "name": "Poppy",
+  "species": "Sparrow",
+  "bio": "Tiny and a little shy. Loves bringing the smallest things.",
+  "tier": "free",
+  "size": [
+   39,
+   49
+  ],
+  "ground": 35,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     0,
+     0,
+     39,
+     49
+    ],
+    "a": [
+     19,
+     35
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     80,
+     0,
+     39,
+     49
+    ],
+    "a": [
+     18,
+     35
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     40,
+     0,
+     39,
+     49
+    ],
+    "a": [
+     19,
+     35
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     120,
+     0,
+     39,
+     49
+    ],
+    "a": [
+     18,
+     35
+    ]
+   },
+   "drop": {
+    "r": [
+     160,
+     0,
+     39,
+     49
+    ],
+    "a": [
+     19,
+     35
+    ]
+   },
+   "wave-a": {
+    "r": [
+     200,
+     0,
+     39,
+     49
+    ],
+    "a": [
+     19,
+     35
+    ]
+   },
+   "wave-b": {
+    "r": [
+     0,
+     50,
+     39,
+     49
+    ],
+    "a": [
+     19,
+     35
+    ]
+   },
+   "happy": {
+    "r": [
+     200,
+     150,
+     39,
+     49
+    ],
+    "a": [
+     19,
+     35
+    ]
+   },
+   "idle": {
+    "r": [
+     120,
+     150,
+     39,
+     49
+    ],
+    "a": [
+     19,
+     35
+    ]
+   },
+   "blink": {
+    "r": [
+     160,
+     150,
+     39,
+     49
+    ],
+    "a": [
+     19,
+     35
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   249
+  ],
+  "treasureSheet": [
+   128,
+   53
+  ],
+  "treasures": [
+   {
+    "id": "feather",
+    "r": [
+     0,
+     0,
+     14,
+     14
+    ],
+    "name": "Feather",
+    "phrase": "a feather"
+   },
+   {
+    "id": "bread-crust",
+    "r": [
+     15,
+     0,
+     14,
+     13
+    ],
+    "name": "Bread crust",
+    "phrase": "a bread crust"
+   },
+   {
+    "id": "petal",
+    "r": [
+     30,
+     0,
+     14,
+     14
+    ],
+    "name": "Cherry petal",
+    "phrase": "a cherry petal"
+   },
+   {
+    "id": "ribbon",
+    "r": [
+     45,
+     0,
+     13,
+     11
+    ],
+    "name": "Ribbon scrap",
+    "phrase": "a ribbon scrap"
+   },
+   {
+    "id": "seed",
+    "r": [
+     59,
+     0,
+     10,
+     14
+    ],
+    "name": "Sunflower seed",
+    "phrase": "a sunflower seed"
+   },
+   {
+    "id": "glass-bead",
+    "r": [
+     70,
+     0,
+     14,
+     14
+    ],
+    "name": "Glass bead",
+    "phrase": "a glass bead"
+   }
+  ]
+ },
+ "dubu": {
+  "name": "Dubu",
+  "species": "Hamster",
+  "bio": "Carries your gift all the way here, tucked in a cheek pouch.",
+  "tier": "free",
+  "size": [
+   40,
+   24
+  ],
+  "ground": 23,
+  "frames": {
+   "drop": {
+    "r": [
+     82,
+     25,
+     40,
+     24
+    ],
+    "a": [
+     22,
+     23
+    ]
+   },
+   "wave-a": {
+    "r": [
+     164,
+     25,
+     40,
+     24
+    ],
+    "a": [
+     22,
+     23
+    ]
+   },
+   "wave-b": {
+    "r": [
+     205,
+     25,
+     40,
+     24
+    ],
+    "a": [
+     22,
+     23
+    ]
+   },
+   "happy": {
+    "r": [
+     164,
+     75,
+     40,
+     24
+    ],
+    "a": [
+     22,
+     23
+    ]
+   },
+   "idle": {
+    "r": [
+     82,
+     75,
+     40,
+     24
+    ],
+    "a": [
+     22,
+     23
+    ]
+   },
+   "blink": {
+    "r": [
+     123,
+     75,
+     40,
+     24
+    ],
+    "a": [
+     22,
+     23
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   124
+  ],
+  "treasureSheet": [
+   128,
+   36
+  ],
+  "treasures": [
+   {
+    "id": "rice-cracker",
+    "r": [
+     0,
+     0,
+     12,
+     11
+    ],
+    "name": "Bitten rice cracker",
+    "phrase": "a bitten rice cracker"
+   },
+   {
+    "id": "sugar-cube",
+    "r": [
+     13,
+     0,
+     9,
+     9
+    ],
+    "name": "Sugar cube",
+    "phrase": "a sugar cube"
+   },
+   {
+    "id": "macaroni",
+    "r": [
+     23,
+     0,
+     9,
+     9
+    ],
+    "name": "Macaroni",
+    "phrase": "a piece of macaroni"
+   },
+   {
+    "id": "cereal-ring",
+    "r": [
+     33,
+     0,
+     10,
+     10
+    ],
+    "name": "Cereal ring",
+    "phrase": "a cereal ring"
+   },
+   {
+    "id": "popcorn",
+    "r": [
+     44,
+     0,
+     11,
+     9
+    ],
+    "name": "Popcorn puff",
+    "phrase": "a popcorn puff"
+   },
+   {
+    "id": "peanut",
+    "r": [
+     56,
+     0,
+     12,
+     7
+    ],
+    "name": "Peanut",
+    "phrase": "a peanut"
+   }
+  ]
+ },
+ "suki": {
+  "name": "Suki",
+  "species": "Otter",
+  "bio": "Slides in belly-first. Never lets go of a favorite pebble.",
+  "tier": "free",
+  "size": [
+   46,
+   23
+  ],
+  "ground": 22,
+  "frames": {
+   "drop": {
+    "r": [
+     0,
+     24,
+     46,
+     23
+    ],
+    "a": [
+     22.5,
+     22
+    ]
+   },
+   "wave-a": {
+    "r": [
+     47,
+     24,
+     46,
+     23
+    ],
+    "a": [
+     22.5,
+     22
+    ]
+   },
+   "wave-b": {
+    "r": [
+     94,
+     24,
+     46,
+     23
+    ],
+    "a": [
+     22.5,
+     22
+    ]
+   },
+   "happy": {
+    "r": [
+     141,
+     72,
+     46,
+     23
+    ],
+    "a": [
+     22.5,
+     22
+    ]
+   },
+   "idle": {
+    "r": [
+     0,
+     0,
+     46,
+     23
+    ],
+    "a": [
+     22.5,
+     22
+    ]
+   },
+   "blink": {
+    "r": [
+     0,
+     72,
+     46,
+     23
+    ],
+    "a": [
+     22.5,
+     22
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   95
+  ],
+  "treasureSheet": [
+   128,
+   37
+  ],
+  "treasures": [
+   {
+    "id": "cattail",
+    "r": [
+     0,
+     0,
+     7,
+     12
+    ],
+    "name": "Cattail",
+    "phrase": "a cattail"
+   },
+   {
+    "id": "lily-pad",
+    "r": [
+     8,
+     0,
+     12,
+     9
+    ],
+    "name": "Lily pad",
+    "phrase": "a lily pad"
+   },
+   {
+    "id": "fishing-float",
+    "r": [
+     21,
+     0,
+     7,
+     10
+    ],
+    "name": "Fishing float",
+    "phrase": "a fishing float"
+   },
+   {
+    "id": "mussel-shell",
+    "r": [
+     29,
+     0,
+     12,
+     8
+    ],
+    "name": "Mussel shell",
+    "phrase": "a mussel shell"
+   },
+   {
+    "id": "paper-boat",
+    "r": [
+     42,
+     0,
+     12,
+     8
+    ],
+    "name": "Paper boat",
+    "phrase": "a paper boat"
+   },
+   {
+    "id": "heart-stone",
+    "r": [
+     55,
+     0,
+     10,
+     9
+    ],
+    "name": "Heart stone",
+    "phrase": "a heart stone"
+   }
+  ]
+ },
+ "digby": {
+  "name": "Digby",
+  "species": "Mole",
+  "bio": "A bit near-sighted. Often pops up in the wrong spot.",
+  "tier": "free",
+  "size": [
+   42,
+   23
+  ],
+  "ground": 22,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     43,
+     0,
+     42,
+     23
+    ],
+    "a": [
+     21,
+     22
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     129,
+     0,
+     42,
+     23
+    ],
+    "a": [
+     20,
+     22
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     0,
+     0,
+     42,
+     23
+    ],
+    "a": [
+     21,
+     22
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     86,
+     0,
+     42,
+     23
+    ],
+    "a": [
+     20,
+     22
+    ]
+   },
+   "drop": {
+    "r": [
+     0,
+     24,
+     42,
+     23
+    ],
+    "a": [
+     21,
+     22
+    ]
+   },
+   "wave-a": {
+    "r": [
+     43,
+     24,
+     42,
+     23
+    ],
+    "a": [
+     21,
+     22
+    ]
+   },
+   "wave-b": {
+    "r": [
+     86,
+     24,
+     42,
+     23
+    ],
+    "a": [
+     21,
+     22
+    ]
+   },
+   "happy": {
+    "r": [
+     129,
+     96,
+     42,
+     23
+    ],
+    "a": [
+     21,
+     22
+    ]
+   },
+   "idle": {
+    "r": [
+     0,
+     0,
+     42,
+     23
+    ],
+    "a": [
+     21,
+     22
+    ]
+   },
+   "blink": {
+    "r": [
+     129,
+     72,
+     42,
+     23
+    ],
+    "a": [
+     21,
+     22
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   119
+  ],
+  "treasureSheet": [
+   128,
+   38
+  ],
+  "treasures": [
+   {
+    "id": "faded-photo",
+    "r": [
+     0,
+     0,
+     10,
+     10
+    ],
+    "name": "Faded photo",
+    "phrase": "a faded photo"
+   },
+   {
+    "id": "future-note",
+    "r": [
+     11,
+     0,
+     11,
+     9
+    ],
+    "name": "Note to the future",
+    "phrase": "a note to the future"
+   },
+   {
+    "id": "friendship-band",
+    "r": [
+     23,
+     0,
+     11,
+     9
+    ],
+    "name": "Friendship band",
+    "phrase": "a friendship band"
+   },
+   {
+    "id": "yo-yo",
+    "r": [
+     35,
+     0,
+     12,
+     12
+    ],
+    "name": "Yo-yo",
+    "phrase": "a yo-yo"
+   },
+   {
+    "id": "gonggi",
+    "r": [
+     48,
+     0,
+     10,
+     9
+    ],
+    "name": "Gonggi pieces",
+    "phrase": "some gonggi pieces"
+   },
+   {
+    "id": "brass-compass",
+    "r": [
+     59,
+     0,
+     10,
+     11
+    ],
+    "name": "Brass compass",
+    "phrase": "a brass compass"
+   }
+  ]
+ },
+ "olive": {
+  "name": "Olive",
+  "species": "Owl",
+  "bio": "Loves reading by candlelight.",
+  "tier": "plus",
+  "size": [
+   33,
+   24
+  ],
+  "ground": 23,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     34,
+     0,
+     33,
+     24
+    ],
+    "a": [
+     19,
+     23
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     102,
+     0,
+     33,
+     24
+    ],
+    "a": [
+     18,
+     23
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     0,
+     0,
+     33,
+     24
+    ],
+    "a": [
+     19,
+     23
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     68,
+     0,
+     33,
+     24
+    ],
+    "a": [
+     18,
+     23
+    ]
+   },
+   "drop": {
+    "r": [
+     136,
+     0,
+     33,
+     24
+    ],
+    "a": [
+     19,
+     23
+    ]
+   },
+   "wave-a": {
+    "r": [
+     170,
+     0,
+     33,
+     24
+    ],
+    "a": [
+     19,
+     23
+    ]
+   },
+   "wave-b": {
+    "r": [
+     204,
+     0,
+     33,
+     24
+    ],
+    "a": [
+     19,
+     23
+    ]
+   },
+   "happy": {
+    "r": [
+     0,
+     99,
+     33,
+     24
+    ],
+    "a": [
+     19,
+     23
+    ]
+   },
+   "idle": {
+    "r": [
+     0,
+     0,
+     33,
+     24
+    ],
+    "a": [
+     19,
+     23
+    ]
+   },
+   "blink": {
+    "r": [
+     34,
+     25,
+     33,
+     24
+    ],
+    "a": [
+     19,
+     23
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   123
+  ],
+  "treasureSheet": [
+   128,
+   37
+  ],
+  "treasures": [
+   {
+    "id": "candle-stub",
+    "r": [
+     0,
+     0,
+     9,
+     12
+    ],
+    "name": "Candle stub",
+    "phrase": "a candle stub"
+   },
+   {
+    "id": "ink-bottle",
+    "r": [
+     10,
+     0,
+     9,
+     11
+    ],
+    "name": "Ink bottle",
+    "phrase": "an ink bottle"
+   },
+   {
+    "id": "magnifier",
+    "r": [
+     20,
+     0,
+     11,
+     12
+    ],
+    "name": "Magnifier",
+    "phrase": "a magnifier"
+   },
+   {
+    "id": "bookmark",
+    "r": [
+     32,
+     0,
+     7,
+     12
+    ],
+    "name": "Bookmark",
+    "phrase": "a bookmark"
+   },
+   {
+    "id": "mini-globe",
+    "r": [
+     40,
+     0,
+     11,
+     12
+    ],
+    "name": "Mini globe",
+    "phrase": "a mini globe"
+   },
+   {
+    "id": "glow-moon",
+    "r": [
+     52,
+     0,
+     11,
+     12
+    ],
+    "name": "Glow moon",
+    "phrase": "a glow moon"
+   }
+  ]
+ },
+ "lulu": {
+  "name": "Lulu",
+  "species": "Red panda",
+  "bio": "Brings your gift wrapped up in a big fluffy tail.",
+  "tier": "plus",
+  "size": [
+   43,
+   22
+  ],
+  "ground": 21,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     0,
+     0,
+     43,
+     22
+    ],
+    "a": [
+     20,
+     21
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     88,
+     0,
+     43,
+     22
+    ],
+    "a": [
+     19,
+     21
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     44,
+     0,
+     43,
+     22
+    ],
+    "a": [
+     20,
+     21
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     132,
+     0,
+     43,
+     22
+    ],
+    "a": [
+     19,
+     21
+    ]
+   },
+   "drop": {
+    "r": [
+     176,
+     0,
+     43,
+     22
+    ],
+    "a": [
+     20,
+     21
+    ]
+   },
+   "wave-a": {
+    "r": [
+     0,
+     23,
+     43,
+     22
+    ],
+    "a": [
+     20,
+     21
+    ]
+   },
+   "wave-b": {
+    "r": [
+     44,
+     23,
+     43,
+     22
+    ],
+    "a": [
+     20,
+     21
+    ]
+   },
+   "happy": {
+    "r": [
+     176,
+     92,
+     43,
+     22
+    ],
+    "a": [
+     20,
+     21
+    ]
+   },
+   "idle": {
+    "r": [
+     88,
+     92,
+     43,
+     22
+    ],
+    "a": [
+     20,
+     21
+    ]
+   },
+   "blink": {
+    "r": [
+     132,
+     92,
+     43,
+     22
+    ],
+    "a": [
+     20,
+     21
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   140
+  ],
+  "treasureSheet": [
+   128,
+   37
+  ],
+  "treasures": [
+   {
+    "id": "tea-leaf",
+    "r": [
+     0,
+     0,
+     9,
+     12
+    ],
+    "name": "Tea leaf",
+    "phrase": "a tea leaf"
+   },
+   {
+    "id": "teacup",
+    "r": [
+     10,
+     0,
+     10,
+     10
+    ],
+    "name": "Tiny teacup",
+    "phrase": "a tiny teacup"
+   },
+   {
+    "id": "tea-cookie",
+    "r": [
+     21,
+     0,
+     11,
+     11
+    ],
+    "name": "Tea cookie",
+    "phrase": "a tea cookie"
+   },
+   {
+    "id": "tea-pouch",
+    "r": [
+     33,
+     0,
+     10,
+     11
+    ],
+    "name": "Tea pouch",
+    "phrase": "a tea pouch"
+   },
+   {
+    "id": "tea-flower",
+    "r": [
+     44,
+     0,
+     12,
+     12
+    ],
+    "name": "Tea chrysanthemum",
+    "phrase": "a tea chrysanthemum"
+   },
+   {
+    "id": "tiny-teapot",
+    "r": [
+     57,
+     0,
+     12,
+     9
+    ],
+    "name": "Tiny teapot",
+    "phrase": "a tiny teapot"
+   }
+  ]
+ },
+ "benny": {
+  "name": "Benny",
+  "species": "Beaver",
+  "bio": "Loves carving things. Miuu's crooked mailbox is a Benny original.",
+  "tier": "plus",
+  "size": [
+   42,
+   21
+  ],
+  "ground": 20,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     43,
+     0,
+     42,
+     21
+    ],
+    "a": [
+     20,
+     20
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     129,
+     0,
+     42,
+     21
+    ],
+    "a": [
+     19,
+     20
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     0,
+     0,
+     42,
+     21
+    ],
+    "a": [
+     20,
+     20
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     86,
+     0,
+     42,
+     21
+    ],
+    "a": [
+     19,
+     20
+    ]
+   },
+   "drop": {
+    "r": [
+     172,
+     0,
+     42,
+     21
+    ],
+    "a": [
+     20,
+     20
+    ]
+   },
+   "wave-a": {
+    "r": [
+     0,
+     22,
+     42,
+     21
+    ],
+    "a": [
+     20,
+     20
+    ]
+   },
+   "wave-b": {
+    "r": [
+     43,
+     22,
+     42,
+     21
+    ],
+    "a": [
+     20,
+     20
+    ]
+   },
+   "happy": {
+    "r": [
+     129,
+     88,
+     42,
+     21
+    ],
+    "a": [
+     20,
+     20
+    ]
+   },
+   "idle": {
+    "r": [
+     43,
+     88,
+     42,
+     21
+    ],
+    "a": [
+     20,
+     20
+    ]
+   },
+   "blink": {
+    "r": [
+     86,
+     88,
+     42,
+     21
+    ],
+    "a": [
+     20,
+     20
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   131
+  ],
+  "treasureSheet": [
+   128,
+   37
+  ],
+  "treasures": [
+   {
+    "id": "wood-shaving",
+    "r": [
+     0,
+     0,
+     10,
+     11
+    ],
+    "name": "Wood shaving",
+    "phrase": "a wood shaving"
+   },
+   {
+    "id": "wooden-gear",
+    "r": [
+     11,
+     0,
+     12,
+     12
+    ],
+    "name": "Wooden gear",
+    "phrase": "a wooden gear"
+   },
+   {
+    "id": "wooden-mallet",
+    "r": [
+     24,
+     0,
+     11,
+     10
+    ],
+    "name": "Wooden mallet",
+    "phrase": "a wooden mallet"
+   },
+   {
+    "id": "sandpaper",
+    "r": [
+     36,
+     0,
+     10,
+     10
+    ],
+    "name": "Sandpaper scrap",
+    "phrase": "a sandpaper scrap"
+   },
+   {
+    "id": "log-slice",
+    "r": [
+     47,
+     0,
+     12,
+     12
+    ],
+    "name": "Log slice",
+    "phrase": "a log slice"
+   },
+   {
+    "id": "crooked-mailbox",
+    "r": [
+     60,
+     0,
+     11,
+     12
+    ],
+    "name": "Crooked mailbox",
+    "phrase": "a crooked mailbox"
+   }
+  ]
+ },
+ "bomi": {
+  "name": "Bomi",
+  "species": "Sheep",
+  "bio": "Knits Miuu a scarf every spring. It's always a little too long.",
+  "tier": "plus",
+  "size": [
+   40,
+   24
+  ],
+  "ground": 23,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     0,
+     0,
+     40,
+     24
+    ],
+    "a": [
+     21,
+     23
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     82,
+     0,
+     40,
+     24
+    ],
+    "a": [
+     20,
+     23
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     41,
+     0,
+     40,
+     24
+    ],
+    "a": [
+     21,
+     23
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     123,
+     0,
+     40,
+     24
+    ],
+    "a": [
+     20,
+     23
+    ]
+   },
+   "drop": {
+    "r": [
+     164,
+     0,
+     40,
+     24
+    ],
+    "a": [
+     21,
+     23
+    ]
+   },
+   "wave-a": {
+    "r": [
+     205,
+     0,
+     40,
+     24
+    ],
+    "a": [
+     21,
+     23
+    ]
+   },
+   "wave-b": {
+    "r": [
+     0,
+     25,
+     40,
+     24
+    ],
+    "a": [
+     21,
+     23
+    ]
+   },
+   "happy": {
+    "r": [
+     0,
+     77,
+     40,
+     24
+    ],
+    "a": [
+     21,
+     23
+    ]
+   },
+   "idle": {
+    "r": [
+     166,
+     51,
+     40,
+     24
+    ],
+    "a": [
+     21,
+     23
+    ]
+   },
+   "blink": {
+    "r": [
+     207,
+     51,
+     40,
+     24
+    ],
+    "a": [
+     21,
+     23
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   101
+  ],
+  "treasureSheet": [
+   128,
+   38
+  ],
+  "treasures": [
+   {
+    "id": "yarn-ball",
+    "r": [
+     0,
+     0,
+     12,
+     11
+    ],
+    "name": "Yarn ball",
+    "phrase": "a yarn ball"
+   },
+   {
+    "id": "knit-heart",
+    "r": [
+     13,
+     0,
+     11,
+     10
+    ],
+    "name": "Knitted heart",
+    "phrase": "a knitted heart"
+   },
+   {
+    "id": "tassel",
+    "r": [
+     25,
+     0,
+     8,
+     12
+    ],
+    "name": "Tassel",
+    "phrase": "a tassel"
+   },
+   {
+    "id": "knit-swatch",
+    "r": [
+     34,
+     0,
+     12,
+     10
+    ],
+    "name": "Knit swatch",
+    "phrase": "a knit swatch"
+   },
+   {
+    "id": "crochet-flower",
+    "r": [
+     47,
+     0,
+     12,
+     12
+    ],
+    "name": "Crochet flower",
+    "phrase": "a crochet flower"
+   },
+   {
+    "id": "scarf-end",
+    "r": [
+     60,
+     0,
+     10,
+     12
+    ],
+    "name": "Scarf end",
+    "phrase": "a scarf end"
+   }
+  ]
+ },
+ "maro": {
+  "name": "Maro",
+  "species": "Hedgehog",
+  "bio": "Never in a hurry. Thinks every chestnut is family.",
+  "tier": "guest",
+  "size": [
+   38,
+   28
+  ],
+  "ground": 26,
+  "frames": {
+   "crawl-a": {
+    "r": [
+     0,
+     0,
+     38,
+     28
+    ],
+    "a": [
+     22,
+     26
+    ]
+   },
+   "crawl-b": {
+    "r": [
+     78,
+     0,
+     38,
+     28
+    ],
+    "a": [
+     21,
+     26
+    ]
+   },
+   "crawl-a-empty": {
+    "r": [
+     39,
+     0,
+     38,
+     28
+    ],
+    "a": [
+     22,
+     26
+    ]
+   },
+   "crawl-b-empty": {
+    "r": [
+     117,
+     0,
+     38,
+     28
+    ],
+    "a": [
+     21,
+     26
+    ]
+   },
+   "drop": {
+    "r": [
+     156,
+     0,
+     38,
+     28
+    ],
+    "a": [
+     22,
+     26
+    ]
+   },
+   "wave-a": {
+    "r": [
+     195,
+     0,
+     38,
+     28
+    ],
+    "a": [
+     22,
+     26
+    ]
+   },
+   "wave-b": {
+    "r": [
+     0,
+     29,
+     38,
+     28
+    ],
+    "a": [
+     22,
+     26
+    ]
+   },
+   "happy": {
+    "r": [
+     156,
+     87,
+     38,
+     28
+    ],
+    "a": [
+     22,
+     26
+    ]
+   },
+   "idle": {
+    "r": [
+     39,
+     0,
+     38,
+     28
+    ],
+    "a": [
+     22,
+     26
+    ]
+   },
+   "blink": {
+    "r": [
+     78,
+     29,
+     38,
+     28
+    ],
+    "a": [
+     22,
+     26
+    ]
+   }
+  },
+  "sheet": [
+   256,
+   115
+  ],
+  "treasureSheet": [
+   128,
+   14
+  ],
+  "treasures": [
+   {
+    "id": "horse-chestnut",
+    "r": [
+     0,
+     0,
+     14,
+     14
+    ],
+    "name": "Horse chestnut",
+    "phrase": "a horse chestnut"
+   },
+   {
+    "id": "march-calendar",
+    "r": [
+     15,
+     0,
+     13,
+     14
+    ],
+    "name": "March calendar",
+    "phrase": "a March calendar"
+   },
+   {
+    "id": "chestnut-burr",
+    "r": [
+     29,
+     0,
+     13,
+     12
+    ],
+    "name": "Spiky chestnut",
+    "phrase": "a spiky chestnut"
+   }
+  ]
+ }
+}

@@ -45,7 +45,10 @@
   .animate-marquee,
   .animate-twinkle,
   .animate-fade-up,
-  .animate-pop-in {
+  .animate-pop-in,
+  .animate-bob,
+  .animate-pop,
+  .animate-swap-in {
     animation: none;
   }
 

@@ -54,6 +54,22 @@ module.exports = {
           from: { opacity: "0", transform: "scale(0.92)" },
           to: { opacity: "1", transform: "scale(1)" },
         },
+        // a few pixels up and back, for stickers resting on a page
+        bob: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" },
+        },
+        // a sticker or cell arriving: from a little small, overshooting just past its size
+        pop: {
+          "0%": { opacity: "0", transform: "scale(0.6)" },
+          "70%": { opacity: "1", transform: "scale(1.06)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        // a view swapped in by a toggle
+        "swap-in": {
+          from: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         float: "float 5s ease-in-out infinite",
@@ -63,6 +79,9 @@ module.exports = {
         // page-load entrances; pair with an [animation-delay:…] to stagger
         "fade-up": "fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both",
         "pop-in": "pop-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        bob: "bob 4s ease-in-out infinite",
+        pop: "pop 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        "swap-in": "swap-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both",
       },
     },
   },

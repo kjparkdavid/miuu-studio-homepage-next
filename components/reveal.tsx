@@ -5,7 +5,7 @@ type RevealProps = {
   className?: string;
   // stagger neighbours by a few tens of milliseconds
   delay?: number;
-  as?: "div" | "article" | "li";
+  as?: "div" | "article" | "li" | "figure";
 };
 
 // Fades its children up the first time they scroll into view

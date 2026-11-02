@@ -10,55 +10,54 @@ const SOCIAL_ICONS = { Instagram: instagram, TikTok: tiktok, YouTube: youtube };
 
 const Footer = () => {
   return (
-    <footer className="border-t border-ink/10 bg-canvas px-4 py-12 sm:px-6">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
+    <footer className="border-t border-ink/[0.08] px-4 py-14 sm:px-6">
+      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-[1fr_auto] sm:items-start">
         <div>
           <a href={STUDIO_URL} aria-label="Miuu Studio official website">
-            <Image src={logo} alt="Miuu Studio" width={160} />
+            <Image src={logo} alt="Miuu Studio" width={140} />
           </a>
-          <p className="mt-4 max-w-xs text-sm font-medium text-ink/60">
+          <p className="mt-4 max-w-xs text-sm font-medium leading-relaxed text-ink/50">
             We make cute, gentle things starring Miuu and friends, to bring a little joy to every day.
           </p>
-          <div className="mt-5 flex gap-3">
+          <div className="mt-6 flex gap-2.5">
             {SOCIAL_LINKS.map((social) => (
               <a
                 key={social.name}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-transform hover:-translate-y-0.5"
+                className="transition-opacity hover:opacity-70"
               >
                 <Image
                   src={SOCIAL_ICONS[social.name as keyof typeof SOCIAL_ICONS]}
                   alt={`Miuu Studio on ${social.name}`}
-                  width={36}
-                  height={36}
+                  width={28}
+                  height={28}
                 />
               </a>
             ))}
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 text-sm font-semibold">
-          <div className="flex gap-8">
-            <a href="#features" className="hover:text-violet">Features</a>
-            <a href="#faq" className="hover:text-violet">FAQ</a>
-            <Link href="/privacy-policy" className="hover:text-violet">Privacy Policy</Link>
-          </div>
-          <a href={STUDIO_URL} className="hover:text-violet">
-            Miuu Studio official website ↗
+        <nav className="grid grid-cols-2 gap-x-12 gap-y-3 text-sm font-medium text-ink/60" aria-label="Footer">
+          <a href="#features" className="hover:text-ink">
+            Features
           </a>
-          <p className="font-medium text-ink/60">
-            Contact:{" "}
-            <a href="mailto:support@miuustudio.com" className="font-semibold text-ink hover:text-violet">
-              support@miuustudio.com
-            </a>
-          </p>
-        </div>
+          <Link href="/privacy-policy" className="hover:text-ink">
+            Privacy Policy
+          </Link>
+          <a href="#faq" className="hover:text-ink">
+            FAQ
+          </a>
+          <a href={STUDIO_URL} className="hover:text-ink">
+            Miuu Studio ↗
+          </a>
+          <a href="mailto:support@miuustudio.com" className="col-span-2 hover:text-ink">
+            support@miuustudio.com
+          </a>
+        </nav>
       </div>
-      <p className="mx-auto mt-10 max-w-6xl text-xs font-medium text-ink/50">
-        © {new Date().getFullYear()} Miuu Studio
-      </p>
+      <p className="mx-auto mt-12 max-w-6xl text-xs font-medium text-ink/40">© {new Date().getFullYear()} Miuu Studio</p>
     </footer>
   );
 };

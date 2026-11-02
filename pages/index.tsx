@@ -2,8 +2,13 @@ import { Montserrat } from "next/font/google";
 import Head from "next/head";
 import SiteNav from "@/components/siteNav";
 import Hero from "@/components/hero";
-import Features from "@/components/features";
-import HomesSection from "@/components/homesSection";
+import WriteSection from "@/components/journal/writeSection";
+import RoomSection from "@/components/journal/roomSection";
+import GiftSection from "@/components/journal/giftSection";
+import CalendarSection from "@/components/journal/calendarSection";
+import ThanksSection from "@/components/journal/thanksSection";
+import DrawSection from "@/components/journal/drawSection";
+import MoreSection from "@/components/journal/moreSection";
 import Testimonials from "@/components/testimonials";
 import Faq from "@/components/faq";
 import DownloadCta from "@/components/downloadCta";
@@ -89,7 +94,7 @@ export default function Home() {
         <meta name="twitter:description" content={DESCRIPTION} />
         <meta name="twitter:image" content={OG_IMAGE} />
         <meta name="apple-itunes-app" content="app-id=6446296872" />
-        <meta name="theme-color" content="#6A1CF6" />
+        <meta name="theme-color" content="#FAF8FF" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/png" href="/icon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -101,12 +106,20 @@ export default function Home() {
       <main className={`${body.variable} bg-canvas font-body text-ink antialiased`}>
         <SiteNav />
         <Hero />
-        <Features />
-        <HomesSection />
-        <Testimonials />
-        <Faq />
-        <DownloadCta />
-        <Footer />
+        {/* below the hero, the page is the app: its cream journal paper and its own screens */}
+        <div className="bg-[#FFFCF5] bg-gradient-to-b from-canvas to-[#FFFCF5] bg-[length:100%_160px] bg-no-repeat">
+          <WriteSection />
+          <RoomSection />
+          <GiftSection />
+          <CalendarSection />
+          <ThanksSection />
+          <DrawSection />
+          <MoreSection />
+          <Testimonials />
+          <Faq />
+          <DownloadCta />
+          <Footer />
+        </div>
       </main>
     </>
   );
