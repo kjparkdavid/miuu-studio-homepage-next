@@ -89,7 +89,7 @@ const Peek = ({ friendKey, onClick }: { friendKey: string; onClick: () => void }
       aria-label={`Save the entry so ${friend.name} can visit`}
       className="group absolute bottom-[18px] right-0 translate-x-[38%] animate-swap-in"
     >
-      <span className="absolute -top-9 right-[52%] whitespace-nowrap rounded-full bg-white px-3 py-1 text-[11px] font-bold text-violet shadow-card ring-1 ring-violet/15 animate-bob">
+      <span className="absolute right-full top-2 me-1 whitespace-nowrap rounded-full bg-white px-3 py-1 text-[11px] font-bold text-violet shadow-card ring-1 ring-violet/15 animate-bob">
         psst… save it!
       </span>
       <span

@@ -65,6 +65,17 @@ module.exports = {
           "70%": { opacity: "1", transform: "scale(1.06)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        // a sticker pressed onto a page: lands a touch big, presses down, settles
+        stick: {
+          "0%": { transform: "scale(1.08)" },
+          "55%": { transform: "scale(0.95)" },
+          "100%": { transform: "scale(1)" },
+        },
+        // a drawer's tiles changing in place
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
         // a view swapped in by a toggle
         "swap-in": {
           from: { opacity: "0", transform: "translateY(8px)" },
@@ -81,7 +92,9 @@ module.exports = {
         "pop-in": "pop-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both",
         bob: "bob 4s ease-in-out infinite",
         pop: "pop 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        stick: "stick 0.32s cubic-bezier(0.3, 0.7, 0.4, 1) both",
         "swap-in": "swap-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        "fade-in": "fade-in 0.3s ease-out both",
       },
     },
   },

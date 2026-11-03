@@ -35,7 +35,20 @@ const DAY_STICKERS = [
 ];
 const DAY_MOODS = ["happy", "calm", "loved", "sleepy", "proud", "butterflies"];
 // A camera roll of small cozy things (made for the site with Codex image generation)
-const DAY_PHOTOS = ["latte", "books", "candle", "leaves", "cat", "cake", "rain", "journal", "bread", "sunset", "ramen", "tulips"];
+const DAY_PHOTOS = [
+  "iced-coffee",
+  "train-book",
+  "birthday-cake",
+  "ginkgo",
+  "black-cat",
+  "chocolate-cake",
+  "neon-street",
+  "notebook",
+  "bread-bag",
+  "beach",
+  "ramen-counter",
+  "tulips-sleeve",
+];
 
 // Which days have an entry, and which of those have a photo: the same quiet pattern every visit
 const hasEntry = (day: number) => (day * 7) % 10 < 7;

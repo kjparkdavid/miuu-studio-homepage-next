@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { Children, ReactElement, ReactNode, cloneElement, isValidElement } from "react";
 import Reveal from "@/components/reveal";
 
 // The pieces every section below the hero is built from, drawn after the app's own UI: its chips
@@ -109,14 +109,30 @@ export const Segmented = <K extends string>({
 };
 
 /** Two columns on wide screens, the words beside the thing; `flip` puts the thing first. */
-export const Row = ({ flip = false, id, children }: { flip?: boolean; id?: string; children: ReactNode }) => (
-  <section id={id} className="scroll-mt-16">
-    <div
-      className={`mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:gap-20 lg:py-28 ${
-        flip ? "lg:[&>*:first-child]:order-2" : ""
-      }`}
-    >
-      {children}
-    </div>
-  </section>
-);
+/**
+ * Two columns on wide screens, the words beside the thing; `flip` puts the thing first. The first child
+ * is the section's `SectionCopy`, the second the thing it shows. Anything in the copy's `extra` (the
+ * skins, the friends) is lifted out: on a phone it comes after the thing, so the main picture is
+ * always seen right after the headline, and on a wide screen it sits under the words.
+ */
+export const Row = ({ flip = false, id, children }: { flip?: boolean; id?: string; children: ReactNode }) => {
+  const [copy, visual] = Children.toArray(children);
+  const extra = isValidElement(copy) ? (copy as ReactElement<{ extra?: ReactNode }>).props.extra : undefined;
+  const words =
+    extra && isValidElement(copy)
+      ? cloneElement(copy as ReactElement<{ extra?: ReactNode }>, { extra: undefined })
+      : copy;
+  const side = flip ? "lg:col-start-2" : "lg:col-start-1";
+  const other = flip ? "lg:col-start-1" : "lg:col-start-2";
+  return (
+    <section id={id} className="scroll-mt-16">
+      <div className="mx-auto grid max-w-6xl gap-y-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:gap-x-20 lg:gap-y-0 lg:py-28">
+        <div className={`lg:row-start-1 ${extra ? "lg:self-end" : "lg:row-span-2 lg:self-center"} ${side}`}>
+          {words}
+        </div>
+        <div className={`lg:row-span-2 lg:row-start-1 lg:self-center ${other}`}>{visual}</div>
+        {extra && <Reveal className={`max-w-md lg:row-start-2 lg:self-start ${side}`}>{extra}</Reveal>}
+      </div>
+    </section>
+  );
+};

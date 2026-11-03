@@ -121,6 +121,8 @@ const prefersReducedMotion = () =>
 
 const StickerJar = () => {
   const [landed, setLanded] = useState(0);
+  // The picker and the buttons wait for the jar: the stickers pouring in are what is seen first
+  const [ready, setReady] = useState(false);
   const [month, setMonth] = useState<string | null>(null);
   // Points to px: the label is set in the app's sizes at the card's scale
   const [scale, setScale] = useState(1);
@@ -177,10 +179,10 @@ const StickerJar = () => {
 
   // The app's label pulse: up to 1.15 and back with a little overshoot
   const pulseLabel = () => {
-    labelRef.current?.animate(
-      [{ transform: "scale(1)" }, { transform: "scale(1.15)" }, { transform: "scale(1)" }],
-      { duration: 550, easing: "cubic-bezier(0.3, 1.6, 0.5, 1)" }
-    );
+    labelRef.current?.animate([{ transform: "scale(1)" }, { transform: "scale(1.15)" }, { transform: "scale(1)" }], {
+      duration: 550,
+      easing: "cubic-bezier(0.3, 1.6, 0.5, 1)",
+    });
   };
 
   // ── The fill: each sticker falls from just above the rim to its place in the pile, 35 ms apart ──
@@ -207,7 +209,10 @@ const StickerJar = () => {
       if (landedNow !== st.landed) {
         st.landed = landedNow;
         setLanded(landedNow);
-        if (landedNow === COUNT) pulseLabel();
+        if (landedNow === COUNT) {
+          pulseLabel();
+          setReady(true);
+        }
       }
       if (done) {
         // Hand the pile to the solver, asleep, where the playback left it
@@ -218,7 +223,7 @@ const StickerJar = () => {
       }
       requestAnimationFrame(playFrame);
     },
-    [pile, falls]
+    [pile, falls],
   );
 
   const play = useCallback(() => {
@@ -239,7 +244,7 @@ const StickerJar = () => {
         { opacity: 0, transform: `translateY(${CARD_RISE_PT * pxPerPt()}px)` },
         { opacity: 1, transform: "translateY(0)" },
       ],
-      { duration: CARD_IN_MS, delay: CARD_IN_AT_MS, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" }
+      { duration: CARD_IN_MS, delay: CARD_IN_AT_MS, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" },
     );
     requestAnimationFrame(playFrame);
   }, [playFrame]);
@@ -277,7 +282,13 @@ const StickerJar = () => {
       const stir = stirAge >= 0 && stirAge < STIR_SECONDS ? 1 - stirAge / STIR_SECONDS : 0;
       if (stirAge >= STIR_SECONDS) st.stirStart = -1;
 
-      let speed = stepJarPhysics(world, gx, gy, dt, stir > 0 ? { stir, sloshX: 0, sloshY: 0, timeSec: stirAge } : undefined);
+      let speed = stepJarPhysics(
+        world,
+        gx,
+        gy,
+        dt,
+        stir > 0 ? { stir, sloshX: 0, sloshY: 0, timeSec: stirAge } : undefined,
+      );
 
       // A held sticker goes where the pointer is and leaves with its speed
       if (st.grab && st.grab.index < world.count) {
@@ -307,7 +318,7 @@ const StickerJar = () => {
       }
       requestAnimationFrame(frame);
     },
-    [renderWorld]
+    [renderWorld],
   );
 
   const wake = useCallback(() => {
@@ -332,6 +343,7 @@ const StickerJar = () => {
       st.landed = COUNT;
       renderWorld();
       setLanded(COUNT);
+      setReady(true);
       return;
     }
 
@@ -341,7 +353,7 @@ const StickerJar = () => {
         observer.disconnect();
         play();
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -366,7 +378,7 @@ const StickerJar = () => {
   };
 
   const press = useRef<null | { kind: "sticker" | "card"; x0: number; y0: number; index: number; dragging: boolean }>(
-    null
+    null,
   );
 
   const onStickerDown = (e: React.PointerEvent) => {
@@ -512,62 +524,70 @@ const StickerJar = () => {
         </div>
       </div>
 
-      {/* today's entry: pick how it went and its sticker drops in */}
-      <div className="mt-4 rounded-2xl bg-white/70 p-3 ring-1 ring-ink/5 backdrop-blur sm:p-4">
-        <div className="flex items-center justify-between px-1">
-          <p className="text-sm font-bold tracking-tight">{full ? "This jar is full" : "How was today?"}</p>
-          <p className="text-xs font-medium text-ink/45">{full ? "A new one every month" : "Pick a mood, an entry drops in"}</p>
-        </div>
-        <div className="mt-2 grid grid-cols-6 gap-1">
-          {MOOD_PICKS.map((pick) => (
-            <button
-              key={pick.face}
-              type="button"
-              onClick={() => {
-                setMood(pick.face);
-                drop();
-              }}
-              disabled={full}
-              aria-label={`Today felt ${pick.label}: add an entry to the jar`}
-              aria-pressed={mood === pick.face}
-              className={`group flex flex-col items-center gap-1 rounded-xl py-2 transition-colors disabled:opacity-40 ${
-                mood === pick.face ? "bg-violet/10" : "hover:bg-ink/[0.04] disabled:hover:bg-transparent"
-              }`}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`/images/moods/${pick.face}.webp`}
-                alt=""
-                draggable={false}
-                className="h-9 w-9 transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90 sm:h-10 sm:w-10"
-              />
-              <span
-                className={`text-[10px] font-semibold sm:text-[11px] ${mood === pick.face ? "text-violet" : "text-ink/50"}`}
+      <div
+        className={`transition-[opacity,transform] duration-700 ease-out ${
+          ready ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+        }`}
+      >
+        {/* today's entry: pick how it went and its sticker drops in */}
+        <div className="mt-4 rounded-2xl bg-white/70 p-3 ring-1 ring-ink/5 backdrop-blur sm:p-4">
+          <div className="flex items-center justify-between px-1">
+            <p className="text-sm font-bold tracking-tight">{full ? "This jar is full" : "How was today?"}</p>
+            <p className="text-xs font-medium text-ink/45">
+              {full ? "A new one every month" : "Pick a mood, an entry drops in"}
+            </p>
+          </div>
+          <div className="mt-2 grid grid-cols-6 gap-1">
+            {MOOD_PICKS.map((pick) => (
+              <button
+                key={pick.face}
+                type="button"
+                onClick={() => {
+                  setMood(pick.face);
+                  drop();
+                }}
+                disabled={full}
+                aria-label={`Today felt ${pick.label}: add an entry to the jar`}
+                aria-pressed={mood === pick.face}
+                className={`group flex flex-col items-center gap-1 rounded-xl py-2 transition-colors disabled:opacity-40 ${
+                  mood === pick.face ? "bg-violet/10" : "hover:bg-ink/[0.04] disabled:hover:bg-transparent"
+                }`}
               >
-                {pick.label}
-              </span>
-            </button>
-          ))}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/images/moods/${pick.face}.webp`}
+                  alt=""
+                  draggable={false}
+                  className="h-9 w-9 transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90 sm:h-10 sm:w-10"
+                />
+                <span
+                  className={`text-[10px] font-semibold sm:text-[11px] ${mood === pick.face ? "text-violet" : "text-ink/50"}`}
+                >
+                  {pick.label}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="mt-3 flex items-center justify-between gap-3 px-1 text-xs font-medium text-ink/45">
-        <span>Tap, toss or tilt the jar</span>
-        <div className="flex gap-1.5">
-          <button
-            type="button"
-            onClick={shake}
-            className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-semibold text-ink/70 transition-colors hover:border-ink/25 hover:text-ink"
-          >
-            Shake
-          </button>
-          <button
-            type="button"
-            onClick={reset}
-            className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-semibold text-ink/70 transition-colors hover:border-ink/25 hover:text-ink"
-          >
-            Reset
-          </button>
+        <div className="mt-3 flex items-center justify-between gap-3 px-1 text-xs font-medium text-ink/45">
+          <span>Tap, toss or tilt the jar</span>
+          <div className="flex gap-1.5">
+            <button
+              type="button"
+              onClick={shake}
+              className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-semibold text-ink/70 transition-colors hover:border-ink/25 hover:text-ink"
+            >
+              Shake
+            </button>
+            <button
+              type="button"
+              onClick={reset}
+              className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-semibold text-ink/70 transition-colors hover:border-ink/25 hover:text-ink"
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
     </div>

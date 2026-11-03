@@ -48,6 +48,8 @@
   .animate-pop-in,
   .animate-bob,
   .animate-pop,
+  .animate-stick,
+  .animate-fade-in,
   .animate-swap-in {
     animation: none;
   }
