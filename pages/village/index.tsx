@@ -2,9 +2,9 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Montserrat } from "next/font/google";
 
-import { appStoreUrlWithCampaign, playUrlWithAttribution } from "@/lib/attribution";
+import { appStoreUrlWithCampaign } from "@/lib/attribution";
 import { trackStoreClick } from "@/lib/analytics";
-import { formatVillageCode, normalizeVillageCode, villageAppLink } from "@/lib/villageInvite";
+import { formatVillageCode, normalizeVillageCode, villageAppLink, villagePlayUrl } from "@/lib/villageInvite";
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -13,9 +13,8 @@ const TITLE = "Be neighbors in Miuu";
 const LINE = "Your friend wants you in their village. Add their code and visit each other's rooms.";
 // Installs from village invites, as their own campaign in App Store Connect and on Play
 const VILLAGE_APP_STORE_URL = appStoreUrlWithCampaign("village");
-const VILLAGE_PLAY_URL = playUrlWithAttribution({ source: "village", medium: "invite" });
 
-type View = { kind: "loading" } | { kind: "invite"; code: string } | { kind: "no-code" };
+type View = { kind: "loading" } | { kind: "invite"; code: string; referral: string | null } | { kind: "no-code" };
 
 /**
  * `/village/?c=XXXX-XXXX` (secret-note#2508): the link a village invite shares.
@@ -23,8 +22,10 @@ type View = { kind: "loading" } | { kind: "invite"; code: string } | { kind: "no
  * - **With Miuu installed**, "Open in Miuu" opens the village with the friend's
  *   code filled in (the app's own link, `villageAppLink`).
  * - **Without it**, the code is on screen with a copy button, the stores, and
- *   where in Miuu to enter it. No install referrer: unlike a referral, a
- *   neighbour code is added by hand after install.
+ *   where in Miuu to enter it. On Android the Play link carries the code (and
+ *   the inviter's referral code, `?r=`) through the install, so Miuu opens the
+ *   village with it once the first run is done (`villagePlayUrl`); on an
+ *   iPhone it is typed.
  * - **A link that lost its code** says so and offers the stores.
  *
  * Static export: the code is read in the browser, never at build time.
@@ -34,8 +35,9 @@ const VillageInvitePage = () => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const code = normalizeVillageCode(new URLSearchParams(window.location.search).get("c"));
-    setView(code ? { kind: "invite", code } : { kind: "no-code" });
+    const params = new URLSearchParams(window.location.search);
+    const code = normalizeVillageCode(params.get("c"));
+    setView(code ? { kind: "invite", code, referral: params.get("r") } : { kind: "no-code" });
   }, []);
 
   const copy = async (code: string) => {
@@ -110,7 +112,7 @@ const VillageInvitePage = () => {
             Get Miuu on the App Store
           </a>
           <a
-            href={VILLAGE_PLAY_URL}
+            href={view.kind === "invite" ? villagePlayUrl(view.code, view.referral) : villagePlayUrl(null, null)}
             onClick={() => trackStoreClick("google_play")}
             className="mt-3 w-full rounded-full bg-[#111111] py-4 text-[16px] font-semibold text-white"
           >
