@@ -66,6 +66,10 @@ const PrivacyPolicyPage = () => {
           </li>
           <li>Google Cloud &mdash; our servers, backup storage</li>
           <li>Anthropic &mdash; the optional AI features (see below)</li>
+          <li>
+            Stripe &mdash; the seller of Plus bought on Miuu Note web (see
+            Miuu Note web)
+          </li>
         </ul>
 
         <p>
@@ -169,8 +173,10 @@ const PrivacyPolicyPage = () => {
           <strong>Purchases and Subscriptions</strong>
         </p>
         <p>
-          Payment is handled entirely by the App Store or Google Play. We never
-          see your card details. We use <strong>RevenueCat</strong> to tell the
+          In the app, payment is handled entirely by the App Store or Google
+          Play. We never see your card details. Plus bought on Miuu Note web is
+          sold by Stripe instead; see &ldquo;Buying Plus on the web&rdquo; under
+          Miuu Note web. We use <strong>RevenueCat</strong> to tell the
           app whether a purchase or subscription is active; it receives an
           anonymous app user identifier and the purchase information the store
           provides. Cancelling or refunding a subscription is done through your
@@ -573,6 +579,183 @@ const PrivacyPolicyPage = () => {
           diary, or the app&apos;s analytics.
         </p>
 
+        <p id="miuu-note-web">
+          <strong>Miuu Note web</strong>
+        </p>
+        <p>
+          Miuu Note web is the Miuu Note app in a web browser, at
+          app.miuunote.site, for Plus members. It is the same app and the same
+          account: you sign in with the Apple or Google account you use in the
+          app, through Firebase Authentication in a pop-up from Apple or
+          Google, and your diary moves between the browser and your phones
+          through our servers on Google Cloud, the same service that keeps your
+          backup (see Data Backup and Storage). Miuu Note web shows no ads and
+          contains no Meta software. Everything else in this policy applies to
+          it as it does to the app, with the differences below.
+        </p>
+        <p>
+          <strong>What your browser keeps, and signing out</strong>
+        </p>
+        <ul>
+          <li>
+            <strong>A copy of your diary</strong>: so that it opens quickly and
+            keeps working when the connection drops, the browser keeps its own
+            copy of your diary in the storage it gives this site, which other
+            websites cannot read: your entries and everything on their pages,
+            and the rest of your diary such as moods and thank-you notes; the
+            photos, stickers and fonts it has shown you (a photo is downloaded
+            only when you scroll to it, and the browser makes its own small
+            previews); the app&apos;s settings for that browser; and your
+            sign-in, with your email address and name to show in Settings. The
+            app asks the browser to keep this storage rather than clear it when
+            space runs low. The app&apos;s own files are also kept, so that it
+            opens offline.
+          </li>
+          <li>
+            <strong>Encrypted on your computer</strong>: the copy of your diary,
+            photos included, is encrypted in the browser. The key that opens it
+            is given to the browser by our server only after you enter your web
+            passcode, is kept only in the browser&apos;s memory, and is
+            forgotten when Miuu Note web locks, when you sign out and when you
+            close the tab. Your sign-in also lasts only while the browser is
+            open: after you close it, you sign in again.
+          </li>
+          <li>
+            <strong>Signing out deletes it all</strong>: signing out of Miuu
+            Note web deletes everything the site stored in that browser: the
+            copy of your diary, its photos and other files, the app&apos;s
+            settings, your sign-in, and the site&apos;s saved files. If some of
+            your changes have not reached our servers yet, the browser tells you
+            first and lets you wait for them. Signing out deletes nothing on our
+            servers: your diary stays in your account and on your phones.
+          </li>
+          <li>
+            <strong>When Plus ends</strong>: the browser deletes its copy of
+            your diary once our server tells it that Plus has ended, keeping only
+            your sign-in so that it can show whose account it is. If that copy
+            holds changes that have not reached our servers, it is kept, hidden,
+            until Plus is back or you sign out. Nothing is deleted on our
+            servers.
+          </li>
+          <li>
+            <strong>Another account</strong>: if someone signs in to the same
+            browser with a different account, the earlier account&apos;s copy is
+            deleted first. If it holds changes that have not reached our servers,
+            the browser asks instead whether to sign in with that account or
+            delete them.
+          </li>
+          <li>
+            <strong>On a computer you share</strong>: closing the tab does not
+            delete the copy. Use a private window, which the browser clears when
+            you close it, or sign out when you are done.
+          </li>
+        </ul>
+        <p>
+          <strong>The web passcode</strong>
+        </p>
+        <p>
+          Miuu Note web asks for a web passcode, which you set on your first
+          visit. It is one passcode for every browser you use with your account,
+          and it is separate from the app&apos;s own lock, which stays your
+          phone&apos;s. It is asked each time you open or reload Miuu Note web,
+          and again after 5 minutes without use.
+        </p>
+        <ul>
+          <li>
+            Our server stores only a salted, one-way hash of your passcode (made
+            with scrypt), never the passcode itself, and the check happens there:
+            the hash never leaves our server. The server also holds the key that
+            opens the browser&apos;s encrypted copy of your diary, and gives it to
+            the browser only after the right passcode.
+          </li>
+          <li>
+            To stop guessing, the server counts wrong tries before checking each
+            one: after 5 in a row the passcode is locked for 15 minutes, and
+            after 20 it can only be reset. &ldquo;Forgot it?&rdquo; asks you to
+            sign in again with Apple or Google before you set a new one.
+          </li>
+          <li>
+            The passcode record is kept for Miuu Note web only. It is not part
+            of your diary, its sync or your backups, it never reaches the app,
+            and it is deleted with your account.
+          </li>
+        </ul>
+        <p>
+          <strong>Analytics, cookies and error reports on the web</strong>
+        </p>
+        <ul>
+          <li>
+            <strong>Analytics</strong>: Miuu Note web uses Firebase Analytics
+            under the same rules as the app (see Analytics &amp; Product Usage
+            Data), and its events are marked as coming from the web. It never
+            receives what you write. It is the app&apos;s analytics, not the
+            website&apos;s described under Our Website.
+          </li>
+          <li>
+            <strong>Asked first in Europe</strong>: in the European Economic
+            Area, the UK and Switzerland, Miuu Note web shows a banner before
+            any analytics. Until you answer, nothing is sent, and if you decline,
+            nothing ever is. Accepting allows measurement only, with analytics
+            cookies; it never allows advertising storage or ad personalisation,
+            so Google signals is not used for those visits. Whether you are
+            asked is worked out in your browser from its time zone setting, not
+            from your network address. Elsewhere nothing is asked, as in the
+            app, and Firebase Analytics sets cookies to tell one visit from the
+            next. Your answer is kept in that browser only; clearing the
+            site&apos;s data, or signing out, removes it, and you are asked
+            again.
+          </li>
+          <li>
+            <strong>Error reports</strong>: errors in Miuu Note web are reported
+            to Sentry. As with the app&apos;s reports (see Log Data), a report
+            describes the error and the browser and operating system it
+            happened in. It never includes your diary text: Miuu Note web makes
+            no recording of the page and does not log what you click or type.
+            Sentry sets no cookie, and it does not wait for the banner, because
+            it only reports errors so that we can fix them.
+          </li>
+        </ul>
+        <p>
+          <strong>Buying Plus on the web</strong>
+        </p>
+        <p>
+          On Miuu Note web you can start a free trial of Plus or buy it, monthly,
+          yearly or Lifetime, through Stripe Checkout, which opens only while
+          you are signed in. The seller of these purchases is{" "}
+          <strong>Stripe</strong>, through Stripe Managed Payments; your
+          statement shows &ldquo;Link&rdquo;, Stripe&apos;s seller name, rather
+          than Miuu.
+        </p>
+        <ul>
+          <li>
+            Stripe collects your payment details and the contact and billing
+            details it asks for, such as your email address and country, works
+            out and charges the tax, and handles refunds and disputes, under{" "}
+            <a
+              href="https://stripe.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Stripe&apos;s Privacy Policy
+            </a>
+            . We never see your card details.
+          </li>
+          <li>
+            The checkout carries an identifier of your Miuu account, so that
+            Plus is added to it. Stripe tells us which plan you bought and
+            whether it is active, with Stripe&apos;s reference for it, and we
+            keep that record with your account, as we do for App Store and
+            Google Play purchases. That is how Plus bought on the web also works
+            in the app on your phones, where it shows as &ldquo;Plus
+            (web)&rdquo;.
+          </li>
+          <li>
+            You manage or cancel a web purchase, and get its receipts, on Miuu
+            Note web, through Stripe&apos;s customer portal, not in the App
+            Store or Google Play.
+          </li>
+        </ul>
+
         <p>
           <strong>Cookies</strong>
         </p>
@@ -581,7 +764,8 @@ const PrivacyPolicyPage = () => {
           or libraries that do. You can choose to accept or refuse cookies in
           your settings, but some features may be affected. Our website uses
           Google Analytics cookies, outside the regions named above, to tell
-          one visit from a returning visitor.
+          one visit from a returning visitor. Miuu Note web uses cookies only
+          for its analytics, as described under Miuu Note web.
         </p>
 
         <p>
@@ -721,6 +905,10 @@ const PrivacyPolicyPage = () => {
             while your account exists.
           </li>
           <li>
+            <strong>Web passcode</strong> (its hash and the count of wrong
+            tries): kept while your account exists.
+          </li>
+          <li>
             <strong>Usage counters</strong> for free limits on the AI features:
             monthly counts, and a one-time count for the first build of your
             universe. They hold numbers, never your text.
@@ -766,7 +954,8 @@ const PrivacyPolicyPage = () => {
         <p>
           Our legal bases for processing are: performing the service you asked
           for (your account and backups); your consent (the AI features,
-          personalised ads and Google signals, notifications), which you can withdraw at any time
+          personalised ads and Google signals, notifications, and analytics on
+          Miuu Note web where it asks), which you can withdraw at any time
           without losing the rest of the app; and our legitimate interests in
           keeping the service working and safe from abuse.
         </p>
@@ -806,7 +995,7 @@ const PrivacyPolicyPage = () => {
             <strong>What is deleted</strong>: your account record (email
             address and display name) and everything stored for it on our
             servers &mdash; your backups, their photos and voice notes, your
-            reminder schedules, your usage counters, your invite code, and any
+            web passcode, your reminder schedules, your usage counters, your invite code, and any
             link between your iPhone and Android accounts. Everything on our
             servers is deleted within 30 days of your request. If you signed in
             with Apple, we also ask Apple to remove the app&apos;s access to
@@ -863,7 +1052,7 @@ const PrivacyPolicyPage = () => {
           to review this page regularly. Changes will be posted here and are
           effective immediately.
         </p>
-        <p>Effective Date: October 12, 2026</p>
+        <p>Effective Date: November 22, 2026</p>
 
         <p>
           <strong>Contact Us</strong>
