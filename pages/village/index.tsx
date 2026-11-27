@@ -4,7 +4,14 @@ import { Montserrat } from "next/font/google";
 
 import { appStoreUrlWithCampaign } from "@/lib/attribution";
 import { trackStoreClick } from "@/lib/analytics";
-import { formatVillageCode, normalizeVillageCode, villageAppLink, villagePlayUrl } from "@/lib/villageInvite";
+import {
+  formatVillageCode,
+  isComputer,
+  normalizeVillageCode,
+  villageAppLink,
+  villagePlayUrl,
+  villageWebLink,
+} from "@/lib/villageInvite";
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
@@ -14,7 +21,10 @@ const LINE = "Your friend wants you in their village. Add their code and visit e
 // Installs from village invites, as their own campaign in App Store Connect and on Play
 const VILLAGE_APP_STORE_URL = appStoreUrlWithCampaign("village");
 
-type View = { kind: "loading" } | { kind: "invite"; code: string; referral: string | null } | { kind: "no-code" };
+type View =
+  | { kind: "loading" }
+  | { kind: "invite"; code: string; referral: string | null; computer: boolean }
+  | { kind: "no-code" };
 
 /**
  * `/village/?c=XXXX-XXXX` (secret-note#2508): the link a village invite shares.
@@ -26,6 +36,10 @@ type View = { kind: "loading" } | { kind: "invite"; code: string; referral: stri
  *   the inviter's referral code, `?r=`) through the install, so Miuu opens the
  *   village with it once the first run is done (`villagePlayUrl`); on an
  *   iPhone it is typed.
+ * - **On a computer** (secret-note#2793) no app link opens Miuu, so the first
+ *   button is "Open in Miuu Note web" (`villageWebLink`): the diary in the
+ *   browser, which adds the friend after sign-in. The stores stay, for her
+ *   phone.
  * - **A link that lost its code** says so and offers the stores.
  *
  * Static export: the code is read in the browser, never at build time.
@@ -37,7 +51,8 @@ const VillageInvitePage = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = normalizeVillageCode(params.get("c"));
-    setView(code ? { kind: "invite", code, referral: params.get("r") } : { kind: "no-code" });
+    const computer = isComputer(navigator.userAgent, navigator.maxTouchPoints ?? 0);
+    setView(code ? { kind: "invite", code, referral: params.get("r"), computer } : { kind: "no-code" });
   }, []);
 
   const copy = async (code: string) => {
@@ -95,12 +110,27 @@ const VillageInvitePage = () => {
               <button type="button" onClick={() => copy(view.code)} className="mt-2 text-[14px] font-semibold text-[#651DFF]">
                 {copied ? "Copied!" : "Copy code"}
               </button>
-              <a
-                href={villageAppLink(view.code)}
-                className="mt-10 w-full rounded-full bg-[#651DFF] py-4 text-[16px] font-semibold text-white"
-              >
-                Open in Miuu
-              </a>
+              {view.computer ? (
+                <>
+                  <a
+                    href={villageWebLink(view.code)}
+                    className="mt-10 w-full rounded-full bg-[#651DFF] py-4 text-[16px] font-semibold text-white"
+                    data-testid="village-open-web"
+                  >
+                    Open in Miuu Note web
+                  </a>
+                  <p className="mt-3 text-[13px] text-[#755E82]">
+                    Miuu on your computer, for Miuu Plus. Sign in with the account you use in the app.
+                  </p>
+                </>
+              ) : (
+                <a
+                  href={villageAppLink(view.code)}
+                  className="mt-10 w-full rounded-full bg-[#651DFF] py-4 text-[16px] font-semibold text-white"
+                >
+                  Open in Miuu
+                </a>
+              )}
             </>
           )}
 

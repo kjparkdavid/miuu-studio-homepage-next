@@ -63,3 +63,26 @@ export const villagePlayUrl = (code: string | null, referralCode: string | null)
 /** Opens the village in an installed Miuu with the add-friend sheet filled in (the app's `AppLinks`). */
 export const villageAppLink = (code: string): string =>
   `com.miuustudio.miuudiary://village?c=${formatVillageCode(code)}`;
+
+/** Miuu Note web, the diary in a computer's browser (secret-note#2685). */
+export const MIUU_NOTE_WEB_URL = "https://app.miuunote.site";
+
+/**
+ * The same invite on Miuu Note web (secret-note#2793): the web reads
+ * `/village?c=` as the app reads its link (`web/WebAppLink.ts`), signed in or
+ * after sign-in, and adds the friend. The referral code stays behind: it
+ * counts an install, and a browser installs nothing.
+ */
+export const villageWebLink = (code: string): string =>
+  `${MIUU_NOTE_WEB_URL}/village?c=${formatVillageCode(code)}`;
+
+/**
+ * A computer rather than a phone or a tablet, from the browser's own
+ * description: no scheme link opens Miuu there, so the page offers the web.
+ * An iPad asking for the desktop site says "Macintosh" with a touch screen.
+ */
+export const isComputer = (userAgent: string, maxTouchPoints: number): boolean => {
+  if (/iPhone|iPad|iPod|Android|Mobile/i.test(userAgent)) return false;
+  if (/Macintosh/i.test(userAgent) && maxTouchPoints > 1) return false;
+  return true;
+};
